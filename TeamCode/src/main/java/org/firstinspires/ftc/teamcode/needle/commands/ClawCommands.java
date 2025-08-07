@@ -7,6 +7,7 @@ public class ClawCommands{
     public static class SetAxisServo extends ActionBase {
         ClawSubsystem clawSubsystem;
         double pos;
+
         public SetAxisServo(ClawSubsystem clawSubsystem, double pos){
             this.clawSubsystem = clawSubsystem;
             this.pos = pos;

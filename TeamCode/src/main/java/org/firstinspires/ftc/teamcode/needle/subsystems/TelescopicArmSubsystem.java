@@ -12,6 +12,7 @@ public class TelescopicArmSubsystem extends SubsystemBase {
     private DcMotorEx axisMotor, extensionMotor;
     public final double ticksPerCm = 8.4;//change later
     private final double maxArmLength = 1000;
+    public final double basketPos = 100.16473, intakePos = 27.16473, startingPos = 0;//tested frfr
 
     public TelescopicArmSubsystem(HardwareMap hm){
         axisMotor = hm.get(DcMotorEx.class, "axisMotor");
@@ -34,9 +35,8 @@ public class TelescopicArmSubsystem extends SubsystemBase {
     public int getPosition(){
         return extensionMotor.getCurrentPosition();
     }
+
     public double getCurrent(){
         return extensionMotor.getCurrent(CurrentUnit.AMPS);
     }
-
-
 }

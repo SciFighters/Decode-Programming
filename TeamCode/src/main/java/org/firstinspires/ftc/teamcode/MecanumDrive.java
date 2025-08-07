@@ -32,6 +32,7 @@ import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -43,6 +44,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.actions.ActionCmd;
 import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
@@ -60,19 +62,19 @@ public final class MecanumDrive extends SubsystemBase {
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
         public double inPerTick = 0.00198114906;
         public double lateralInPerTick = 0.001667270760786234;
-        public double trackWidthTicks = 6551.44822780296;
+        public double trackWidthTicks = 6428.429998161894;
 
         // feedforward parameters (in tick units)
         public double kS = 0.7865055068791067;
         public double kV = 0.0003615295799834487;
-        public double kA = 0.00005;
+        public double kA = 0.00007;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -115,7 +117,7 @@ public final class MecanumDrive extends SubsystemBase {
     public final LazyImu lazyImu;
 
     public final Localizer localizer;
-    private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
+    public final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
     private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);
@@ -128,7 +130,7 @@ public final class MecanumDrive extends SubsystemBase {
 
         private int lastLeftFrontPos, lastLeftBackPos, lastRightBackPos, lastRightFrontPos;
         private Rotation2d lastHeading;
-        private boolean initialized;
+        public boolean initialized;
         private Pose2d pose;
 
         public DriveLocalizer(Pose2d pose) {
@@ -229,8 +231,8 @@ public final class MecanumDrive extends SubsystemBase {
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -248,6 +250,7 @@ public final class MecanumDrive extends SubsystemBase {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        localizer.getPose();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
@@ -267,7 +270,34 @@ public final class MecanumDrive extends SubsystemBase {
         rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
     }
 
-    public final class FollowTrajectoryAction implements Action {
+    public double[] getRawValues(){
+        if (localizer instanceof PinpointLocalizer)
+            return ((PinpointLocalizer)localizer).getRawValues();
+        return null;
+    }
+
+    public void resetPosAndIMU(){
+        if(localizer instanceof PinpointLocalizer){
+            ((PinpointLocalizer)localizer).resetPosAndIMU();
+        }
+    }
+
+    public GoBildaPinpointDriver.DeviceStatus getStatus(){
+        if(localizer instanceof PinpointLocalizer){
+            return ((PinpointLocalizer)localizer).getStatus();
+        }
+        return null;
+    }
+
+    public double getFreq(){
+        if(localizer instanceof PinpointLocalizer){
+            return ((PinpointLocalizer)localizer).getFreq();
+        }
+        return 0;
+    }
+
+
+    public final class FollowTrajectoryAction extends ActionCmd {
         public final TimeTrajectory timeTrajectory;
         private double beginTs = -1;
 

@@ -11,13 +11,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
+import java.sql.Array;
 import java.util.Objects;
 
 @Config
 public final class PinpointLocalizer implements Localizer {
     public static class Params {
-        public double parYTicks = -2248.109239101734 ; // y position of the parallel encoder (in tick units)
-        public double perpXTicks = -3771.6000901621087; // x position of the perpendicular encoder (in tick units)
+        public double parYTicks = 2473.31212928; // y position of the parallel encoder (in tick units)
+        public double perpXTicks = -4795.19698533; // x position of the perpendicular encoder (in tick units)
+//        -2170.3645688210336
+//        -3762.3781495719995
     }
 
     public static Params PARAMS = new Params();
@@ -32,9 +35,9 @@ public final class PinpointLocalizer implements Localizer {
         // TODO: make sure your config has a Pinpoint device with this name
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         driver = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-
-        driver.setEncoderResolution(1 / inPerTick, DistanceUnit.INCH);
+        driver.setEncoderResolution(1.0 / inPerTick, DistanceUnit.INCH);
         driver.setOffsets(inPerTick * PARAMS.parYTicks, inPerTick * PARAMS.perpXTicks, DistanceUnit.INCH);
+        driver.resetDeviceConfigurationForOpMode();
 
         // TODO: reverse encoder directions if needed
         initialParDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
@@ -68,5 +71,21 @@ public final class PinpointLocalizer implements Localizer {
             return new PoseVelocity2d(robotVelocity, driver.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS));
         }
         return new PoseVelocity2d(new Vector2d(0, 0), 0);
+    }
+
+    public double[] getRawValues(){
+        double[] arr =  {driver.getEncoderX(), driver.getEncoderY()};
+        return arr;
+    }
+
+    public void resetPosAndIMU(){
+        driver.resetPosAndIMU();
+    }
+
+    public GoBildaPinpointDriver.DeviceStatus getStatus(){
+        return driver.getDeviceStatus();
+    }
+    public double getFreq(){
+        return driver.getFrequency();
     }
 }

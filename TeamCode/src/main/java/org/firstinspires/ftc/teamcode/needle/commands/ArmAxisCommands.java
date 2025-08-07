@@ -7,59 +7,59 @@ import java.util.function.Supplier;
 
 public class ArmAxisCommands {
     public static class AxisGoTo extends ActionBase {
-        ArmAxisSubsystem telescopicArmSubsystem;
+        ArmAxisSubsystem armAxisSubsystem;
         double angle;
         final double kp = 0.03;
-        public AxisGoTo(ArmAxisSubsystem telescopicArmSubsystem, double angle){
-            this.telescopicArmSubsystem = telescopicArmSubsystem;
+        public AxisGoTo(ArmAxisSubsystem armAxisSubsystem, double angle){
+            this.armAxisSubsystem = armAxisSubsystem;
             this.angle = angle;
-            addRequirements(telescopicArmSubsystem);
+            addRequirements(armAxisSubsystem);
         }
 
         @Override
         public void execute() {
-            double power = (angle - telescopicArmSubsystem.getAngle()) * kp;
-            telescopicArmSubsystem.setAxisPower(power);
+            double power = (angle - armAxisSubsystem.getAngle()) * kp;
+            armAxisSubsystem.setAxisPower(power);
         }
 
         @Override
         public boolean isFinished() {
-            return angle - telescopicArmSubsystem.getAngle() < 5;
+            return angle - armAxisSubsystem.getAngle() < 5;
         }
     }
 
     public static class ResetAngle extends ActionBase{
-        ArmAxisSubsystem telescopicArmSubsystem;
+        ArmAxisSubsystem armAxisSubsystem;
         final double kp = 0.05;
-        public ResetAngle(ArmAxisSubsystem telescopicArmSubsystem){
-            this.telescopicArmSubsystem = telescopicArmSubsystem;
-            addRequirements(telescopicArmSubsystem);
+        public ResetAngle(ArmAxisSubsystem armAxisSubsystem){
+            this.armAxisSubsystem = armAxisSubsystem;
+            addRequirements(armAxisSubsystem);
         }
 
         @Override
         public void initialize() {
-            double power = -telescopicArmSubsystem.getAngle() * kp;
-            telescopicArmSubsystem.setAxisPower(power);
+            double power = -armAxisSubsystem.getAngle() * kp;
+            armAxisSubsystem.setAxisPower(power);
         }
 
         @Override
         public boolean isFinished() {
-            return telescopicArmSubsystem.getAngle() < 5;
+            return armAxisSubsystem.getAngle() < 5;
         }
     }
 
     public static class AxisManual extends ActionBase{
-        ArmAxisSubsystem telescopicArmSubsystem;
+        ArmAxisSubsystem armAxisSubsystem;
         Supplier<Double> power;
-        public AxisManual(ArmAxisSubsystem telescopicArmSubsystem, Supplier<Double> power){
-            this.telescopicArmSubsystem = telescopicArmSubsystem;
+        public AxisManual(ArmAxisSubsystem armAxisSubsystem, Supplier<Double> power){
+            this.armAxisSubsystem = armAxisSubsystem;
             this.power = power;
-            addRequirements(telescopicArmSubsystem);
+            addRequirements(armAxisSubsystem);
         }
 
         @Override
         public void execute() {
-            telescopicArmSubsystem.setAxisPower(power.get());
+            armAxisSubsystem.setAxisPower(power.get());
         }
 
 

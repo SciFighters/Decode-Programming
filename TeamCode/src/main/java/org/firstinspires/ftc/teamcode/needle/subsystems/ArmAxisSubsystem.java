@@ -28,7 +28,8 @@ public class ArmAxisSubsystem extends SubsystemBase {
     }
 
     public double getAngle() {
-        return startAngle + motor.getCurrentPosition() / ticksPerDegree;
+        return motor.getCurrentPosition();
+//        return startAngle + motor.getCurrentPosition() / ticksPerDegree;
     }
 
     public void setAxisPower(double power) {

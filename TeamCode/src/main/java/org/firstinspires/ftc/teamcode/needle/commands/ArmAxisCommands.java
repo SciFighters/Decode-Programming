@@ -59,7 +59,7 @@ public class ArmAxisCommands {
 
         @Override
         public void execute() {
-            armAxisSubsystem.setAxisPower(power.get());
+            armAxisSubsystem.setAxisPower(power.get()/3);
         }
 
 

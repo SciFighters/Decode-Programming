@@ -21,44 +21,44 @@ public class Needle extends ActionOpMode {
     ArmAxisSubsystem armAxisSubsystem = new ArmAxisSubsystem(hardwareMap);
     TelescopicArmSubsystem telescopicArmSubsystem= new TelescopicArmSubsystem(hardwareMap);
     MecanumDrive mecanumDrive = new MecanumDrive(hardwareMap,new Pose2d(new Vector2d(0,0),Math.PI/2));
-    GamepadEx driverGamepad;
-    Button driverA;
-    Button driverB;
-    Button driverY;
-    Button driverX;
-    Button driverDPadDown;
-    Button driverDPadUp;
-    Button driverDPadRight;
-    Button driverDPadLeft;
-    Button driverRightBumper;
-    Button driverLeftBumper;
-    Button driverStart;
-    Button driverBack;
-    Button driverLeftStick, driverRightStick;
+    GamepadEx gamepad;
+    Button a;
+    Button b;
+    Button y;
+    Button x;
+    Button dPadDown;
+    Button dPadUp;
+    Button dPadRight;
+    Button dPadLeft;
+    Button rightBumper;
+    Button leftBumper;
+    Button start;
+    Button back;
+    Button leftStick, rightStick;
     @Override
     public void initialize() {
-        driverGamepad = new GamepadEx(gamepad1);
+        gamepad = new GamepadEx(gamepad1);
         initButtons();
-        armAxisSubsystem.setDefaultCommand(new ArmAxisCommands.AxisManual(armAxisSubsystem, driverGamepad::getRightY));
-        telescopicArmSubsystem.setDefaultCommand(new TelescopicArmCommands.ExtensionManual(telescopicArmSubsystem, () -> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
-        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive,() -> driverGamepad.getLeftY(),() -> -driverGamepad.getLeftX(),() -> driverGamepad.getRightX()));
+        armAxisSubsystem.setDefaultCommand(new ArmAxisCommands.AxisManual(armAxisSubsystem, gamepad::getRightY));
+        telescopicArmSubsystem.setDefaultCommand(new TelescopicArmCommands.ExtensionManual(telescopicArmSubsystem, () -> gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive,() -> gamepad.getLeftY(),() -> -gamepad.getLeftX(),() -> gamepad.getRightX()));
     }
     private void initButtons() {
 
-        driverA = new GamepadButton(driverGamepad, GamepadKeys.Button.A);
-        driverB = new GamepadButton(driverGamepad, GamepadKeys.Button.B);
-        driverY = new GamepadButton(driverGamepad, GamepadKeys.Button.Y);
-        driverX = new GamepadButton(driverGamepad, GamepadKeys.Button.X);
-        driverDPadDown = new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_DOWN);
-        driverDPadUp = new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_UP);
-        driverDPadRight = new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_RIGHT);
-        driverDPadLeft = new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_LEFT);
-        driverRightBumper = new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER);
-        driverLeftBumper = new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER);
-        driverStart = new GamepadButton(driverGamepad, GamepadKeys.Button.START);
-        driverLeftStick = new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_STICK_BUTTON);
-        driverRightStick = new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_STICK_BUTTON);
-        driverBack = new GamepadButton(driverGamepad, GamepadKeys.Button.BACK);
+        a = new GamepadButton(gamepad, GamepadKeys.Button.A);
+        b = new GamepadButton(gamepad, GamepadKeys.Button.B);
+        y = new GamepadButton(gamepad, GamepadKeys.Button.Y);
+        x = new GamepadButton(gamepad, GamepadKeys.Button.X);
+        dPadDown = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_DOWN);
+        dPadUp = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP);
+        dPadRight = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_RIGHT);
+        dPadLeft = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_LEFT);
+        rightBumper = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_BUMPER);
+        leftBumper = new GamepadButton(gamepad, GamepadKeys.Button.LEFT_BUMPER);
+        start = new GamepadButton(gamepad, GamepadKeys.Button.START);
+        leftStick = new GamepadButton(gamepad, GamepadKeys.Button.LEFT_STICK_BUTTON);
+        rightStick = new GamepadButton(gamepad, GamepadKeys.Button.RIGHT_STICK_BUTTON);
+        back = new GamepadButton(gamepad, GamepadKeys.Button.BACK);
 
 
     }

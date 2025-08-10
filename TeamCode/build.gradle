@@ -27,10 +27,17 @@ repositories {
     maven {
         url = 'https://maven.brott.dev/'
     }
+//    maven{
+//        url = "https://repo.dairy.foundation/releases"
+//    }
+//    maven {
+//        url = "https://repo.dairy.foundation/snapshots"
+//    }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
+//    implementation("dev.frozenmilk.sinister:Sloth:0.2.3")
     implementation 'org.ftclib.ftclib:core:2.1.1'
     implementation "com.acmerobotics.roadrunner:ftc:0.1.24"
     implementation "com.acmerobotics.roadrunner:core:1.0.1"

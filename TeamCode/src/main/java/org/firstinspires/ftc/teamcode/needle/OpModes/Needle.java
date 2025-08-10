@@ -18,9 +18,10 @@ import org.firstinspires.ftc.teamcode.needle.subsystems.TelescopicArmSubsystem;
 
 @TeleOp
 public class Needle extends ActionOpMode {
-    ArmAxisSubsystem armAxisSubsystem = new ArmAxisSubsystem(hardwareMap);
-    TelescopicArmSubsystem telescopicArmSubsystem= new TelescopicArmSubsystem(hardwareMap);
-    MecanumDrive mecanumDrive = new MecanumDrive(hardwareMap,new Pose2d(new Vector2d(0,0),Math.PI/2));
+//    ArmAxisSubsystem armAxisSubsystem = new ArmAxisSubsystem(hardwareMap);
+//    TelescopicArmSubsystem telescopicArmSubsystem= new TelescopicArmSubsystem(hardwareMap);
+
+    MecanumDrive mecanumDrive;
     GamepadEx gamepad;
     Button a;
     Button b;
@@ -37,12 +38,22 @@ public class Needle extends ActionOpMode {
     Button leftStick, rightStick;
     @Override
     public void initialize() {
+        mecanumDrive = new MecanumDrive(hardwareMap,new Pose2d(new Vector2d(0,-64),Math.PI/2));
         gamepad = new GamepadEx(gamepad1);
         initButtons();
-        armAxisSubsystem.setDefaultCommand(new ArmAxisCommands.AxisManual(armAxisSubsystem, gamepad::getRightY));
-        telescopicArmSubsystem.setDefaultCommand(new TelescopicArmCommands.ExtensionManual(telescopicArmSubsystem, () -> gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
-        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive,() -> gamepad.getLeftY(),() -> -gamepad.getLeftX(),() -> gamepad.getRightX()));
+//        armAxisSubsystem.setDefaultCommand(new ArmAxisCommands.AxisManual(armAxisSubsystem, gamepad::getRightY));
+//        telescopicArmSubsystem.setDefaultCommand(new TelescopicArmCommands.ExtensionManual(telescopicArmSubsystem, () -> gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive,() -> gamepad.getLeftX(),() -> gamepad.getLeftY(),() -> gamepad.getRightX()));
     }
+
+    @Override
+    public void run() {
+        super.run();
+        mecanumDrive.updatePoseEstimate();
+        multipleTelemetry.addData("heading deg",Math.toDegrees(mecanumDrive.localizer.getPose().heading.toDouble()));
+        multipleTelemetry.update();
+    }
+
     private void initButtons() {
 
         a = new GamepadButton(gamepad, GamepadKeys.Button.A);

@@ -18,15 +18,15 @@ public class MecanumCommands {
             this.x = x;
             this.y = y;
             this.r = r;
+            addRequirements(mecanumDrive);
         }
 
         @Override
         public void execute() {
-            com.arcrobotics.ftclib.geometry.Vector2d vector
-                    = new com.arcrobotics.ftclib.geometry.Vector2d(
-                    x.get(), y.get()).rotateBy(-mecanumDrive.localizer.getPose().heading.toDouble());
+            com.arcrobotics.ftclib.geometry.Vector2d vector = new com.arcrobotics.ftclib.geometry.Vector2d(
+                    x.get(), y.get()).rotateBy(Math.toDegrees(-mecanumDrive.localizer.getPose().heading.toDouble()));
             Vector2d vector2d = new Vector2d(vector.getX(), vector.getY());
-            mecanumDrive.setDrivePowers(new PoseVelocity2d(vector2d,r.get()));
+            mecanumDrive.setDrivePowers(new PoseVelocity2d(vector2d,-r.get()));
         }
     }
 }

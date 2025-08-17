@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.needle.commands;
 
 
-import org.firstinspires.ftc.teamcode.actions.ActionBase;
-import org.firstinspires.ftc.teamcode.actions.groups.ParallelActionGroup;
+import com.arcrobotics.ftclib.command.CommandBase;
+
+
 import org.firstinspires.ftc.teamcode.needle.subsystems.ArmAxisSubsystem;
 import org.firstinspires.ftc.teamcode.needle.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.needle.subsystems.TelescopicArmSubsystem;
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.teamcode.needle.subsystems.TelescopicArmSubsystem;
 import java.util.function.Supplier;
 
 public class TelescopicArmCommands {
-    public static class SlideUntil extends ActionBase {
+    public static class SlideUntil extends CommandBase {
         TelescopicArmSubsystem telescopicArmSubsystem;
         double wantedPos;
         int direction;
@@ -32,30 +33,30 @@ public class TelescopicArmCommands {
             return telescopicArmSubsystem.getPosition() * direction > wantedPos * direction;
         }
     }
-    public static class GoTo extends ActionBase{
+    public static class GoTo extends CommandBase{
         TelescopicArmSubsystem telescopicArmSubsystem;
         double wantedPos;
-        final double kp = 0.0069;
+        final double kp = 0.07, kf = 0.1;
         public GoTo(TelescopicArmSubsystem telescopicArmSubsystem, double posInCm){
             this.telescopicArmSubsystem = telescopicArmSubsystem;
-            wantedPos = posInCm * telescopicArmSubsystem.ticksPerCm;
+            wantedPos = posInCm;
             addRequirements(telescopicArmSubsystem);
         }
 
         @Override
         public void execute() {
             double power = (wantedPos - telescopicArmSubsystem.getPosition()) * kp;
-            telescopicArmSubsystem.setArmPower(power);
+            telescopicArmSubsystem.setArmPower(power + kf);
         }
 
         @Override
         public boolean isFinished() {
-            return wantedPos - telescopicArmSubsystem.getPosition() < 16.473;
+            return Math.abs(wantedPos - telescopicArmSubsystem.getPosition()) < 2;
         }
     }
-    public static class GoHome extends ActionBase {
+    public static class GoHome extends CommandBase {
         TelescopicArmSubsystem telescopicArmSubsystem;
-        final double requiredCurrent = 3;
+        final double requiredCurrent = 10;
         public GoHome(TelescopicArmSubsystem telescopicArmSubsystem) {
             this.telescopicArmSubsystem = telescopicArmSubsystem;
             addRequirements(telescopicArmSubsystem);
@@ -68,11 +69,11 @@ public class TelescopicArmCommands {
 
         @Override
         public boolean isFinished() {
-            return telescopicArmSubsystem.getCurrent() > requiredCurrent || telescopicArmSubsystem.getPosition() < 10;
+            return telescopicArmSubsystem.getCurrent() > requiredCurrent || telescopicArmSubsystem.getPosition() < 31;
         }
     }
 
-    public static class ExtensionManual extends ActionBase{
+    public static class ExtensionManual extends CommandBase{
         TelescopicArmSubsystem telescopicArmSubsystem;
         Supplier<Double> power;
         public ExtensionManual(TelescopicArmSubsystem telescopicArmSubsystem, Supplier<Double> power){

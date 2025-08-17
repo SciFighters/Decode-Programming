@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode.needle.commands;
 
-import org.firstinspires.ftc.teamcode.actions.ActionBase;
+import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.CommandBase;
+
 import org.firstinspires.ftc.teamcode.needle.subsystems.ArmAxisSubsystem;
 
 import java.util.function.Supplier;
-
 public class ArmAxisCommands {
-    public static class AxisGoTo extends ActionBase {
+
+    @Config
+    public static class AxisGoTo extends CommandBase {
         ArmAxisSubsystem armAxisSubsystem;
         double angle;
-        final double kp = 0.03;
+        public static double kp = 0.05;
         public AxisGoTo(ArmAxisSubsystem armAxisSubsystem, double angle){
             this.armAxisSubsystem = armAxisSubsystem;
             this.angle = angle;
@@ -24,11 +27,11 @@ public class ArmAxisCommands {
 
         @Override
         public boolean isFinished() {
-            return angle - armAxisSubsystem.getAngle() < 5;
+            return Math.abs(angle - armAxisSubsystem.getAngle()) < 3;
         }
     }
 
-    public static class ResetAngle extends ActionBase{
+    public static class ResetAngle extends CommandBase{
         ArmAxisSubsystem armAxisSubsystem;
         final double kp = 0.05;
         public ResetAngle(ArmAxisSubsystem armAxisSubsystem){
@@ -48,7 +51,31 @@ public class ArmAxisCommands {
         }
     }
 
-    public static class AxisManual extends ActionBase{
+    public static class waitForAngle extends CommandBase{
+        ArmAxisSubsystem armAxisSubsystem;
+        double angle;
+        boolean forward;
+        public waitForAngle(ArmAxisSubsystem armAxisSubsystem, double angle){
+            this.armAxisSubsystem = armAxisSubsystem;
+            this.angle = angle;
+        }
+
+        @Override
+        public void initialize() {
+            forward = angle < armAxisSubsystem.getAngle();
+        }
+
+        @Override
+        public boolean isFinished() {
+            if (forward){
+                return  angle > armAxisSubsystem.getAngle();
+            }
+            return  angle < armAxisSubsystem.getAngle();
+
+        }
+    }
+
+    public static class AxisManual extends CommandBase{
         ArmAxisSubsystem armAxisSubsystem;
         Supplier<Double> power;
         public AxisManual(ArmAxisSubsystem armAxisSubsystem, Supplier<Double> power){
@@ -59,7 +86,7 @@ public class ArmAxisCommands {
 
         @Override
         public void execute() {
-            armAxisSubsystem.setAxisPower(power.get()/3);
+            armAxisSubsystem.setAxisPower(power.get());
         }
 
 

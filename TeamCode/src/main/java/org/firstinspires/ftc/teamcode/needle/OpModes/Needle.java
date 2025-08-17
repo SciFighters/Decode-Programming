@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.needle.OpModes;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
@@ -11,16 +12,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.needle.commands.ArmAxisCommands;
+import org.firstinspires.ftc.teamcode.needle.commands.Groups;
 import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 import org.firstinspires.ftc.teamcode.needle.commands.TelescopicArmCommands;
 import org.firstinspires.ftc.teamcode.needle.subsystems.ArmAxisSubsystem;
+import org.firstinspires.ftc.teamcode.needle.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.needle.subsystems.TelescopicArmSubsystem;
 
 @TeleOp
 public class Needle extends ActionOpMode {
-//    ArmAxisSubsystem armAxisSubsystem = new ArmAxisSubsystem(hardwareMap);
-//    TelescopicArmSubsystem telescopicArmSubsystem= new TelescopicArmSubsystem(hardwareMap);
-
+    ArmAxisSubsystem armAxisSubsystem;
+    TelescopicArmSubsystem telescopicArmSubsystem;
+    ClawSubsystem clawSubsystem;
     MecanumDrive mecanumDrive;
     GamepadEx gamepad;
     Button a;
@@ -38,19 +41,27 @@ public class Needle extends ActionOpMode {
     Button leftStick, rightStick;
     @Override
     public void initialize() {
+        armAxisSubsystem = new ArmAxisSubsystem(hardwareMap);
+        telescopicArmSubsystem = new TelescopicArmSubsystem(hardwareMap);
         mecanumDrive = new MecanumDrive(hardwareMap,new Pose2d(new Vector2d(0,-64),Math.PI/2));
         gamepad = new GamepadEx(gamepad1);
         initButtons();
-//        armAxisSubsystem.setDefaultCommand(new ArmAxisCommands.AxisManual(armAxisSubsystem, gamepad::getRightY));
-//        telescopicArmSubsystem.setDefaultCommand(new TelescopicArmCommands.ExtensionManual(telescopicArmSubsystem, () -> gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+        armAxisSubsystem.setDefaultCommand(new ArmAxisCommands.AxisManual(armAxisSubsystem, gamepad::getRightY));
+        telescopicArmSubsystem.setDefaultCommand(new TelescopicArmCommands.ExtensionManual(telescopicArmSubsystem,
+                () -> gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive,() -> gamepad.getLeftX(),() -> gamepad.getLeftY(),() -> gamepad.getRightX()));
+        a.whenPressed(new Groups.GoToBasketCmd(telescopicArmSubsystem,armAxisSubsystem,clawSubsystem));
+        b.whenPressed(new Groups.GoHome(telescopicArmSubsystem,armAxisSubsystem,clawSubsystem));
     }
 
     @Override
     public void run() {
+
         super.run();
         mecanumDrive.updatePoseEstimate();
         multipleTelemetry.addData("heading deg",Math.toDegrees(mecanumDrive.localizer.getPose().heading.toDouble()));
+        multipleTelemetry.addData("armCm",telescopicArmSubsystem.getPosition());
+        multipleTelemetry.addData("armAngle",armAxisSubsystem.getAngle());
         multipleTelemetry.update();
     }
 

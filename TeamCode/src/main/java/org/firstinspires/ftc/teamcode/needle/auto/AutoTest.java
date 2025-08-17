@@ -10,11 +10,18 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.actions.ActionCommand;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Autonomous
@@ -39,8 +46,9 @@ public class AutoTest extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(17,31,-Math.PI*3/4),Math.PI/4)
                 .splineToLinearHeading(new Pose2d(36,36,-Math.PI),0);
 
-
-
+        Set<Subsystem> gsdf = new HashSet<Subsystem>();
+        gsdf.add(drive);
+        Command sdf = new ActionCommand(auto.build(), gsdf);
         waitForStart();
         if (isStopRequested()) return;
         Actions.runBlocking(auto.build());

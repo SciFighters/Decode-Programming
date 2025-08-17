@@ -9,31 +9,28 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class TelescopicArmSubsystem extends SubsystemBase {
-    private DcMotorEx axisMotor, extensionMotor;
-    public final double ticksPerCm = 8.4;//change later
-    private final double maxArmLength = 1000;
-    public final double basketPos = 100.16473, intakePos = 27.16473, startingPos = 0;//tested frfr
+    private DcMotorEx extensionMotor;
+    public final double ticksPerCm = 39.487962963;//change later
+    private final int maxArmLength = 78, minArmLength = 30;
+    public final double basketPos = 60, intakePos = 36;//tested frfr
 
     public TelescopicArmSubsystem(HardwareMap hm){
-        axisMotor = hm.get(DcMotorEx.class, "axisMotor");
         extensionMotor = hm.get(DcMotorEx.class, "extensionMotor");
-        axisMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        axisMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extensionMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        axisMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void setArmPower(double power){
-        if (extensionMotor.getCurrentPosition() <= 0) {
+        if (getPosition() <= 0) {
             extensionMotor.setPower(Range.clip(power, 0, 1));
-        } else if (extensionMotor.getCurrentPosition() >= maxArmLength) {
+        } else if (getPosition() >= maxArmLength) {
             extensionMotor.setPower(Range.clip(power, -1, 0));
         } else {
             extensionMotor.setPower(power);
         }
     }
-    public int getPosition(){
-        return extensionMotor.getCurrentPosition();
+    public double getPosition(){
+        return extensionMotor.getCurrentPosition() / ticksPerCm + minArmLength;
     }
 
     public double getCurrent(){

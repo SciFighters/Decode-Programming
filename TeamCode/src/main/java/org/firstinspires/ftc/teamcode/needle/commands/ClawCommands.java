@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.needle.commands;
 
-import org.firstinspires.ftc.teamcode.actions.ActionBase;
+import com.arcrobotics.ftclib.command.CommandBase;
+
 import org.firstinspires.ftc.teamcode.needle.subsystems.ClawSubsystem;
 
 public class ClawCommands{
-    public static class SetAxisServo extends ActionBase {
+    public static class SetAxisServo extends CommandBase {
         ClawSubsystem clawSubsystem;
         double pos;
 
@@ -19,7 +20,7 @@ public class ClawCommands{
         }
     }
 
-    public static class SetClampPos extends ActionBase{
+    public static class SetClampPos extends CommandBase{
         ClawSubsystem clawSubsystem;
         double pos;
         public SetClampPos(ClawSubsystem clawSubsystem, double pos){

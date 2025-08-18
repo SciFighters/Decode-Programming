@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class ArmAxisSubsystem extends SubsystemBase {
     public final double ticksPerDegree = -487.0/9.0;
-    public final double maxRotation = 1350;
+    public final double maxRotation = 135;
     public final double basketAngle = 110;
     DcMotorEx motor;
 
@@ -20,7 +20,7 @@ public class ArmAxisSubsystem extends SubsystemBase {
         motor = hm.get(DcMotorEx.class, "axisMotor");
 
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -35,6 +35,7 @@ public class ArmAxisSubsystem extends SubsystemBase {
     public void setAxisPower(double power) {
         if (getAngle() <= 0) {
             motor.setPower(Range.clip(power, 0, 1));
+
         } else if (getAngle() >= maxRotation) {
             motor.setPower(Range.clip(power, -1, 0));
         } else {
@@ -44,7 +45,7 @@ public class ArmAxisSubsystem extends SubsystemBase {
     public void setRawPower(double power){
         motor.setPower(power);
     }
-    public double getMotorCurrent(){
+    public double getCurrent(){
         return motor.getCurrent(CurrentUnit.AMPS);
     }
 

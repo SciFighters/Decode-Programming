@@ -11,23 +11,32 @@ public class ArmAxisCommands {
     @Config
     public static class AxisGoTo extends CommandBase {
         ArmAxisSubsystem armAxisSubsystem;
-        double angle;
-        public static double kp = 0.05;
-        public AxisGoTo(ArmAxisSubsystem armAxisSubsystem, double angle){
+        double wantedAngle, lastAngle;
+        public static double kp = 0.05, kd = 0.0;
+        public AxisGoTo(ArmAxisSubsystem armAxisSubsystem, double wantedAngle){
             this.armAxisSubsystem = armAxisSubsystem;
-            this.angle = angle;
+            this.wantedAngle = wantedAngle;
+
             addRequirements(armAxisSubsystem);
+        }
+
+
+        @Override
+        public void initialize() {
+            lastAngle = armAxisSubsystem.getAngle();
         }
 
         @Override
         public void execute() {
-            double power = (angle - armAxisSubsystem.getAngle()) * kp;
-            armAxisSubsystem.setAxisPower(power);
+            double power = (wantedAngle - armAxisSubsystem.getAngle()) * kp;
+            double derivative = (lastAngle - armAxisSubsystem.getAngle()) * kd;
+
+            armAxisSubsystem.setAxisPower(power + derivative);
         }
 
         @Override
         public boolean isFinished() {
-            return Math.abs(angle - armAxisSubsystem.getAngle()) < 3;
+            return Math.abs(wantedAngle - armAxisSubsystem.getAngle()) < 3;
         }
     }
 
@@ -86,7 +95,7 @@ public class ArmAxisCommands {
 
         @Override
         public void execute() {
-            armAxisSubsystem.setAxisPower(power.get());
+            armAxisSubsystem.setAxisPower(-power.get());
         }
 
 

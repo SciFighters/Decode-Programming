@@ -33,7 +33,7 @@ public class AxisEncoderTuner extends ActionOpMode {
     public void run() {
         super.run();
         multipleTelemetry.addData("pos",armAxisSubsystem.getAngle());
-        multipleTelemetry.addData("current",armAxisSubsystem.getMotorCurrent());
+        multipleTelemetry.addData("current",armAxisSubsystem.getCurrent());
         multipleTelemetry.update();
     }
 }

@@ -22,20 +22,13 @@ public class Groups {
                       ArmAxisSubsystem armAxisSubsystem, ClawSubsystem clawSubsystem) {
 
             addCommands(
-                    new SequentialCommandGroup(
-                            new ArmAxisCommands.waitForAngle(armAxisSubsystem, 50),
-                            new TelescopicArmCommands.GoHome(telescopicArmSubsystem)),
+                    //not using the go home command because when the angle isnt zero then it closes too much
+                    new TelescopicArmCommands.GoTo(telescopicArmSubsystem,30),
                     new ArmAxisCommands.AxisGoTo(armAxisSubsystem, 0));
 
 //                new ClawCommands.SetAxisServo(clawSubsystem, clawSubsystem.intakePos)
         }
     }
 
-    public static ParallelCommandGroup GoHome(TelescopicArmSubsystem telescopicArmSubsystem,
-                                              ArmAxisSubsystem armAxisSubsystem, ClawSubsystem clawSubsystem) {
-        return new ParallelCommandGroup(new TelescopicArmCommands.GoHome(telescopicArmSubsystem),
-                new ArmAxisCommands.AxisGoTo(armAxisSubsystem, 0));
-//                new ClawCommands.SetAxisServo(clawSubsystem, clawSubsystem.intakePos)
-    }
 
 }

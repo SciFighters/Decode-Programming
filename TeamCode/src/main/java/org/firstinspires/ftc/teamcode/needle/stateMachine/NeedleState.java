@@ -6,12 +6,13 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.needle.subsystems.ArmAxisSubsystem;
 import org.firstinspires.ftc.teamcode.needle.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.needle.subsystems.TelescopicArmSubsystem;
 
 public abstract class NeedleState {
-    SubsystemBase telescopicArmSubsystem, armAxisSubsystem, clawSubsystem;
+    SubsystemBase telescopicArmSubsystem, armAxisSubsystem, clawSubsystem, mecanumDrive;
     GamepadEx driver, system;
     Button driverA, systemA;
     Button driverB, systemB;
@@ -26,9 +27,10 @@ public abstract class NeedleState {
     Button driverStart, systemStart;
     Button driverBack, systemBack;
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
-    NeedleState(GamepadEx driver, GamepadEx system, TelescopicArmSubsystem telescopicArmSubsystem, ArmAxisSubsystem armAxisSubsystem, ClawSubsystem clawSubsystem){
+    NeedleState(GamepadEx driver, GamepadEx system, MecanumDrive mecanumDrive, TelescopicArmSubsystem telescopicArmSubsystem, ArmAxisSubsystem armAxisSubsystem, ClawSubsystem clawSubsystem){
         this.driver = driver;
         this.system = system;
+        this.mecanumDrive = mecanumDrive;
         this.telescopicArmSubsystem = telescopicArmSubsystem;
         this.armAxisSubsystem = armAxisSubsystem;
         this.clawSubsystem = clawSubsystem;

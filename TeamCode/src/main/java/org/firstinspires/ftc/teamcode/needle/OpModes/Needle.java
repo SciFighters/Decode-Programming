@@ -63,9 +63,9 @@ public class Needle extends ActionOpMode {
         system = new GamepadEx(gamepad2);
         initButtons();
 
-        armAxisSubsystem.setDefaultCommand(new ArmAxisCommands.AxisManual(armAxisSubsystem, system::getRightY));
+        armAxisSubsystem.setDefaultCommand(new ArmAxisCommands.AxisManual(armAxisSubsystem,() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) /*system::getRightY*/));
         telescopicArmSubsystem.setDefaultCommand(new TelescopicArmCommands.ExtensionManual(telescopicArmSubsystem,
-                system::getLeftY));//() -> gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)
+                /*system::getLeftY*/() -> system.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - system.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX(),() -> 0.6 + 0.4 * driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
         driverB.whenPressed(new Runnable() {
             @Override
@@ -88,8 +88,14 @@ public class Needle extends ActionOpMode {
                         new SequentialCommandGroup(new WaitCommand(500),new Groups.GoToBasketCmd(telescopicArmSubsystem, armAxisSubsystem, clawSubsystem))));
             }
         });
-        systemA.whenPressed(new Groups.GoToBasketCmd(telescopicArmSubsystem,armAxisSubsystem,clawSubsystem));
-        systemB.whenPressed(new Groups.GoHome(telescopicArmSubsystem,armAxisSubsystem,clawSubsystem));
+
+
+//        systemA.whenPressed(new Groups.GoToBasketCmd(telescopicArmSubsystem,armAxisSubsystem,clawSubsystem));
+//        systemB.whenPressed(new Groups.GoHome(telescopicArmSubsystem,armAxisSubsystem,clawSubsystem));
+
+        systemA.whenPressed(new ArmAxisCommands.AxisGoTo(armAxisSubsystem, telescopicArmSubsystem, 60));
+        systemY.whenPressed(new ArmAxisCommands.AxisGoTo(armAxisSubsystem,telescopicArmSubsystem, 110));
+        systemB.whenPressed(new ArmAxisCommands.AxisGoTo(armAxisSubsystem,telescopicArmSubsystem, 0));
 
     }
 
@@ -98,12 +104,13 @@ public class Needle extends ActionOpMode {
 
         super.run();
         mecanumDrive.updatePoseEstimate();
-//        multipleTelemetry.addData("heading deg",Math.toDegrees(mecanumDrive.localizer.getPose().heading.toDouble()));
-//        multipleTelemetry.addData("armCm",telescopicArmSubsystem.getPosition());
-//        multipleTelemetry.addData("telescopicCurrent",telescopicArmSubsystem.getCurrent());
-//        multipleTelemetry.addData("axisCurrent",armAxisSubsystem.getCurrent());
-//        multipleTelemetry.addData("armAngle",armAxisSubsystem.getAngle());
-//        multipleTelemetry.update();
+        multipleTelemetry.addData("axisPower", armAxisSubsystem.getPower() * 3);
+        multipleTelemetry.addData("heading deg",Math.toDegrees(mecanumDrive.localizer.getPose().heading.toDouble()));
+        multipleTelemetry.addData("armCm",telescopicArmSubsystem.getPosition());
+        multipleTelemetry.addData("telescopicCurrent",telescopicArmSubsystem.getCurrent());
+        multipleTelemetry.addData("axisCurrent",armAxisSubsystem.getCurrent());
+        multipleTelemetry.addData("armAngle",armAxisSubsystem.getAngle());
+        multipleTelemetry.update();
     }
 
     public void initButtons() {

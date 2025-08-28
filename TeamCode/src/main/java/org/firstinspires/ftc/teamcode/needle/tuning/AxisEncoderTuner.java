@@ -5,13 +5,14 @@ import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.needle.commands.ArmAxisCommands;
 import org.firstinspires.ftc.teamcode.needle.subsystems.ArmAxisSubsystem;
 @Config
-@TeleOp
+@Disabled
 public class AxisEncoderTuner extends ActionOpMode {
     ArmAxisSubsystem armAxisSubsystem;
     GamepadEx gamepad;
@@ -25,8 +26,8 @@ public class AxisEncoderTuner extends ActionOpMode {
         a = new GamepadButton(gamepad, GamepadKeys.Button.A);
         b = new GamepadButton(gamepad, GamepadKeys.Button.B);
         armAxisSubsystem.setDefaultCommand(new ArmAxisCommands.AxisManual(armAxisSubsystem, gamepad::getLeftY));
-        a.whenPressed(new ArmAxisCommands.AxisGoTo(armAxisSubsystem, angle));
-        b.whenPressed(new ArmAxisCommands.AxisGoTo(armAxisSubsystem,0));
+//        a.whenPressed(new ArmAxisCommands.AxisGoTo(armAxisSubsystem, angle));
+//        b.whenPressed(new ArmAxisCommands.AxisGoTo(armAxisSubsystem,0));
     }
 
     @Override

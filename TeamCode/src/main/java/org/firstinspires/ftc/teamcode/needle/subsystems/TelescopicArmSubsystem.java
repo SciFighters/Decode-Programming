@@ -21,7 +21,7 @@ public class TelescopicArmSubsystem extends SubsystemBase {
         extensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void setArmPower(double power){
-        if (getPosition() <= 0) {
+        if (getPosition() <= 30) {
             extensionMotor.setPower(Range.clip(power, 0, 1));
         } else if (getPosition() >= maxArmLength) {
             extensionMotor.setPower(Range.clip(power, -1, 0));

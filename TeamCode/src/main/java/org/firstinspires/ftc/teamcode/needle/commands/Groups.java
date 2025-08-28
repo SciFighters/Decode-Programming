@@ -13,7 +13,7 @@ public class Groups {
         public GoToBasketCmd(TelescopicArmSubsystem telescopicArmSubsystem,
                              ArmAxisSubsystem armAxisSubsystem, ClawSubsystem clawSubsystem) {
             addCommands(new TelescopicArmCommands.GoTo(telescopicArmSubsystem, telescopicArmSubsystem.basketPos),
-                    new ArmAxisCommands.AxisGoTo(armAxisSubsystem, armAxisSubsystem.basketAngle));
+                    new ArmAxisCommands.AxisGoTo(armAxisSubsystem,telescopicArmSubsystem, armAxisSubsystem.basketAngle));
 //                new ClawCommands.SetAxisServo(clawSubsystem, clawSubsystem.basketTilt));
         }
     }
@@ -25,7 +25,7 @@ public class Groups {
             addCommands(
                     //not using the go home command because when the angle isnt zero then it closes too much
                     new TelescopicArmCommands.GoTo(telescopicArmSubsystem,30),
-                    new ArmAxisCommands.AxisGoTo(armAxisSubsystem, 0));
+                    new ArmAxisCommands.AxisGoTo(armAxisSubsystem,telescopicArmSubsystem, 0));
 
 //                new ClawCommands.SetAxisServo(clawSubsystem, clawSubsystem.intakePos)
         }

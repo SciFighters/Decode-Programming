@@ -9,45 +9,71 @@ import org.firstinspires.ftc.teamcode.needle.subsystems.TelescopicArmSubsystem;
 import java.util.function.Supplier;
 
 public class ArmAxisCommands {
-//    public static class AxisControl extends CommandBase {
-//        public enum Mode {GOTO, MANUAL}
-//        public static Mode mode = Mode.MANUAL;
-//        private static double targetPos = 0, kp = 0.05;
-//        ArmAxisSubsystem armAxisSubsystem;
-//
-//        public AxisControl(ArmAxisSubsystem armAxisSubsystem, Supplier<Double> manual) {
-//            this.armAxisSubsystem = armAxisSubsystem;
-//        }
-//
-//        @Override
-//        public void execute() {
-//            switch (mode){
-//                case GOTO:
-//                    armAxisSubsystem.setAxisPower();
-//                    break;
-//                case MANUAL:
-//
-//                    break;
-//            }
-//        }
-//
-//
-//        public static void setTargetPos(double targetPos1) {
-//            targetPos = targetPos1;
-//        }
-//
-//        public static void setMode(Mode m) {
-//            mode = m;
-//        }
-//    }
+    @Config
+    public static class AxisControl extends CommandBase {
+        public enum Mode {GOTO, MANUAL}
+
+        public static Mode mode = Mode.MANUAL;
+        public static double targetPos = 0, lastAngle, kp = 0.05, kd = 0.05;
+        Supplier<Double> manual;
+        ArmAxisSubsystem armAxisSubsystem;
+        TelescopicArmSubsystem telescopicArmSubsystem;
+
+        public AxisControl(ArmAxisSubsystem armAxisSubsystem, TelescopicArmSubsystem telescopicArmSubsystem, Supplier<Double> manual) {
+            this.armAxisSubsystem = armAxisSubsystem;
+            this.telescopicArmSubsystem = telescopicArmSubsystem;
+            this.manual = manual;
+            addRequirements(armAxisSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            lastAngle = armAxisSubsystem.getAngle();
+            targetPos = 0;
+            mode = Mode.MANUAL;
+        }
+
+        @Override
+        public void execute() {
+            double currentAngle = armAxisSubsystem.getAngle();
+            switch (mode) {
+                case GOTO:
+                    if (Math.abs(manual.get()) > 0.15) {
+                        armAxisSubsystem.setAxisPower(-manual.get());
+                        mode = Mode.MANUAL;
+                        break;
+                    }
+                    double proportional = (targetPos - currentAngle) * kp;
+                    double derivative = (lastAngle - currentAngle) * kd;
+                    double feedforward = (0.00064 * telescopicArmSubsystem.getPosition() + 0.0468) * Math.cos(armAxisSubsystem.getAngle() / 180 * Math.PI) * 1.2;
+//                            Math.signum(Math.cos(armAxisSubsystem.getAngle() / 180 * Math.PI))
+//                            * Math.sqrt(Math.abs(Math.cos(armAxisSubsystem.getAngle() / 180 * Math.PI)));
+
+                    armAxisSubsystem.setAxisPower(proportional + derivative + feedforward);
+
+                    break;
+                case MANUAL:
+                    armAxisSubsystem.setAxisPower(-manual.get());
+                    break;
+            }
+            lastAngle = currentAngle;
+        }
+
+
+        public static void setTargetPos(double targetPos1) {
+            targetPos = targetPos1;
+        }
+
+        public static void setMode(Mode m) {
+            mode = m;
+        }
+    }
 
     @Config
     public static class AxisGoTo extends CommandBase {
         ArmAxisSubsystem armAxisSubsystem;
-        double wantedAngle, lastAngle;
-        public static double kp = 11.0, kd = 4.0, kf = 1;
-        public final double mass = 0.679;
-        public final double g = 9.81;
+        double wantedAngle;
+        boolean wait = true;
         TelescopicArmSubsystem telescopicArmSubsystem;
 
         public AxisGoTo(ArmAxisSubsystem armAxisSubsystem, TelescopicArmSubsystem telescopicArmSubsystem, double wantedAngle) {
@@ -55,29 +81,26 @@ public class ArmAxisCommands {
             this.telescopicArmSubsystem = telescopicArmSubsystem;
             this.wantedAngle = wantedAngle;
 
-            addRequirements(armAxisSubsystem);
+        }
+
+        public AxisGoTo(ArmAxisSubsystem armAxisSubsystem, TelescopicArmSubsystem telescopicArmSubsystem, double wantedAngle, boolean wait) {
+            this.armAxisSubsystem = armAxisSubsystem;
+            this.telescopicArmSubsystem = telescopicArmSubsystem;
+            this.wantedAngle = wantedAngle;
+
         }
 
 
         @Override
         public void initialize() {
-            lastAngle = armAxisSubsystem.getAngle();
+            ArmAxisCommands.AxisControl.setTargetPos(wantedAngle);
+            ArmAxisCommands.AxisControl.setMode(AxisControl.Mode.GOTO);
         }
 
-        @Override
-        public void execute() {
-            double power = (wantedAngle - armAxisSubsystem.getAngle()) * kp;
-            double derivative = (lastAngle - armAxisSubsystem.getAngle()) * kd;
-            double feedForward = kf * mass * g * (telescopicArmSubsystem.getPosition() / 200) * Math.cos(armAxisSubsystem.getAngle());
-
-            armAxisSubsystem.setAxisPower((power + derivative + feedForward)/30);
-
-            lastAngle = armAxisSubsystem.getAngle();
-        }
 
         @Override
         public boolean isFinished() {
-            return Math.abs(wantedAngle - armAxisSubsystem.getAngle()) < 1;
+            return Math.abs(wantedAngle - armAxisSubsystem.getAngle()) < 3 || !wait || AxisControl.mode == AxisControl.Mode.MANUAL;
         }
     }
 

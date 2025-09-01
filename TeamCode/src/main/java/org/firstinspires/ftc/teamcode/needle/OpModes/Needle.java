@@ -62,10 +62,8 @@ public class Needle extends ActionOpMode {
         driver = new GamepadEx(gamepad1);
         system = new GamepadEx(gamepad2);
         initButtons();
-
-        armAxisSubsystem.setDefaultCommand(new ArmAxisCommands.AxisManual(armAxisSubsystem,() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) /*system::getRightY*/));
-        telescopicArmSubsystem.setDefaultCommand(new TelescopicArmCommands.ExtensionManual(telescopicArmSubsystem,
-                /*system::getLeftY*/() -> system.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - system.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
+        CommandScheduler.getInstance().schedule(new ArmAxisCommands.AxisControl(armAxisSubsystem,telescopicArmSubsystem, system::getRightY));
+        telescopicArmSubsystem.setDefaultCommand(new TelescopicArmCommands.ExtensionManual(telescopicArmSubsystem, system::getLeftY));
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX(),() -> 0.6 + 0.4 * driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
         driverB.whenPressed(new Runnable() {
             @Override
@@ -110,6 +108,7 @@ public class Needle extends ActionOpMode {
         multipleTelemetry.addData("telescopicCurrent",telescopicArmSubsystem.getCurrent());
         multipleTelemetry.addData("axisCurrent",armAxisSubsystem.getCurrent());
         multipleTelemetry.addData("armAngle",armAxisSubsystem.getAngle());
+        multipleTelemetry.addData("arm Current",armAxisSubsystem.getCurrent());
         multipleTelemetry.update();
     }
 

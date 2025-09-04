@@ -102,7 +102,7 @@ public class Needle extends ActionOpMode {
 
         super.run();
         mecanumDrive.updatePoseEstimate();
-        multipleTelemetry.addData("axisPower", armAxisSubsystem.getPower() * 3);
+        multipleTelemetry.addData("axisPower", armAxisSubsystem.getPower());
         multipleTelemetry.addData("heading deg",Math.toDegrees(mecanumDrive.localizer.getPose().heading.toDouble()));
         multipleTelemetry.addData("armCm",telescopicArmSubsystem.getPosition());
         multipleTelemetry.addData("telescopicCurrent",telescopicArmSubsystem.getCurrent());

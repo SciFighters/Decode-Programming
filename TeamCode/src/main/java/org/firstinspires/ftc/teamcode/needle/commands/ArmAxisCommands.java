@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.needle.commands;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.needle.subsystems.ArmAxisSubsystem;
 import org.firstinspires.ftc.teamcode.needle.subsystems.TelescopicArmSubsystem;
@@ -14,10 +15,15 @@ public class ArmAxisCommands {
         public enum Mode {GOTO, MANUAL}
 
         public static Mode mode = Mode.MANUAL;
-        public static double targetPos = 0, lastAngle, kp = 0.05, kd = 0.05;
+        public static double targetPos = 0, lastAngle;// kp = 0.05, kd = 0.05;
         Supplier<Double> manual;
         ArmAxisSubsystem armAxisSubsystem;
         TelescopicArmSubsystem telescopicArmSubsystem;
+        public static double kp = 1, kd = 0.08, kf = 0.9;
+        public final double mass = 0.679;
+        public final double g = 9.81;
+        ElapsedTime time;
+        double lastTime = 0;
 
         public AxisControl(ArmAxisSubsystem armAxisSubsystem, TelescopicArmSubsystem telescopicArmSubsystem, Supplier<Double> manual) {
             this.armAxisSubsystem = armAxisSubsystem;
@@ -31,32 +37,44 @@ public class ArmAxisCommands {
             lastAngle = armAxisSubsystem.getAngle();
             targetPos = 0;
             mode = Mode.MANUAL;
+            time = new ElapsedTime();
+            lastTime = time.seconds();
         }
 
         @Override
         public void execute() {
             double currentAngle = armAxisSubsystem.getAngle();
+            double currentTime = time.seconds();
+
             switch (mode) {
                 case GOTO:
                     if (Math.abs(manual.get()) > 0.15) {
                         armAxisSubsystem.setAxisPower(-manual.get());
+                        armAxisSubsystem.breakMode();
                         mode = Mode.MANUAL;
                         break;
                     }
-                    double proportional = (targetPos - currentAngle) * kp;
-                    double derivative = (lastAngle - currentAngle) * kd;
-                    double feedforward = (0.00064 * telescopicArmSubsystem.getPosition() + 0.0468) * Math.cos(armAxisSubsystem.getAngle() / 180 * Math.PI) * 1.2;
+                    double power = (targetPos - armAxisSubsystem.getAngle()) * kp;
+                    currentTime = time.seconds();
+                    double derivative = (lastAngle - armAxisSubsystem.getAngle()) * kd * (currentTime - lastTime) * 100;
+                    double feedForward =kf * mass * g * (telescopicArmSubsystem.getPosition() / (2 * telescopicArmSubsystem.getPosition() + 140)) * Math.cos(armAxisSubsystem.getAngle() * Math.PI / 180);
+//                    double proportional = (targetPos - currentAngle) * kp;
+//                    double derivative = (lastAngle - currentAngle) * kd;
+//                    double feedforward = armAxisSubsystem.getCurrent() * Math.cos(Math.toRadians(armAxisSubsystem.getAngle())) / 5;
+//                    double feedforward = (0.00064 * telescopicArmSubsystem.getPosition() + 0.0468) * Math.cos(armAxisSubsystem.getAngle() / 180 * Math.PI) * 1.2;
 //                            Math.signum(Math.cos(armAxisSubsystem.getAngle() / 180 * Math.PI))
 //                            * Math.sqrt(Math.abs(Math.cos(armAxisSubsystem.getAngle() / 180 * Math.PI)));
 
-                    armAxisSubsystem.setAxisPower(proportional + derivative + feedforward);
+                    armAxisSubsystem.setAxisPower((power + derivative + feedForward)/30);
 
                     break;
                 case MANUAL:
+                    currentTime = time.seconds();
                     armAxisSubsystem.setAxisPower(-manual.get());
                     break;
             }
             lastAngle = currentAngle;
+            lastTime = currentTime;
         }
 
 
@@ -93,8 +111,8 @@ public class ArmAxisCommands {
 
         @Override
         public void initialize() {
-            ArmAxisCommands.AxisControl.setTargetPos(wantedAngle);
-            ArmAxisCommands.AxisControl.setMode(AxisControl.Mode.GOTO);
+            AxisControl.setTargetPos(wantedAngle);
+            AxisControl.setMode(AxisControl.Mode.GOTO);
         }
 
 

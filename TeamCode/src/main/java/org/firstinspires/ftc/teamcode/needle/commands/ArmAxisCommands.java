@@ -29,7 +29,7 @@ public class ArmAxisCommands {
             this.armAxisSubsystem = armAxisSubsystem;
             this.telescopicArmSubsystem = telescopicArmSubsystem;
             this.manual = manual;
-            addRequirements(armAxisSubsystem);
+//            addRequirements(armAxisSubsystem);
         }
 
         @Override

@@ -94,6 +94,8 @@ public class Needle extends ActionOpMode {
         systemA.whenPressed(new ArmAxisCommands.AxisGoTo(armAxisSubsystem, telescopicArmSubsystem, 60));
         systemY.whenPressed(new ArmAxisCommands.AxisGoTo(armAxisSubsystem,telescopicArmSubsystem, 110));
         systemB.whenPressed(new ArmAxisCommands.AxisGoTo(armAxisSubsystem,telescopicArmSubsystem, 0));
+        systemRightBumper.whenPressed(new TelescopicArmCommands.GoTo(telescopicArmSubsystem , 50));
+        systemLeftBumper.whenPressed(new TelescopicArmCommands.GoTo(telescopicArmSubsystem , 0));
 
     }
 

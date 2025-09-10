@@ -12,7 +12,8 @@ public class Groups {
     public static class GoToBasketCmd extends ParallelCommandGroup {
         public GoToBasketCmd(TelescopicArmSubsystem telescopicArmSubsystem,
                              ArmAxisSubsystem armAxisSubsystem, ClawSubsystem clawSubsystem) {
-            addCommands(new TelescopicArmCommands.GoTo(telescopicArmSubsystem, telescopicArmSubsystem.basketPos),
+            addCommands(
+                    new TelescopicArmCommands.GoTo(telescopicArmSubsystem, telescopicArmSubsystem.basketPos),
                     new ArmAxisCommands.AxisGoTo(armAxisSubsystem,telescopicArmSubsystem, armAxisSubsystem.basketAngle));
 //                new ClawCommands.SetAxisServo(clawSubsystem, clawSubsystem.basketTilt));
         }

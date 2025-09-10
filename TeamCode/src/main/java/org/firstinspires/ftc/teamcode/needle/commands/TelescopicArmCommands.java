@@ -51,7 +51,12 @@ public class TelescopicArmCommands {
 
         @Override
         public boolean isFinished() {
-            return Math.abs(wantedPos - telescopicArmSubsystem.getPosition()) < 2;
+            return Math.abs(wantedPos - telescopicArmSubsystem.getPosition()) < 3;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            telescopicArmSubsystem.setArmPower(0);
         }
     }
     public static class GoHome extends CommandBase {

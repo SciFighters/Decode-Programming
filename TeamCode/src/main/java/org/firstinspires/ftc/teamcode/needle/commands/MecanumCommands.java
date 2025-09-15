@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.needle.commands;
 
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.Subsystem;
+import com.seattlesolvers.solverslib.command.CommandBase;
+import com.seattlesolvers.solverslib.command.Subsystem;
 //nuh uh
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
@@ -36,7 +36,7 @@ public class MecanumCommands {
 
         @Override
         public void execute() {
-            com.arcrobotics.ftclib.geometry.Vector2d vector = new com.arcrobotics.ftclib.geometry.Vector2d(
+            com.seattlesolvers.solverslib.geometry.Vector2d vector = new com.seattlesolvers.solverslib.geometry.Vector2d(
                     x.get() * boost.get(), y.get() * boost.get()).rotateBy(Math.toDegrees(-mecanumDrive.localizer.getPose().heading.toDouble() + Math.PI/2));
             Vector2d vector2d = new Vector2d(vector.getX(), vector.getY());
             mecanumDrive.setDrivePowers(new PoseVelocity2d(vector2d,-r.get() * boost.get()));

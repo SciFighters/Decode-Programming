@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.CommandOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 

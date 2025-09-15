@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.needle.stateMachine;
 
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.command.button.Button;
-import com.arcrobotics.ftclib.command.button.GamepadButton;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.needle.subsystems.ArmAxisSubsystem;
@@ -16,7 +13,7 @@ public class StateMachine {
     GamepadEx driver, system;
     SubsystemBase telescopicArmSubsystem, armAxisSubsystem, clawSubsystem, mecanumDrive;
     States currentState = States.NONE;
-    NeedleState state1, state2, state3;
+    RobotState state1, state2, state3;
 
     public StateMachine(GamepadEx driver, GamepadEx system, MecanumDrive mecanumDrive, TelescopicArmSubsystem telescopicArmSubsystem, ArmAxisSubsystem armAxisSubsystem, ClawSubsystem clawSubsystem) {
         this.driver = driver;

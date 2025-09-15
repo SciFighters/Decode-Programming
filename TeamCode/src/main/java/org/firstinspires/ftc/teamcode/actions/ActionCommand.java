@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.actions;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.Subsystem;
+import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.Subsystem;
 
 import java.util.Set;
 

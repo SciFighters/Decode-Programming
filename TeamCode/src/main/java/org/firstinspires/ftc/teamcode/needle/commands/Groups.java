@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.needle.commands;
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.needle.subsystems.ArmAxisSubsystem;
 import org.firstinspires.ftc.teamcode.needle.subsystems.ClawSubsystem;

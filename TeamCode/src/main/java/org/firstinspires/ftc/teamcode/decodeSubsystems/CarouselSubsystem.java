@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 public class CarouselSubsystem extends SubsystemBase {
     private DcMotorEx carouselMotor;
     private Servo rampServo;
+    final double spinConversion =
 
     public CarouselSubsystem(HardwareMap hm) {
         carouselMotor = hm.get(DcMotorEx.class, "carousel");

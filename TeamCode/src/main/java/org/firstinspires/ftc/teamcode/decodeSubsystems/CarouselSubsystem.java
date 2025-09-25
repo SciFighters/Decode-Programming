@@ -11,10 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class CarouselSubsystem extends SubsystemBase {
     private DcMotorEx carouselMotor;
-    private Servo rampServo;
     public final int spinConversion = 666; // for moving the motor about a third of a spin
     // should be changed once more info is provided
-
     private ColorSensor colorSlot1;
     private ColorSensor colorSlot2;
     private ColorSensor colorSlot3;
@@ -23,8 +21,6 @@ public class CarouselSubsystem extends SubsystemBase {
         carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        rampServo = hm.servo.get("rampServo");
 
         colorSlot1 = hm.get(ColorSensor.class, "sensor1");
         colorSlot2 = hm.get(ColorSensor.class, "sensor2");
@@ -35,19 +31,8 @@ public class CarouselSubsystem extends SubsystemBase {
         carouselMotor.setPower(power);
     }
 
-    public void moveToPosition(int ticks, double power) {
-        carouselMotor.setTargetPosition(ticks);
-        carouselMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        carouselMotor.setPower(power);
-    }
-
-    public boolean atTarget() {
-        return !carouselMotor.isBusy();
-    }
-
     public void stopMotor() {
         carouselMotor.setPower(0);
-        carouselMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public double getPosition() {
         return carouselMotor.getCurrentPosition();
@@ -55,10 +40,6 @@ public class CarouselSubsystem extends SubsystemBase {
 
     public double getCurrent() {
         return carouselMotor.getCurrent(CurrentUnit.AMPS);
-    }
-
-    public void setRampServo(double pos) {
-        rampServo.setPosition(pos);
     }
 
     public String colorIdentifier(ColorSensor sensor) {
@@ -73,3 +54,5 @@ public class CarouselSubsystem extends SubsystemBase {
         else return null;
     }
 }
+// ^
+// TODO: convert colorIdentifier func to enum

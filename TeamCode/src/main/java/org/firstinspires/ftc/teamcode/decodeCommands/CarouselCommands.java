@@ -5,36 +5,65 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 
 public class CarouselCommands {
 
-    public static class MoveCarouselByTicks extends CommandBase {
+    public static class MoveToPos extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
-        private final double power;
-        int mul;
-        public MoveCarouselByTicks(CarouselSubsystem carouselSubsystem, double power, boolean direction) {
-            if (direction) { mul = 1; }
-            else { mul = -1; }
 
+        int currentPos;
+        double tagetPos;
+        double kp = 0.1;
+
+        public MoveToPos(CarouselSubsystem carouselSubsystem, double pos) {
             this.carouselSubsystem = carouselSubsystem;
-            this.power = power * mul;
-            addRequirements(carouselSubsystem);
-
+            tagetPos = pos;
         }
 
         @Override
-        public void initialize() {
+        public void execute() {
             int currentPos = (int) carouselSubsystem.getPosition();
-            int targetPos = currentPos + (int) carouselSubsystem.spinConversion * mul;
 
-            carouselSubsystem.moveToPosition(targetPos, power);
+            double error = tagetPos - currentPos;
+            double power = kp * error;
+
+            carouselSubsystem.setSpinPower(power);
         }
 
         @Override
         public boolean isFinished() {
-            return carouselSubsystem.atTarget();
+            return Math.abs(currentPos - tagetPos) < 50;
         }
 
         @Override
         public void end(boolean interrupted) {
             carouselSubsystem.stopMotor();
+        }
+    }
+
+    public static class ThirdOfSpin extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        double power;
+        int currentPos;
+        int tagetPos;
+        double kp = 0.1;
+
+        public ThirdOfSpin(CarouselSubsystem carouselSubsystem) {
+            this.carouselSubsystem = carouselSubsystem;
+
+            tagetPos = (int) (carouselSubsystem.getPosition() + carouselSubsystem.spinConversion);
+        }
+
+        @Override
+        public void initialize() {
+            int currentPos = (int) carouselSubsystem.getPosition();
+
+            double error = tagetPos - currentPos;
+            double power = kp * error;
+
+            carouselSubsystem.setSpinPower(power);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return Math.abs(currentPos - tagetPos) < 50;
         }
     }
 }

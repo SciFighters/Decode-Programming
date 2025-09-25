@@ -28,10 +28,11 @@ public class DischargeSubsystem extends SubsystemBase {
     public void setTurretPower(double turretPower) {
         turretMotor.setPower(turretPower);
     }
+    public double getTurretPosition(){
+        return turretMotor.getCurrentPosition();
+    }
 
     public void setRampDegree(double rampDegree) {
         rampServo.setPosition(rampDegree/90);
     }
-
-
 }

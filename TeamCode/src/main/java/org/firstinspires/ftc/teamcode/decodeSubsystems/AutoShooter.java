@@ -7,7 +7,7 @@ public class AutoShooter {
     private static final double robotWidth = 18, robotLength = 15.5;//inch
     private static final double goalHeight = 40;//inch
     private static final double g = 386.1;//inch/s^2
-    private static final Vector2d goalPos = new Vector2d(-60, 60);//red
+    private static final Vector2d goalPos = new Vector2d(-58, 56);//red
 
     //robot corners
     private static final Vector2d[] points = {new Vector2d(robotWidth / 2, robotLength / 2),

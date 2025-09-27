@@ -4,4 +4,5 @@ public enum Motif{
     PPG,
     PGP,
     GPP;
+    // very cool
 }

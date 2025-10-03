@@ -11,6 +11,7 @@ public class CarouselCommands {
         int currentPos;
         double tagetPos;
         double kp = 0.1;
+        int tolerance = 50;
 
         public MoveToPos(CarouselSubsystem carouselSubsystem, double pos) {
             this.carouselSubsystem = carouselSubsystem;
@@ -29,12 +30,12 @@ public class CarouselCommands {
 
         @Override
         public boolean isFinished() {
-            return Math.abs(currentPos - tagetPos) < 50;
+            return Math.abs(currentPos - tagetPos) < tolerance;
         }
 
         @Override
         public void end(boolean interrupted) {
-            carouselSubsystem.stopMotor();
+            carouselSubsystem.setSpinPower(0);
         }
     }
 
@@ -44,6 +45,7 @@ public class CarouselCommands {
         int currentPos;
         int tagetPos;
         double kp = 0.1;
+        int tolerance = 50;
 
         public ThirdOfSpin(CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
@@ -52,7 +54,7 @@ public class CarouselCommands {
         }
 
         @Override
-        public void initialize() {
+        public void execute() {
             int currentPos = (int) carouselSubsystem.getPosition();
 
             double error = tagetPos - currentPos;
@@ -63,7 +65,52 @@ public class CarouselCommands {
 
         @Override
         public boolean isFinished() {
-            return Math.abs(currentPos - tagetPos) < 50;
+            return Math.abs(currentPos - tagetPos) < tolerance;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            carouselSubsystem.setSpinPower(0);
+        }
+    }
+
+    public static class GreenBallToBackSlot extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        private final double kp = 0.1;
+        private final int tolerance = 50;
+        private int targetPos;
+
+        public GreenBallToBackSlot(CarouselSubsystem carouselSubsystem) {
+            this.carouselSubsystem = carouselSubsystem;
+        }
+
+        @Override
+        public void initialize() {
+            // is there a green ball
+            if (carouselSubsystem.colorIdentifier(carouselSubsystem.colorSensor) == CarouselSubsystem.SensorColors.Green) {
+                // moves the carousel 1 slot (depending on the location of the color sensor)
+                targetPos = (int) (carouselSubsystem.getPosition() + 2 * carouselSubsystem.spinConversion);
+            }
+        }
+
+        @Override
+        public void execute() {
+            int currentPos = (int) carouselSubsystem.getPosition();
+            double error = targetPos - currentPos;
+            double power = kp * error;
+
+            carouselSubsystem.setSpinPower(power);
+        }
+
+        @Override
+        public boolean isFinished() {
+            int currentPos = (int) carouselSubsystem.getPosition();
+            return Math.abs(currentPos - targetPos) < tolerance;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            carouselSubsystem.setSpinPower(0);
         }
     }
 }

@@ -509,7 +509,7 @@ public final class MecanumDrive extends SubsystemBase {
         c.setStroke("#3F51B5");
         c.strokePolyline(xPoints, yPoints);
     }
-
+    PoseMap poseMap =  p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.inverse());//the heading.inverse() might be wrong
     public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
         return new TrajectoryActionBuilder(
                 TurnAction::new,
@@ -525,4 +525,24 @@ public final class MecanumDrive extends SubsystemBase {
                 defaultVelConstraint, defaultAccelConstraint
         );
     }
+    public TrajectoryActionBuilder actionBuilder(Pose2d beginPose, boolean reversed) {
+        if(reversed){
+            return new TrajectoryActionBuilder(
+                    TurnAction::new,
+                    FollowTrajectoryAction::new,
+                    new TrajectoryBuilderParams(
+                            1e-6,
+                            new ProfileParams(
+                                    0.25, 0.1, 1e-2
+                            )
+                    ),
+                    beginPose, 0.0,
+                    defaultTurnConstraints,
+                    defaultVelConstraint, defaultAccelConstraint,
+                    poseMap
+            );
+        }
+        return actionBuilder(beginPose);
+    }
+
 }

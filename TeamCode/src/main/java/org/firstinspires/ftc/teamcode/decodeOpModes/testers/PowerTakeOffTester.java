@@ -19,12 +19,25 @@ public class PowerTakeOffTester extends ActionOpMode {
         rb = hardwareMap.get(DcMotorEx.class, "rightBack");
         lf = hardwareMap.get(DcMotorEx.class, "leftFront");
         lb = hardwareMap.get(DcMotorEx.class, "leftBack");
+
         lf.setDirection(DcMotorSimple.Direction.REVERSE);
         lb.setDirection(DcMotorSimple.Direction.REVERSE);
-        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+//        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         gamepad = new GamepadEx(gamepad1);
     }
 
@@ -34,6 +47,11 @@ public class PowerTakeOffTester extends ActionOpMode {
         rb.setPower(-gamepad.getRightX());
         lf.setPower(gamepad.getRightX());
         lb.setPower(-gamepad.getRightX());
+        multipleTelemetry.addData("rf pos", rf.getCurrentPosition());
+        multipleTelemetry.addData("rb pos", rb.getCurrentPosition());
+        multipleTelemetry.addData("lf pos", lf.getCurrentPosition());
+        multipleTelemetry.addData("lb pos", lb.getCurrentPosition());
+        multipleTelemetry.update();
         super.run();
     }
 }

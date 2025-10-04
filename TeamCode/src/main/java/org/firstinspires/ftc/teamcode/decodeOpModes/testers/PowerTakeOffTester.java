@@ -28,15 +28,15 @@ public class PowerTakeOffTester extends ActionOpMode {
         lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-//        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        lf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         gamepad = new GamepadEx(gamepad1);
     }

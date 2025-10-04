@@ -5,26 +5,43 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.geometry.Vector2d;
+import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter.TeamColor;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 import java.util.List;
 
-public class LimelightSubsystems extends SubsystemBase {
+public class LimelightSubsystem extends SubsystemBase {
     private Limelight3A limelight;
     int pipeline = 1;
-    public AutoShooter.TeamColor color;
+    public TeamColor color;
     public Vector2d initialLimelightPos = new Vector2d(0, 2); //TODO:change
     public Vector2d limelightByTurret = new Vector2d(0, 2.6454415267717);
     public Vector2d aprilTagPos;
     public MecanumDrive mecanumDrive;
 
-    public LimelightSubsystems(HardwareMap hm, AutoShooter.TeamColor color, MecanumDrive mecanumDrive) {
+    public LimelightSubsystem(HardwareMap hm, TeamColor color, MecanumDrive mecanumDrive) {
         limelight = hm.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(pipeline);
         this.color = color;
         this.mecanumDrive = mecanumDrive;
-        aprilTagPos = color == AutoShooter.TeamColor.RED ? new Vector2d(-58, 56) : new Vector2d(-58, -56);
+        aprilTagPos = color == TeamColor.RED ? new Vector2d(-58, 56) : new Vector2d(-58, -56);
+    }
+    public TeamColor getColorFromObelisk(){
+        List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
+        for (LLResultTypes.FiducialResult fiducialResult : results) {
+            int id = fiducialResult.getFiducialId();
+            if(21 <= id && id <= 23){
+                if(fiducialResult.getCameraPoseTargetSpace().getPosition().x > 0){
+                    return TeamColor.RED;
+                }
+                return TeamColor.BLUE;
+            }
+        }
+        return null;
+    }
+    public void SetColor(TeamColor teamColor){
+        aprilTagPos = color == TeamColor.RED ? new Vector2d(-58, 56) : new Vector2d(-58, -56);
     }
 
     public Motif getMotif() {

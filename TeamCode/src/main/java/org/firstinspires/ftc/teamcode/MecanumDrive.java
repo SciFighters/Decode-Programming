@@ -66,14 +66,14 @@ public final class MecanumDrive extends SubsystemBase {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        public double inPerTick = 0.00196922295;
+        public double inPerTick = 0.00195699564;
         public double lateralInPerTick = 0.0015676388171972015;
-        public double trackWidthTicks = 6505.6611553722005;
+        public double trackWidthTicks = 7776.781909839368;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.7379373085844803;
-        public double kV = 0.0003540522981708156;
-        public double kA = 0.00007;
+        public double kS = 0.4589086829599496;
+        public double kV = 0.00035350749623995844;
+        public double kA = 0.00004;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 60;
@@ -86,8 +86,8 @@ public final class MecanumDrive extends SubsystemBase {
 
         // path controller gains
         public double axialGain = 3.0;
-        public double lateralGain = 3.0;
-        public double headingGain = 2.0; // shared with turn
+        public double lateralGain = 4.0;
+        public double headingGain = 3.0; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -509,7 +509,7 @@ public final class MecanumDrive extends SubsystemBase {
         c.setStroke("#3F51B5");
         c.strokePolyline(xPoints, yPoints);
     }
-    PoseMap poseMap =  p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.inverse());//the heading.inverse() might be wrong
+
     public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
         return new TrajectoryActionBuilder(
                 TurnAction::new,
@@ -526,7 +526,9 @@ public final class MecanumDrive extends SubsystemBase {
         );
     }
     public TrajectoryActionBuilder actionBuilder(Pose2d beginPose, boolean reversed) {
+        PoseMap poseMap =  p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.inverse());//the heading.inverse() might be wrong
         if(reversed){
+            localizer.setPose(new Pose2d(localizer.getPose().position.x, -localizer.getPose().position.y,-localizer.getPose().heading.toDouble()));
             return new TrajectoryActionBuilder(
                     TurnAction::new,
                     FollowTrajectoryAction::new,

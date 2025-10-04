@@ -1,30 +1,16 @@
-package org.firstinspires.ftc.teamcode.needle.auto;
-
+package org.firstinspires.ftc.teamcode.decodeAutos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.seattlesolvers.solverslib.command.Command;
-import com.seattlesolvers.solverslib.command.CommandBase;
-import com.seattlesolvers.solverslib.command.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.actions.ActionCommand;
-
-import java.util.HashSet;
-import java.util.Set;
-
-@Disabled
 @Autonomous
 public class AutoTest extends LinearOpMode {
     FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -36,10 +22,11 @@ public class AutoTest extends LinearOpMode {
 
         Pose2d startPos =new Pose2d(-38,56,0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPos);
+//        TelemetryPacket fsd = new TelemetryPacket(false);
+//        fsd.fieldOverlay().drawImage("background/season-2025-decode/field-2025-juice-dark.png", 0.0,0.0,5.530496,3.434);
 
 
-
-        TrajectoryActionBuilder normalAuto = drive.actionBuilder(new Pose2d(-38,56,0))
+        TrajectoryActionBuilder normalAuto = drive.actionBuilder(startPos,true)
                 .setTangent(-Math.PI / 4)
                 .splineToLinearHeading(new Pose2d(-24,36,Math.PI / 4),-Math.PI/4)
                 .waitSeconds(1)
@@ -69,4 +56,3 @@ public class AutoTest extends LinearOpMode {
 
 
 }
-

@@ -4,6 +4,8 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.geometry.Pose2d;
+import com.seattlesolvers.solverslib.geometry.Rotation2d;
 import com.seattlesolvers.solverslib.geometry.Vector2d;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter.TeamColor;
 
@@ -17,7 +19,7 @@ public class LimelightSubsystem extends SubsystemBase {
     public TeamColor color;
     public Vector2d initialLimelightPos = new Vector2d(0, 2); //TODO:change
     public Vector2d limelightByTurret = new Vector2d(0, 2.6454415267717);
-    public Vector2d aprilTagPos;
+    public Pose2d aprilTagPos;
     public MecanumDrive mecanumDrive;
 
     public LimelightSubsystem(HardwareMap hm, TeamColor color, MecanumDrive mecanumDrive) {
@@ -25,7 +27,7 @@ public class LimelightSubsystem extends SubsystemBase {
         limelight.pipelineSwitch(pipeline);
         this.color = color;
         this.mecanumDrive = mecanumDrive;
-        aprilTagPos = color == TeamColor.RED ? new Vector2d(-58, 56) : new Vector2d(-58, -56);
+        aprilTagPos = color == TeamColor.RED ? new Pose2d(-58, 56, Rotation2d.fromDegrees(-54)) : new Pose2d(-58, -56,Rotation2d.fromDegrees(54));
     }
     public TeamColor getColorFromObelisk(){
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
@@ -38,10 +40,10 @@ public class LimelightSubsystem extends SubsystemBase {
                 return TeamColor.BLUE;
             }
         }
-        return null;
+        return TeamColor.RED;
     }
-    public void SetColor(TeamColor teamColor){
-        aprilTagPos = color == TeamColor.RED ? new Vector2d(-58, 56) : new Vector2d(-58, -56);
+    public void setColor(TeamColor teamColor){
+        aprilTagPos = teamColor == TeamColor.RED ? new Pose2d(-58, 56, Rotation2d.fromDegrees(-54)) : new Pose2d(-58, -56,Rotation2d.fromDegrees(54));
     }
 
     public Motif getMotif() {
@@ -84,11 +86,13 @@ public class LimelightSubsystem extends SubsystemBase {
             switch (color) {
                 case RED:
                     pos = fiducialResult.getFiducialId() == 24 ?
-                            new Vector2d(fiducialResult.getCameraPoseTargetSpace().getPosition().x, fiducialResult.getCameraPoseTargetSpace().getPosition().y) : pos;
+                            new Vector2d(fiducialResult.getCameraPoseTargetSpace().getPosition().x,
+                                    fiducialResult.getCameraPoseTargetSpace().getPosition().y).rotateBy(Math.toDegrees(aprilTagPos.getHeading())) : pos;
                     break;
                 case BLUE:
                     pos = fiducialResult.getFiducialId() == 20 ?
-                            new Vector2d(fiducialResult.getCameraPoseTargetSpace().getPosition().x, fiducialResult.getCameraPoseTargetSpace().getPosition().y) : pos;
+                            new Vector2d(fiducialResult.getCameraPoseTargetSpace().getPosition().x,
+                                    fiducialResult.getCameraPoseTargetSpace().getPosition().y).rotateBy(Math.toDegrees(aprilTagPos.getHeading())) : pos;
                     break;
             }
         }
@@ -103,7 +107,7 @@ public class LimelightSubsystem extends SubsystemBase {
         if (getGoalID()) {
             Vector2d limelightPos = initialLimelightPos.plus(limelightByTurret.rotateBy(turretHeading)).rotateBy(robotHeading);
             Vector2d limelightByTag = getLimelightByTagPos();
-            return limelightByTag.minus(limelightPos).plus(aprilTagPos);
+            return limelightByTag.minus(limelightPos).plus(new Vector2d(aprilTagPos.getX(), aprilTagPos.getY()));
         }
         return new Vector2d(1000, 1000); // only if result isn't in field and or is invalid
     }

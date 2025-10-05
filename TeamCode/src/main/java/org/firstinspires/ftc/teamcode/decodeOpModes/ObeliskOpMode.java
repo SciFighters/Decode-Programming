@@ -10,6 +10,7 @@ public abstract class ObeliskOpMode extends ActionOpMode {
     LimelightSubsystem limelightSubsystem;
     MecanumDrive mecanumDrive;
     Motif motif;
+    TeamColor teamColor;
 
     public abstract void mecanumInit();
 
@@ -23,6 +24,11 @@ public abstract class ObeliskOpMode extends ActionOpMode {
     @Override
     public void initialize_loop() {
         motif = (limelightSubsystem.getMotif() != null)? limelightSubsystem.getMotif() : motif;
+        TeamColor teamColor1 = limelightSubsystem.getColorFromObelisk();
+        teamColor = teamColor1 != null ? teamColor1 : teamColor;
+        if(teamColor1 == TeamColor.BLUE){//because default if red
+            limelightSubsystem.setColor(TeamColor.BLUE);
+        }
     }
 
 }

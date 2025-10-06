@@ -15,7 +15,7 @@ import java.util.List;
 
 public class LimelightSubsystem extends SubsystemBase {
     private Limelight3A limelight;
-    int pipeline = 1;
+    int pipeline = 0;
     public TeamColor color;
     public Vector2d initialLimelightPos = new Vector2d(0, 2); //TODO:change
     public Vector2d limelightByTurret = new Vector2d(0, 2.6454415267717);
@@ -29,12 +29,22 @@ public class LimelightSubsystem extends SubsystemBase {
         this.mecanumDrive = mecanumDrive;
         aprilTagPos = color == TeamColor.RED ? new Pose2d(-58, 56, Rotation2d.fromDegrees(-54)) : new Pose2d(-58, -56,Rotation2d.fromDegrees(54));
     }
+    public void setPipeline(int pipeline){
+        this.pipeline = pipeline;
+        limelight.pipelineSwitch(pipeline);
+    }
+    public void startLimelight(){
+        limelight.start();
+    }
+    public void stopLimelight(){
+        limelight.stop();
+    }
     public TeamColor getColorFromObelisk(){
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducialResult : results) {
             int id = fiducialResult.getFiducialId();
             if(21 <= id && id <= 23){
-                if(fiducialResult.getCameraPoseTargetSpace().getPosition().x > 0){
+                if(fiducialResult.getCameraPoseTargetSpace().getPosition().y > 0){
                     return TeamColor.RED;
                 }
                 return TeamColor.BLUE;

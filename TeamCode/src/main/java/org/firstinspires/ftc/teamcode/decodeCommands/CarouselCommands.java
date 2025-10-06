@@ -3,8 +3,26 @@ package org.firstinspires.ftc.teamcode.decodeCommands;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 
+import java.util.function.Supplier;
+
 public class CarouselCommands {
 
+    public static class Manual extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        private final Supplier<Double> power;
+
+        public Manual (CarouselSubsystem carouselSubsystem, Supplier<Double> power) {
+            this.carouselSubsystem = carouselSubsystem;
+            this.power = power;
+            addRequirements(carouselSubsystem);
+        }
+
+        @Override
+        public void execute() {
+            carouselSubsystem.setSpinPower(power.get());
+        }
+
+    }
     public static class MoveToPos extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
 
@@ -88,7 +106,7 @@ public class CarouselCommands {
         public void initialize() {
             // is there a green ball
             if (carouselSubsystem.colorIdentifier(carouselSubsystem.colorSensor) == CarouselSubsystem.SensorColors.Green) {
-                // moves the carousel 1 slot (depending on the location of the color sensor)
+                // moves the carousel 2 slot (depending on the location of the color sensor)
                 targetPos = (int) (carouselSubsystem.getPosition() + 2 * carouselSubsystem.spinConversion);
             }
         }

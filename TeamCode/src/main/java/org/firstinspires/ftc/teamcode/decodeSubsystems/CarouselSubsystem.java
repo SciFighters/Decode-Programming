@@ -8,7 +8,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class CarouselSubsystem extends SubsystemBase {
-    private DcMotorEx carouselMotor;
+    private final DcMotorEx carouselMotor;
     public final int spinConversion = 666; // for moving the motor about a third of a spin
     // should be changed once more info is provided
     public ColorSensor colorSensor;
@@ -25,11 +25,9 @@ public class CarouselSubsystem extends SubsystemBase {
     public void setSpinPower(double power) {
         carouselMotor.setPower(power);
     }
-
     public double getPosition() {
         return carouselMotor.getCurrentPosition();
     }
-
     public double getCurrent() {
         return carouselMotor.getCurrent(CurrentUnit.AMPS);
     }

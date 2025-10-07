@@ -62,8 +62,10 @@ public class MeepMeepTesting {
                 .splineTo(new Vector2d(36,54),Math.PI/2)
                 .splineToSplineHeading(new Pose2d(36,56,Math.PI/2),Math.PI/2)
                 .splineToConstantHeading(new Vector2d(56,16),-Math.PI/2);
-
-        clankerTestsBot.runAction(betterAuto.build());
+        TrajectoryActionBuilder showcase = clankerTestsBot.getDrive().actionBuilder(new Pose2d(0,36,-Math.PI))
+                        .setTangent(0)
+                        .splineToLinearHeading(new Pose2d(38,-33,0),0);
+        clankerTestsBot.runAction(showcase.build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)
                 .setDarkMode(true)

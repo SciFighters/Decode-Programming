@@ -44,13 +44,13 @@ public class LimelightSubsystem extends SubsystemBase {
         for (LLResultTypes.FiducialResult fiducialResult : results) {
             int id = fiducialResult.getFiducialId();
             if(21 <= id && id <= 23){
-                if(fiducialResult.getCameraPoseTargetSpace().getPosition().y > 0){
+                if(fiducialResult.getCameraPoseTargetSpace().getPosition().x > 0){
                     return TeamColor.RED;
                 }
                 return TeamColor.BLUE;
             }
         }
-        return TeamColor.RED;
+        return null;
     }
     public void setColor(TeamColor teamColor){
         aprilTagPos = teamColor == TeamColor.RED ? new Pose2d(-58, 56, Rotation2d.fromDegrees(-54)) : new Pose2d(-58, -56,Rotation2d.fromDegrees(54));

@@ -12,7 +12,7 @@ public class CarouselCommands {
         private final CarouselSubsystem carouselSubsystem;
         private final Supplier<Double> power;
 
-        public Manual (CarouselSubsystem carouselSubsystem, Supplier<Double> power) {
+        public Manual(CarouselSubsystem carouselSubsystem, Supplier<Double> power) {
             this.carouselSubsystem = carouselSubsystem;
             this.power = power;
             addRequirements(carouselSubsystem);
@@ -131,53 +131,89 @@ public class CarouselCommands {
             carouselSubsystem.setSpinPower(0);
         }
     }
-    public static class SortByMotif extends CommandBase {
-        CarouselSubsystem carouselSubsystem;
-        private final Motif motif;
-        int steps;
-        int targetPos;
-        double kp = 0.1;
-        boolean completion = false;
 
-        public SortByMotif (Motif motif, int steps, boolean completion) {
+    public static class SortByMotif extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        private final Motif motif;
+        private int steps;
+        private int targetPos;
+        private final double kp = 0.1;
+        private final int tolerance = 50;
+
+        public SortByMotif(Motif motif, int steps, CarouselSubsystem carouselSubsystem) {
+            this.carouselSubsystem = carouselSubsystem;
             this.motif = motif;
             this.steps = steps;
-            this.completion = completion;
+            addRequirements(carouselSubsystem);
         }
 
         @Override
         public void initialize() {
-            // sets step count for initial movement
-            // positive is clockwise and the other way around
             switch (motif) {
-                case GPP: steps = 1; break;
-                case PGP: steps = 0; break;
-                case PPG: steps = -1; break;
+                case GPP:
+                    steps = 1;
+                    break;
+                case PGP:
+                    steps = 0;
+                    break;
+                case PPG:
+                    steps = -1;
+                    break;
             }
+            targetPos = (int) (carouselSubsystem.getPosition() + steps * carouselSubsystem.spinConversion);
         }
 
-        // helper func:
-        public void moveByThirds (int steps) {
-            int currentPos = (int) carouselSubsystem.getPosition();
-            while (Math.abs(targetPos-currentPos) < 50) {
-                targetPos = (int) (carouselSubsystem.getPosition() + steps * carouselSubsystem.spinConversion);
-                currentPos = (int) carouselSubsystem.getPosition();
-                double error = targetPos - currentPos;
-                double power = kp * error;
 
-                carouselSubsystem.setSpinPower(power);
-            }
-        }
         @Override
         public void execute() {
-            moveByThirds(steps);
-            moveByThirds(3);
-            completion = true; // completes after the 2 loops
+            int currentPos = (int) carouselSubsystem.getPosition();
+            double error = targetPos - currentPos;
+            double power = Math.max(-1, Math.min(1, kp * error));
+            carouselSubsystem.setSpinPower(power);
         }
 
         @Override
         public boolean isFinished() {
-            return completion;
+            int currentPos = (int) carouselSubsystem.getPosition();
+            return Math.abs(currentPos - targetPos) < tolerance;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            carouselSubsystem.setSpinPower(0);
+        }
+    }
+
+
+    public class Discharge extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        private int targetPos;
+        private final double kp = 0.1;
+        private final int tolerance = 50;
+
+        public Discharge(CarouselSubsystem carouselSubsystem) {
+            this.carouselSubsystem = carouselSubsystem;
+            addRequirements(carouselSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            // Set target position for a full rotation (3 thirds)
+            targetPos = (int) (carouselSubsystem.getPosition() + 3 * carouselSubsystem.spinConversion);
+        }
+        @Override
+        public void execute() {
+            int currentPos = (int) carouselSubsystem.getPosition();
+            double error = targetPos - currentPos;
+            // Clamp power to [-1, 1]
+            double power = Math.max(-1, Math.min(1, kp * error));
+            carouselSubsystem.setSpinPower(power);
+        }
+
+        @Override
+        public boolean isFinished() {
+            int currentPos = (int) carouselSubsystem.getPosition();
+            return Math.abs(currentPos - targetPos) < tolerance;
         }
     }
 }

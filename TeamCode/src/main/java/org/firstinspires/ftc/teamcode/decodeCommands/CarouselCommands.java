@@ -101,7 +101,7 @@ public class CarouselCommands {
         @Override
         public void initialize() {
             // is there a green ball
-            if (carouselSubsystem.colorIdentifier(carouselSubsystem.colorSensor) == CarouselSubsystem.SensorColors.Green) {
+            if (carouselSubsystem.colorIdentifier() == CarouselSubsystem.SensorColors.Green) {
                 // moves the carousel 1 slot (the location of the color sensor is to the left of the back slot from top view)
                 targetPos = (int) (carouselSubsystem.getPosition() + carouselSubsystem.spinConversion);
             }

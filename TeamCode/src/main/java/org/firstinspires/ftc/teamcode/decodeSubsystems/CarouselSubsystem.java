@@ -19,7 +19,7 @@ public class CarouselSubsystem extends SubsystemBase {
         carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        colorSensor = hm.get(ColorSensor.class, "colorSensor");
+//        colorSensor = hm.get(ColorSensor.class, "colorSensor");
     }
 
     public void setSpinPower(double power) {
@@ -38,10 +38,10 @@ public class CarouselSubsystem extends SubsystemBase {
         Unknown
     }
 
-    public SensorColors colorIdentifier(ColorSensor sensor) {
-        int red = sensor.red();
-        int green = sensor.green();
-        int blue = sensor.blue();
+    public SensorColors colorIdentifier() {
+        int red = colorSensor.red();
+        int green = colorSensor.green();
+        int blue = colorSensor.blue();
 
         if (red > green &&  blue > green) {
             return SensorColors.Purple;

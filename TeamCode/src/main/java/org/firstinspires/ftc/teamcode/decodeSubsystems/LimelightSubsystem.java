@@ -7,44 +7,49 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.geometry.Pose2d;
 import com.seattlesolvers.solverslib.geometry.Rotation2d;
 import com.seattlesolvers.solverslib.geometry.Vector2d;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter.TeamColor;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter.TeamColor;
 
 import java.util.List;
 
 public class LimelightSubsystem extends SubsystemBase {
-    private Limelight3A limelight;
-    int pipeline = 0;
+    private final double metersToInch = 39.3700787;
     public TeamColor color;
-    public Vector2d initialLimelightPos = new Vector2d(0, 2); //TODO:change
-    public Vector2d limelightByTurret = new Vector2d(0, 2.6454415267717);
+    public Vector2d initialLimelightPos = new Vector2d(7.5, 0); //TODO:change
+    public Vector2d limelightByTurret = new Vector2d(0, 0);//y: 2.6454415267717
     public Pose2d aprilTagPos;
     public MecanumDrive mecanumDrive;
+    int pipeline = 0;
+    private Limelight3A limelight;
 
     public LimelightSubsystem(HardwareMap hm, TeamColor color, MecanumDrive mecanumDrive) {
         limelight = hm.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(pipeline);
         this.color = color;
         this.mecanumDrive = mecanumDrive;
-        aprilTagPos = color == TeamColor.RED ? new Pose2d(-58, 56, Rotation2d.fromDegrees(-54)) : new Pose2d(-58, -56,Rotation2d.fromDegrees(54));
+        aprilTagPos = color == TeamColor.RED ? new Pose2d(-58, 56, Rotation2d.fromDegrees(-54)) : new Pose2d(-58, -56, Rotation2d.fromDegrees(54));
     }
-    public void setPipeline(int pipeline){
+
+    public void setPipeline(int pipeline) {
         this.pipeline = pipeline;
         limelight.pipelineSwitch(pipeline);
     }
-    public void startLimelight(){
+
+    public void startLimelight() {
         limelight.start();
     }
-    public void stopLimelight(){
+
+    public void stopLimelight() {
         limelight.stop();
     }
-    public TeamColor getColorFromObelisk(){
+
+    public TeamColor getColorFromObelisk() {
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducialResult : results) {
             int id = fiducialResult.getFiducialId();
-            if(21 <= id && id <= 23){
-                if(fiducialResult.getCameraPoseTargetSpace().getPosition().x > 0){
+            if (21 <= id && id <= 23) {
+                if (fiducialResult.getCameraPoseTargetSpace().getPosition().x > 0) {
                     return TeamColor.RED;
                 }
                 return TeamColor.BLUE;
@@ -52,8 +57,9 @@ public class LimelightSubsystem extends SubsystemBase {
         }
         return null;
     }
-    public void setColor(TeamColor teamColor){
-        aprilTagPos = teamColor == TeamColor.RED ? new Pose2d(-58, 56, Rotation2d.fromDegrees(-54)) : new Pose2d(-58, -56,Rotation2d.fromDegrees(54));
+
+    public void setColor(TeamColor teamColor) {
+        aprilTagPos = teamColor == TeamColor.RED ? new Pose2d(-58, 56, Rotation2d.fromDegrees(-54)) : new Pose2d(-58, -56, Rotation2d.fromDegrees(54));
     }
 
     public Motif getMotif() {
@@ -96,18 +102,23 @@ public class LimelightSubsystem extends SubsystemBase {
             switch (color) {
                 case RED:
                     pos = fiducialResult.getFiducialId() == 24 ?
-                            new Vector2d(fiducialResult.getCameraPoseTargetSpace().getPosition().x,
-                                    fiducialResult.getCameraPoseTargetSpace().getPosition().y).rotateBy(Math.toDegrees(aprilTagPos.getHeading())) : pos;
+                            new Vector2d(fiducialResult.getRobotPoseFieldSpace().getPosition().x * metersToInch, fiducialResult.getRobotPoseFieldSpace().getPosition().y * metersToInch)
+                            : pos;
+//                    new Vector2d(fiducialResult.getCameraPoseTargetSpace().getPosition().x,
+//                                    fiducialResult.getCameraPoseTargetSpace().getPosition().y).rotateBy(Math.toDegrees(aprilTagPos.getHeading()))
                     break;
                 case BLUE:
                     pos = fiducialResult.getFiducialId() == 20 ?
-                            new Vector2d(fiducialResult.getCameraPoseTargetSpace().getPosition().x,
-                                    fiducialResult.getCameraPoseTargetSpace().getPosition().y).rotateBy(Math.toDegrees(aprilTagPos.getHeading())) : pos;
+                            new Vector2d(fiducialResult.getRobotPoseFieldSpace().getPosition().x * metersToInch, fiducialResult.getRobotPoseFieldSpace().getPosition().y * metersToInch)
+                            : pos;
+//                            new Vector2d(fiducialResult.getCameraPoseTargetSpace().getPosition().x,
+//                                    fiducialResult.getCameraPoseTargetSpace().getPosition().y).rotateBy(Math.toDegrees(aprilTagPos.getHeading())) : pos;
                     break;
             }
         }
         return pos;
     }
+
     //given the limelight pos, returns if the pos is valid
     public boolean checkLimelightResults(Vector2d robotPos) {
         return (Math.abs(mecanumDrive.localizer.getPose().position.y - robotPos.getY()) < 3 && Math.abs(mecanumDrive.localizer.getPose().position.y - robotPos.getY()) < 3);
@@ -115,9 +126,9 @@ public class LimelightSubsystem extends SubsystemBase {
 
     public Vector2d getRobotPos(double robotHeading, double turretHeading) {
         if (getGoalID()) {
-            Vector2d limelightPos = initialLimelightPos.plus(limelightByTurret.rotateBy(turretHeading)).rotateBy(robotHeading);
+            Vector2d limelightPos = initialLimelightPos.plus(limelightByTurret.rotateBy(turretHeading)).rotateBy(robotHeading * 180 / Math.PI);
             Vector2d limelightByTag = getLimelightByTagPos();
-            return limelightByTag.minus(limelightPos).plus(new Vector2d(aprilTagPos.getX(), aprilTagPos.getY()));
+            return limelightByTag.minus(limelightPos);//.plus(new Vector2d(aprilTagPos.getX(), aprilTagPos.getY()))
         }
         return new Vector2d(1000, 1000); // only if result isn't in field and or is invalid
     }

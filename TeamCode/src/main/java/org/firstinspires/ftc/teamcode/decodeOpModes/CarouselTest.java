@@ -6,7 +6,6 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
-
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CarouselCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
@@ -26,16 +25,14 @@ public class CarouselTest extends ActionOpMode {
         CarouselCommands.SortByMotif sortByMotif = new CarouselCommands.SortByMotif(Motif.GPP, 1, carouselSubsystem);
         CarouselCommands.Discharge discharge = new CarouselCommands.Discharge(carouselSubsystem);
 
-        // Combine them into a sequential command group
+        // sequential command group
         SequentialCommandGroup fullSequence = new SequentialCommandGroup(
-                moveToPos,
-                new WaitCommand(2000),
+                moveToPos, new WaitCommand(2000),
                 thirdOfSpin, new WaitCommand(2000),
                 sortByMotif, new WaitCommand(2000),
                 discharge
         );
 
-        // Schedule once; ActionOpMode automatically runs the scheduler
         CommandScheduler.getInstance().schedule(fullSequence);
     }
 

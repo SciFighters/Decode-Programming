@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.decodeCommands;
 
 import com.seattlesolvers.solverslib.command.CommandBase;
+
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 
@@ -24,6 +25,7 @@ public class CarouselCommands {
         }
 
     }
+
     public static class MoveToPos extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
         double targetPos;
@@ -62,6 +64,7 @@ public class CarouselCommands {
         int currentPos;
         int tolerance = 50;
         double kp = 0.1;
+
         public ThirdOfSpin(CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
 
@@ -93,6 +96,7 @@ public class CarouselCommands {
         int currentPos;
         int tolerance = 50;
         double kp = 0.1;
+
         public GreenBallToBackSlot(CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
             addRequirements(carouselSubsystem);
@@ -134,6 +138,7 @@ public class CarouselCommands {
         int currentPos;
         int tolerance = 50;
         double kp = 0.1;
+
         public SortByMotif(Motif motif, int steps, CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
             this.motif = motif;
@@ -184,6 +189,7 @@ public class CarouselCommands {
         int currentPos;
         int tolerance = 50;
         double kp = 0.1;
+
         public Discharge(CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
             addRequirements(carouselSubsystem);
@@ -194,6 +200,7 @@ public class CarouselCommands {
             // Set target position for a full rotation
             targetPos = (int) (carouselSubsystem.getPosition() + 3 * carouselSubsystem.spinConversion);
         }
+
         @Override
         public void execute() {
             currentPos = (int) carouselSubsystem.getPosition();
@@ -205,6 +212,64 @@ public class CarouselCommands {
         @Override
         public boolean isFinished() {
             return Math.abs(currentPos - targetPos) < tolerance;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            carouselSubsystem.setSpinPower(0);
+        }
+    }
+
+    public static class WaitForFullCarousel extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        private boolean slot1 = false;
+        private boolean slot2 = false;
+        private boolean slot3 = false;
+        private int nextCheckPos ;
+        int currSlot;
+
+        public WaitForFullCarousel(CarouselSubsystem carouselSubsystem) {
+            this.carouselSubsystem = carouselSubsystem;
+            addRequirements(carouselSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            nextCheckPos = (int) carouselSubsystem.getPosition() + carouselSubsystem.spinConversion;
+            double spinPower = 0.2;
+            carouselSubsystem.setSpinPower(spinPower);
+        }
+
+        @Override
+        public void execute() {
+            int currentPos = (int) carouselSubsystem.getPosition();
+
+            if (currentPos >= nextCheckPos) {
+                CarouselSubsystem.SensorColors color = carouselSubsystem.colorIdentifier();
+                nextCheckPos += carouselSubsystem.spinConversion;
+
+                if (color == CarouselSubsystem.SensorColors.Green
+                        || color == CarouselSubsystem.SensorColors.Purple) {
+
+                    currSlot =  currentPos / carouselSubsystem.spinConversion;
+                    switch (currSlot) {
+                        case 1:
+                            slot1 = true;
+                            break;
+                        case 2:
+                            slot2 = true;
+                            break;
+                        case 3:
+                            slot3 = true;
+                            break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public boolean isFinished() {
+            return slot1 && slot2 && slot3;
         }
 
         @Override

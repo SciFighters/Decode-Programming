@@ -19,7 +19,7 @@ public class LimelightTester extends ActionOpMode {
     public void initialize() {
 //        limelightSubsystem = new LimelightSubsystem(hardwareMap, AutoShooter.TeamColor.RED,mecanumDrive);
         limelightSubsystem = hardwareMap.get(Limelight3A.class,"limelight");
-        limelightSubsystem.pipelineSwitch(0);
+        limelightSubsystem.pipelineSwitch(1);
 //        limelightSubsystem.setPipeline(0);
         limelightSubsystem.start();
     }
@@ -34,9 +34,16 @@ public class LimelightTester extends ActionOpMode {
                 multipleTelemetry.addData("y", fiducialResult.getCameraPoseTargetSpace().getPosition().y);
                 multipleTelemetry.addData("z", fiducialResult.getCameraPoseTargetSpace().getPosition().z);
 //                multipleTelemetry.addData("x", fiducialResult.getCameraPoseTargetSpace().getPosition().);
-                multipleTelemetry.update();
+//                multipleTelemetry.update();
+            }
+            if(id == 20 || id == 24){
+                multipleTelemetry.addData("x field", fiducialResult.getRobotPoseFieldSpace().getPosition().x);
+                multipleTelemetry.addData("y field", fiducialResult.getRobotPoseFieldSpace().getPosition().y);
+                multipleTelemetry.addData("z field", fiducialResult.getRobotPoseFieldSpace().getPosition().z);
             }
         }
+        multipleTelemetry.update();
+
 //        multipleTelemetry.addData("color",);
 
         super.run();

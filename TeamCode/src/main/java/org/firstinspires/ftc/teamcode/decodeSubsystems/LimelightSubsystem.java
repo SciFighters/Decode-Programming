@@ -44,12 +44,34 @@ public class LimelightSubsystem extends SubsystemBase {
         limelight.stop();
     }
 
+    public TeamColor getTeamColor(){
+        TeamColor goalColor = getColorFromGoal();
+        if (goalColor != null){
+            return goalColor;
+        }
+        return getColorFromObelisk();
+    }
     public TeamColor getColorFromObelisk() {
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducialResult : results) {
             int id = fiducialResult.getFiducialId();
+
             if (21 <= id && id <= 23) {
                 if (fiducialResult.getCameraPoseTargetSpace().getPosition().x > 0) {
+                    return TeamColor.RED;
+                }
+                return TeamColor.BLUE;
+            }
+        }
+        return null;
+    }
+    public TeamColor getColorFromGoal() {
+        List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
+        for (LLResultTypes.FiducialResult fiducialResult : results) {
+            int id = fiducialResult.getFiducialId();
+
+            if(id == 20 || id ==24){
+                if (fiducialResult.getRobotPoseFieldSpace().getPosition().y > 0) {
                     return TeamColor.RED;
                 }
                 return TeamColor.BLUE;

@@ -9,8 +9,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class CarouselSubsystem extends SubsystemBase {
     private final DcMotorEx carouselMotor;
-    public final int spinConversion = 666; // for moving the motor about a third of a spin
-    // should be changed once more info is provided
+    double tickPerRev = 383.6;
+    // accurate amount of tick per revolution
+    public final int spinConversion = 639; // for moving the motor about a third of a spin
+    // not sure what is the gear ratio and so this place holder stays
     public ColorSensor colorSensor;
 
     public CarouselSubsystem(HardwareMap hm) {

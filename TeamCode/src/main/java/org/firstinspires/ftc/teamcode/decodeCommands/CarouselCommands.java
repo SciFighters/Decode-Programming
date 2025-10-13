@@ -90,30 +90,36 @@ public class CarouselCommands {
         }
     }
 
-    public static class GreenBallToBackSlot extends CommandBase {
+    public static class GreenBallToSensor extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
         private double targetPos;
         double currentPos;
         int tolerance = 50;
         double kp = 0.1;
+        boolean isGreen = false;
+        int moveCount = 0;
 
-        public GreenBallToBackSlot(CarouselSubsystem carouselSubsystem) {
+        public GreenBallToSensor(CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
             addRequirements(carouselSubsystem);
         }
 
         @Override
         public void initialize() {
-            // is there a green ball
-            if (carouselSubsystem.colorIdentifier() == CarouselSubsystem.SensorColors.Green) {
-                // moves the carousel 1 slot (the location of the color sensor is to the left of the back slot from top view)
-                targetPos = (carouselSubsystem.getPosition() + carouselSubsystem.spinConversion);
-            }
+            targetPos = carouselSubsystem.getPosition();
         }
 
         @Override
         public void execute() {
             currentPos = carouselSubsystem.getPosition();
+            if (carouselSubsystem.colorIdentifier() == CarouselSubsystem.SensorColors.Green) {
+                isGreen = true;
+            }
+            if (Math.abs(targetPos - currentPos) < tolerance && moveCount < 3) {
+                targetPos += carouselSubsystem.spinConversion;
+                moveCount++;
+            }
+
             double error = targetPos - currentPos;
             double power = kp * error;
             carouselSubsystem.setSpinPower(power);
@@ -121,7 +127,7 @@ public class CarouselCommands {
 
         @Override
         public boolean isFinished() {
-            return Math.abs(currentPos - targetPos) < tolerance;
+            return isGreen || moveCount >= 3;
         }
 
         @Override
@@ -149,13 +155,13 @@ public class CarouselCommands {
         @Override
         public void initialize() {
             switch (motif) {
-                case GPP:
+                case PGP:
                     steps = 1;
                     break;
-                case PPG:
+                case GPP:
                     steps = -1;
                     break;
-                default: // for PGP case
+                default: // for PPG case
                     steps = 0;
                     break;
             }

@@ -11,8 +11,8 @@ public class CarouselSubsystem extends SubsystemBase {
     private final DcMotorEx carouselMotor;
     double tickPerRev = 383.6;
     // accurate amount of tick per revolution
-    public final int spinConversion = 639; // for moving the motor about a third of a spin
-    // not sure what is the gear ratio and so this place holder stays
+    public final double spinConversion = tickPerRev * 5.0 / 3.0; // for moving the motor about a third of a spin
+    // calculation for a third of a spin knowing the amount of ticks per revolution
     public ColorSensor colorSensor;
 
     public CarouselSubsystem(HardwareMap hm) {

@@ -29,18 +29,18 @@ public class CarouselCommands {
     public static class MoveToPos extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
         double targetPos;
-        int currentPos;
+        double currentPos;
         double kp = 0.1;
         int tolerance = 50;
 
         public MoveToPos(CarouselSubsystem carouselSubsystem, double pos) {
             this.carouselSubsystem = carouselSubsystem;
-            targetPos = pos;
+            this.targetPos = pos;
         }
 
         @Override
         public void execute() {
-            currentPos = (int) carouselSubsystem.getPosition();
+            currentPos = carouselSubsystem.getPosition();
             double error = targetPos - currentPos;
             double power = kp * error;
             carouselSubsystem.setSpinPower(power);
@@ -60,20 +60,20 @@ public class CarouselCommands {
 
     public static class ThirdOfSpin extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
-        int targetPos;
-        int currentPos;
+        double targetPos;
+        double currentPos;
         int tolerance = 50;
         double kp = 0.1;
 
         public ThirdOfSpin(CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
 
-            targetPos = (int) (carouselSubsystem.getPosition() + carouselSubsystem.spinConversion);
+            targetPos = carouselSubsystem.getPosition() + carouselSubsystem.spinConversion;
         }
 
         @Override
         public void execute() {
-            currentPos = (int) carouselSubsystem.getPosition();
+            currentPos = carouselSubsystem.getPosition();
             double error = targetPos - currentPos;
             double power = kp * error;
             carouselSubsystem.setSpinPower(power);
@@ -92,8 +92,8 @@ public class CarouselCommands {
 
     public static class GreenBallToBackSlot extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
-        private int targetPos;
-        int currentPos;
+        private double targetPos;
+        double currentPos;
         int tolerance = 50;
         double kp = 0.1;
 
@@ -107,13 +107,13 @@ public class CarouselCommands {
             // is there a green ball
             if (carouselSubsystem.colorIdentifier() == CarouselSubsystem.SensorColors.Green) {
                 // moves the carousel 1 slot (the location of the color sensor is to the left of the back slot from top view)
-                targetPos = (int) (carouselSubsystem.getPosition() + carouselSubsystem.spinConversion);
+                targetPos = (carouselSubsystem.getPosition() + carouselSubsystem.spinConversion);
             }
         }
 
         @Override
         public void execute() {
-            currentPos = (int) carouselSubsystem.getPosition();
+            currentPos = carouselSubsystem.getPosition();
             double error = targetPos - currentPos;
             double power = kp * error;
             carouselSubsystem.setSpinPower(power);
@@ -134,8 +134,8 @@ public class CarouselCommands {
         private final CarouselSubsystem carouselSubsystem;
         private final Motif motif;
         private int steps;
-        private int targetPos;
-        int currentPos;
+        private double targetPos;
+        double currentPos;
         int tolerance = 50;
         double kp = 0.1;
 
@@ -159,13 +159,13 @@ public class CarouselCommands {
                     steps = 0;
                     break;
             }
-            targetPos = (int) (carouselSubsystem.getPosition() + steps * carouselSubsystem.spinConversion);
+            targetPos = (carouselSubsystem.getPosition() + steps * carouselSubsystem.spinConversion);
         }
 
 
         @Override
         public void execute() {
-            currentPos = (int) carouselSubsystem.getPosition();
+            currentPos = carouselSubsystem.getPosition();
             double error = targetPos - currentPos;
             double power = kp * error;
             carouselSubsystem.setSpinPower(power);
@@ -185,8 +185,8 @@ public class CarouselCommands {
 
     public static class Discharge extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
-        private int targetPos;
-        int currentPos;
+        private double targetPos;
+        double currentPos;
         int tolerance = 50;
         double kp = 0.1;
 
@@ -198,12 +198,12 @@ public class CarouselCommands {
         @Override
         public void initialize() {
             // Set target position for a full rotation
-            targetPos = (int) (carouselSubsystem.getPosition() + 3 * carouselSubsystem.spinConversion);
+            targetPos = (carouselSubsystem.getPosition() + 3 * carouselSubsystem.spinConversion);
         }
 
         @Override
         public void execute() {
-            currentPos = (int) carouselSubsystem.getPosition();
+            currentPos = carouselSubsystem.getPosition();
             double error = targetPos - currentPos;
             double power = kp * error;
             carouselSubsystem.setSpinPower(power);
@@ -225,7 +225,7 @@ public class CarouselCommands {
         private boolean slot1 = false;
         private boolean slot2 = false;
         private boolean slot3 = false;
-        private int nextCheckPos ;
+        private double nextCheckPos ;
         int currSlot;
 
         public WaitForFullCarousel(CarouselSubsystem carouselSubsystem) {
@@ -235,14 +235,14 @@ public class CarouselCommands {
 
         @Override
         public void initialize() {
-            nextCheckPos = (int) carouselSubsystem.getPosition() + carouselSubsystem.spinConversion;
+            nextCheckPos = carouselSubsystem.getPosition() + carouselSubsystem.spinConversion;
             double spinPower = 0.2;
             carouselSubsystem.setSpinPower(spinPower);
         }
 
         @Override
         public void execute() {
-            int currentPos = (int) carouselSubsystem.getPosition();
+            double currentPos = carouselSubsystem.getPosition();
 
             if (currentPos >= nextCheckPos) {
                 CarouselSubsystem.SensorColors color = carouselSubsystem.colorIdentifier();
@@ -251,7 +251,7 @@ public class CarouselCommands {
                 if (color == CarouselSubsystem.SensorColors.Green
                         || color == CarouselSubsystem.SensorColors.Purple) {
 
-                    currSlot =  currentPos / carouselSubsystem.spinConversion;
+                    currSlot =  (int) (currentPos / carouselSubsystem.spinConversion);
                     switch (currSlot) {
                         case 1:
                             slot1 = true;

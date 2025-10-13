@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.decodeSubsystems;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -126,15 +127,11 @@ public class LimelightSubsystem extends SubsystemBase {
                     pos = fiducialResult.getFiducialId() == 24 ?
                             new Vector2d(fiducialResult.getRobotPoseFieldSpace().getPosition().x * metersToInch, fiducialResult.getRobotPoseFieldSpace().getPosition().y * metersToInch)
                             : pos;
-//                    new Vector2d(fiducialResult.getCameraPoseTargetSpace().getPosition().x,
-//                                    fiducialResult.getCameraPoseTargetSpace().getPosition().y).rotateBy(Math.toDegrees(aprilTagPos.getHeading()))
                     break;
                 case BLUE:
                     pos = fiducialResult.getFiducialId() == 20 ?
                             new Vector2d(fiducialResult.getRobotPoseFieldSpace().getPosition().x * metersToInch, fiducialResult.getRobotPoseFieldSpace().getPosition().y * metersToInch)
                             : pos;
-//                            new Vector2d(fiducialResult.getCameraPoseTargetSpace().getPosition().x,
-//                                    fiducialResult.getCameraPoseTargetSpace().getPosition().y).rotateBy(Math.toDegrees(aprilTagPos.getHeading())) : pos;
                     break;
             }
         }
@@ -153,5 +150,23 @@ public class LimelightSubsystem extends SubsystemBase {
             return limelightByTag.minus(limelightPos);//.plus(new Vector2d(aprilTagPos.getX(), aprilTagPos.getY()))
         }
         return new Vector2d(1000, 1000); // only if result isn't in field and or is invalid
+    }
+    public Vector2d getPixelError(){
+        List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
+        for (LLResultTypes.FiducialResult fiducialResult : results) {
+            switch (color) {
+                case RED:
+                    if(fiducialResult.getFiducialId() == 24){
+                        return new Vector2d(fiducialResult.getTargetXPixels(),fiducialResult.getTargetYPixels());
+                    }
+                    break;
+                case BLUE:
+                    if(fiducialResult.getFiducialId() == 20){
+                        return new Vector2d(fiducialResult.getTargetXPixels(),fiducialResult.getTargetYPixels());
+                    }
+                    break;
+            }
+        }
+        return null;
     }
 }

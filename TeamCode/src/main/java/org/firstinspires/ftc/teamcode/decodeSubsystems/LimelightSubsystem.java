@@ -17,12 +17,12 @@ import java.util.List;
 public class LimelightSubsystem extends SubsystemBase {
     private final double metersToInch = 39.3700787;
     public TeamColor color;
-    public Vector2d initialLimelightPos = new Vector2d(7.5, 0); //TODO:change
+    public Vector2d initialLimelightPos = new Vector2d(0, 0); //TODO:change
     public Vector2d limelightByTurret = new Vector2d(0, 0);//y: 2.6454415267717
     public Pose2d aprilTagPos;
     public MecanumDrive mecanumDrive;
     int pipeline = 0;
-    private Limelight3A limelight;
+    private final Limelight3A limelight;
 
     public LimelightSubsystem(HardwareMap hm, TeamColor color, MecanumDrive mecanumDrive) {
         limelight = hm.get(Limelight3A.class, "limelight");
@@ -143,13 +143,14 @@ public class LimelightSubsystem extends SubsystemBase {
         return (Math.abs(mecanumDrive.localizer.getPose().position.y - robotPos.getY()) < 3 && Math.abs(mecanumDrive.localizer.getPose().position.y - robotPos.getY()) < 3);
     }
 
-    public Vector2d getRobotPos(double robotHeading, double turretHeading) {
+    public Vector2d getRobotPos(double turretHeading) {
+        double robotHeading = mecanumDrive.localizer.getPose().heading.toDouble();
         if (getGoalID()) {
             Vector2d limelightPos = initialLimelightPos.plus(limelightByTurret.rotateBy(turretHeading)).rotateBy(robotHeading * 180 / Math.PI);
             Vector2d limelightByTag = getLimelightByTagPos();
             return limelightByTag.minus(limelightPos);//.plus(new Vector2d(aprilTagPos.getX(), aprilTagPos.getY()))
         }
-        return new Vector2d(1000, 1000); // only if result isn't in field and or is invalid
+        return null; // only if result isn't in field and or is invalid
     }
     public Vector2d getPixelError(){
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();

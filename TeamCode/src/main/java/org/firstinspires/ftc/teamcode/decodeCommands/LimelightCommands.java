@@ -65,12 +65,12 @@ public class LimelightCommands {
             }
             double pinpointCovarianceX = pinpointDelta.getX() * pinpointKDistance + 0.0001;
             double pinpointCovarianceY = pinpointDelta.getY() * pinpointKDistance + 0.0001;
-            double limelightVelocityCovariance = Math.hypot(pinpointDelta.getX(), pinpointDelta.getY()) * Kv / (currentTime - lastTime);
-            double limelightDistanceCovariance = Math.hypot(limelightSubsystem.aprilTagPos.getX() - position.getX(), limelightSubsystem.aprilTagPos.getY() - position.getY()) * Kd;
-            double limelightPixelCovarianceX = Math.abs(limelightSubsystem.getPixelError().getX() * Kp);
-            double limelightPixelCovarianceY = Math.abs(limelightSubsystem.getPixelError().getY() * Kp);
-            double limelightCovarianceX = Kf + limelightVelocityCovariance + limelightDistanceCovariance + limelightPixelCovarianceX;
-            double limelightCovarianceY = Kf + limelightVelocityCovariance + limelightDistanceCovariance + limelightPixelCovarianceY;
+            double limelightVelocityCovariance = 1 + Math.hypot(pinpointDelta.getX(), pinpointDelta.getY()) * Kv / (currentTime - lastTime);
+            double limelightDistanceCovariance = 1 + Math.hypot(limelightSubsystem.aprilTagPos.getX() - position.getX(), limelightSubsystem.aprilTagPos.getY() - position.getY()) * Kd;
+            double limelightPixelCovarianceX = 1 + Math.abs(limelightSubsystem.getPixelError().getX() * Kp);
+            double limelightPixelCovarianceY = 1 + Math.abs(limelightSubsystem.getPixelError().getY() * Kp);
+            double limelightCovarianceX = Kf * limelightVelocityCovariance * limelightDistanceCovariance * limelightPixelCovarianceX;
+            double limelightCovarianceY = Kf * limelightVelocityCovariance * limelightDistanceCovariance * limelightPixelCovarianceY;
             position = new Vector2d(position.getX() + pinpointDelta.getX(), position.getY() + pinpointDelta.getY());//predict
             positionCovarianceX += pinpointCovarianceX;
             positionCovarianceY += pinpointCovarianceY;

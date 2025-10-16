@@ -17,7 +17,7 @@ import java.util.List;
 public class LimelightSubsystem extends SubsystemBase {
     private final double metersToInch = 39.3700787;
     public TeamColor color;
-    public Vector2d initialLimelightPos = new Vector2d(0, 0); //TODO:change
+    public Vector2d initialLimelightPos = new Vector2d(7, -1); //TODO:change
     public Vector2d limelightByTurret = new Vector2d(0, 0);//y: 2.6454415267717
     public Pose2d aprilTagPos;
     public MecanumDrive mecanumDrive;

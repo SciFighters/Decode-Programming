@@ -15,8 +15,9 @@ public class LimelightCommands {
         public static Vector2d position;
         Vector2d pinpointPos;
         double positionCovarianceX = 0, positionCovarianceY = 0;
-        final double pinpointKDistance = 0.01;
-        final double Kv = 0.005, Kd = 0.002, Kp = 0.001, Kf = 0.3;//for limelight covariance
+        final double pinpointKDistance = 0.002;
+        final double Kv = 0.02, Kd = 0.08, Kp = 0.03, Kf = 0.7;//for limelight covariance
+        public static double kalmanGainX, kalmanGainY;
         ElapsedTime time;
         double lastTime = 0;
         LimelightSubsystem limelightSubsystem;
@@ -56,15 +57,15 @@ public class LimelightCommands {
             pinpointPos = new Vector2d(mecanumDrivePos.x, mecanumDrivePos.y);
             Vector2d limelightPos = limelightSubsystem.getRobotPos(turretAngle.get());
             if(limelightPos == null){
-                double pinpointCovarianceX = pinpointDelta.getX() * pinpointKDistance + 0.0001;
-                double pinpointCovarianceY = pinpointDelta.getY() * pinpointKDistance + 0.0001;
+                double pinpointCovarianceX = Math.abs(pinpointDelta.getX() * pinpointKDistance);
+                double pinpointCovarianceY = Math.abs(pinpointDelta.getY() * pinpointKDistance);
                 positionCovarianceX += pinpointCovarianceX;
                 positionCovarianceY += pinpointCovarianceY;
                 position = new Vector2d(position.getX() + pinpointDelta.getX(), position.getY() + pinpointDelta.getY());
                 return;
             }
-            double pinpointCovarianceX = pinpointDelta.getX() * pinpointKDistance + 0.0001;
-            double pinpointCovarianceY = pinpointDelta.getY() * pinpointKDistance + 0.0001;
+            double pinpointCovarianceX = Math.abs(pinpointDelta.getX() * pinpointKDistance);
+            double pinpointCovarianceY = Math.abs(pinpointDelta.getY() * pinpointKDistance);
             double limelightVelocityCovariance = 1 + Math.hypot(pinpointDelta.getX(), pinpointDelta.getY()) * Kv / (currentTime - lastTime);
             double limelightDistanceCovariance = 1 + Math.hypot(limelightSubsystem.aprilTagPos.getX() - position.getX(), limelightSubsystem.aprilTagPos.getY() - position.getY()) * Kd;
             double limelightPixelCovarianceX = 1 + Math.abs(limelightSubsystem.getPixelError().getX() * Kp);
@@ -74,8 +75,8 @@ public class LimelightCommands {
             position = new Vector2d(position.getX() + pinpointDelta.getX(), position.getY() + pinpointDelta.getY());//predict
             positionCovarianceX += pinpointCovarianceX;
             positionCovarianceY += pinpointCovarianceY;
-            double kalmanGainX = positionCovarianceX / (positionCovarianceX + limelightCovarianceX);
-            double kalmanGainY = positionCovarianceY / (positionCovarianceY + limelightCovarianceY);
+            kalmanGainX = positionCovarianceX / (positionCovarianceX + limelightCovarianceX);
+            kalmanGainY = positionCovarianceY / (positionCovarianceY + limelightCovarianceY);
             double positionX = position.getX() + kalmanGainX * (limelightPos.getX() - position.getX());
             double positionY = position.getY() + kalmanGainY * (limelightPos.getY() - position.getY());
             position = new Vector2d(positionX, positionY);

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
 public class LimelightSubsystemTester extends ActionOpMode {
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
-    Pose2d startPos = new Pose2d(0,0,-Math.PI);
+    Pose2d startPos = new Pose2d(61.875,-60.25,-Math.PI);
     GamepadEx gamepad;
     @Override
     public void initialize() {
@@ -37,8 +37,12 @@ public class LimelightSubsystemTester extends ActionOpMode {
         Vector2d llPos = limelightSubsystem.getRobotPos(0);
         multipleTelemetry.addData("pinpointX",mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("pinpointY",mecanumDrive.localizer.getPose().position.y);
-        multipleTelemetry.addData("llPosX",llPos.getX());
-        multipleTelemetry.addData("llPosY",llPos.getY());
+        if(llPos != null){
+            multipleTelemetry.addData("llPosX",llPos.getX());
+            multipleTelemetry.addData("llPosY",llPos.getY());
+        }
+        multipleTelemetry.addData("gainX",LimelightCommands.KalmanFilter.kalmanGainX);
+        multipleTelemetry.addData("gainY",LimelightCommands.KalmanFilter.kalmanGainY);
         multipleTelemetry.addData("kalmanX",LimelightCommands.KalmanFilter.position.getX());
         multipleTelemetry.addData("kalmanY",LimelightCommands.KalmanFilter.position.getY());
         multipleTelemetry.update();

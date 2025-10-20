@@ -17,6 +17,7 @@ public class LimelightSubsystemTester extends ActionOpMode {
     LimelightSubsystem limelightSubsystem;
     Pose2d startPos = new Pose2d(61.875,-60.25,-Math.PI);
     GamepadEx gamepad;
+
     @Override
     public void initialize() {
         gamepad = new GamepadEx(gamepad1);
@@ -34,7 +35,8 @@ public class LimelightSubsystemTester extends ActionOpMode {
         com.acmerobotics.roadrunner.Vector2d vector2d = new com.acmerobotics.roadrunner.Vector2d(vector.getX(), vector.getY());
         mecanumDrive.setDrivePowers(new PoseVelocity2d(vector2d,-gamepad.getRightX()));
 //        mecanumDrive.setDrivePowers(new PoseVelocity2d(new com.acmerobotics.roadrunner.Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),-gamepad1.right_stick_x));
-        Vector2d llPos = limelightSubsystem.getRobotPos(0);
+
+        com.seattlesolvers.solverslib.geometry.Pose2d llPos = limelightSubsystem.getRobotPos(0);
         multipleTelemetry.addData("pinpointX",mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("pinpointY",mecanumDrive.localizer.getPose().position.y);
         if(llPos != null){

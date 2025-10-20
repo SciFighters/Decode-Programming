@@ -7,8 +7,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.geometry.Pose2d;
 import com.seattlesolvers.solverslib.geometry.Rotation2d;
+import com.seattlesolvers.solverslib.geometry.Translation2d;
 import com.seattlesolvers.solverslib.geometry.Vector2d;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter.TeamColor;
 
@@ -117,38 +119,44 @@ public class LimelightSubsystem extends SubsystemBase {
         return id;
     }
 
-    public Vector2d getLimelightByTagPos() {
-        Vector2d pos = new Vector2d(0, 0);
+    public Pose2d getLimelightByTagPos() {
+        Vector2d pos1 = new Vector2d(0, 0);
+        double z = 0;
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
 
         for (LLResultTypes.FiducialResult fiducialResult : results) {
             switch (color) {
                 case RED:
-                    pos = fiducialResult.getFiducialId() == 24 ?
+                    pos1 = fiducialResult.getFiducialId() == 24 ?
                             new Vector2d(fiducialResult.getRobotPoseFieldSpace().getPosition().x * metersToInch, fiducialResult.getRobotPoseFieldSpace().getPosition().y * metersToInch)
-                            : pos;
+                            : pos1;
+                    z = fiducialResult.getRobotPoseFieldSpace().getPosition().z;
                     break;
                 case BLUE:
-                    pos = fiducialResult.getFiducialId() == 20 ?
+                    pos1 = fiducialResult.getFiducialId() == 20 ?
                             new Vector2d(fiducialResult.getRobotPoseFieldSpace().getPosition().x * metersToInch, fiducialResult.getRobotPoseFieldSpace().getPosition().y * metersToInch)
-                            : pos;
+                            : pos1;
+                    z = fiducialResult.getRobotPoseFieldSpace().getPosition().z;
                     break;
             }
         }
-        return pos;
+        return new Pose2d(new Translation2d(pos1.getX(), pos1.getX()), new Rotation2d(z));
     }
 
     //given the limelight pos, returns if the pos is valid
     public boolean checkLimelightResults(Vector2d robotPos) {
         return (Math.abs(mecanumDrive.localizer.getPose().position.y - robotPos.getY()) < 3 && Math.abs(mecanumDrive.localizer.getPose().position.y - robotPos.getY()) < 3);
     }
+//THE POSE2D IS TO REFER TO THE Z AXIS TOO
+    public Pose2d getRobotPos(double turretHeading) {
 
-    public Vector2d getRobotPos(double turretHeading) {
         double robotHeading = mecanumDrive.localizer.getPose().heading.toDouble();
         if (getGoalID()) {
+            Pose2d limelight3d = getLimelightByTagPos();
             Vector2d limelightPos = initialLimelightPos.plus(limelightByTurret.rotateBy(turretHeading)).rotateBy(robotHeading * 180 / Math.PI);
-            Vector2d limelightByTag = getLimelightByTagPos();
-            return limelightByTag.minus(limelightPos);//.plus(new Vector2d(aprilTagPos.getX(), aprilTagPos.getY()))
+            Vector2d limelightByTag = new Vector2d(limelight3d.getX(),limelight3d.getY());
+            Vector2d result = limelightByTag.minus(limelightPos);
+            return new Pose2d(result.getX(),result.getY(),new Rotation2d(limelight3d.getHeading()));//.plus(new Vector2d(aprilTagPos.getX(), aprilTagPos.getY()))
         }
         return null; // only if result isn't in field and or is invalid
     }

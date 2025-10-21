@@ -18,11 +18,11 @@ public class FlyWheelTester extends ActionOpMode {
     GamepadButton A, B, X, up, down;
     MotorEx flyWheelMotor;
     Servo servo;
-//    double power = 0.00;
-    double kS = 0.09, kV = 0.0002, kP = 0.000833333;
+    double power = 0.00;
+    double kS = 0.14, kV = 0.0001761804, kP = 0.005833333;
     public static double wantedRpm = 2000;
-    double currentPos = 0;
-
+    double currentPos = 0.5;
+    boolean work = true;
     @Override
     public void initialize() {
 
@@ -38,6 +38,7 @@ public class FlyWheelTester extends ActionOpMode {
         down.whenPressed(() ->currentPos -= 0.1);
         A.whenPressed(() -> wantedRpm += 100);
         B.whenPressed(() -> wantedRpm -= 100);
+        X.whenPressed(() -> work = !work);
 //        A.whenPressed(() -> power += 0.01);
 //        B.whenPressed(() -> power -= 0.01);
 //        X.whenPressed(() -> power = 0);
@@ -55,8 +56,15 @@ public class FlyWheelTester extends ActionOpMode {
 
     @Override
     public void run() {
-        servo.setPosition(currentPos);
-        flyWheelMotor.set(calculate(wantedRpm));
+        if(work){
+            servo.setPosition(currentPos);
+            flyWheelMotor.set(calculate(wantedRpm));
+        }
+        else {
+//            servo.setPosition(currentPos);
+            flyWheelMotor.set(0);
+        }
+
 //        flyWheelMotor.set(power);
         multipleTelemetry.addData("power", flyWheelMotor.motorEx.getPower());
         multipleTelemetry.addData("velocity", flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60);

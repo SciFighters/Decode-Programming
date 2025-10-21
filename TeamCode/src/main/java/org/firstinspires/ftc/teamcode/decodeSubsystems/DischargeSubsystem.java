@@ -14,7 +14,7 @@ public class DischargeSubsystem extends SubsystemBase {
     private final DcMotorEx turretMotor;
     private final MotorEx flyWheelMotor;
     private final Servo rampServo;
-    private final double kS = 0.04, kV = 0.00015915963, kP = 0.0000833333;
+    double kS = 0.14, kV = 0.0001761804, kP = 0.005833333;
 
     public DischargeSubsystem(HardwareMap hm) {
         flyWheelMotor = new MotorEx(hm,"flyWheelMotor", Motor.GoBILDA.BARE);

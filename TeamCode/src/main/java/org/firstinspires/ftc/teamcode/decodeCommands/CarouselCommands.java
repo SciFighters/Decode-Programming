@@ -154,6 +154,54 @@ public class CarouselCommands {
 
         @Override
         public void initialize() {
+            targetPos = carouselSubsystem.getPosition();
+        }
+
+        @Override
+        public void execute() {
+            currentPos = carouselSubsystem.getPosition();
+            if (carouselSubsystem.colorIdentifier() == CarouselSubsystem.SensorColors.Green) {
+                isGreen = true;
+            }
+            if (Math.abs(targetPos - currentPos) < tolerance && moveCount < 3) {
+                targetPos += carouselSubsystem.spinConversion;
+                moveCount++;
+            }
+
+            double error = targetPos - currentPos;
+            double power = kp * error;
+            carouselSubsystem.setSpinPower(power);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return isGreen || moveCount >= 3;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            carouselSubsystem.setSpinPower(0);
+        }
+    }
+
+    public static class SortByMotif extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        private final Motif motif;
+        private int steps;
+        private double targetPos;
+        double currentPos;
+        int tolerance = 50;
+        double kp = 0.1;
+
+        public SortByMotif(Motif motif, int steps, CarouselSubsystem carouselSubsystem) {
+            this.carouselSubsystem = carouselSubsystem;
+            this.motif = motif;
+            this.steps = steps;
+            addRequirements(carouselSubsystem);
+        }
+
+        @Override
+        public void initialize() {
             switch (motif) {
                 case PGP:
                     steps = 1;
@@ -193,8 +241,7 @@ public class CarouselCommands {
         private final CarouselSubsystem carouselSubsystem;
         private double targetPos;
         double currentPos;
-        int tolerance = 50;
-        double kp = 0.1;
+        double power = 0.6;
 
         public Discharge(CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
@@ -204,7 +251,17 @@ public class CarouselCommands {
         @Override
         public void initialize() {
             // Set target position for a full rotation
-            targetPos = (carouselSubsystem.getPosition() + 3 * carouselSubsystem.spinConversion);
+            double angle = carouselSubsystem.getAngle();
+            if(100 < angle && angle < 140){
+                targetPos = (carouselSubsystem.getPosition() + 4 * carouselSubsystem.spinConversion);
+            }
+            else if(220 < angle && angle < 260){
+                targetPos = (carouselSubsystem.getPosition() + 5 * carouselSubsystem.spinConversion);
+
+            }
+            else if(340 < angle || angle < 20){
+                targetPos = (carouselSubsystem.getPosition() + 3 * carouselSubsystem.spinConversion);
+            }
         }
 
         @Override
@@ -217,7 +274,7 @@ public class CarouselCommands {
 
         @Override
         public boolean isFinished() {
-            return Math.abs(currentPos - targetPos) < tolerance;
+            return currentPos > targetPos;
         }
 
         @Override

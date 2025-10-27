@@ -28,24 +28,23 @@ public class DischargeCommands{
             dischargeSubsystem.setRampDegree(rampDegree.get());
         }
     }
-    public static class GoTo extends CommandBase{
+    public static class setState extends CommandBase{
         DischargeSubsystem dischargeSubsystem;
-        double turretPower;
-        double flyWheelPower;
+        double flyWheelRPM;
         double rampDegree;
         double wantedPos;
         static final double kp = 0.01;
 
-        public GoTo(DischargeSubsystem dischargeSubsystem,  double flyWheelPower, double turretPos, double rampDegree){
+        public setState(DischargeSubsystem dischargeSubsystem, double flyWheelRPM, double turretPos, double rampDegree){
             this.dischargeSubsystem = dischargeSubsystem;
-            this.flyWheelPower = flyWheelPower;
+            this.flyWheelRPM = flyWheelRPM;
             this.rampDegree = rampDegree;
             wantedPos = turretPos;
             addRequirements(dischargeSubsystem);
         }
         @Override
         public  void initialize() {
-            dischargeSubsystem.setFlyWheelPower(flyWheelPower);
+            dischargeSubsystem.setFlyWheelRPM(flyWheelRPM);
             dischargeSubsystem.setRampDegree(rampDegree);
         }
 

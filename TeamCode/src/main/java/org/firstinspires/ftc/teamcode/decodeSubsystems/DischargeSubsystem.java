@@ -38,6 +38,7 @@ public class DischargeSubsystem extends SubsystemBase {
     public double getTurretPosition() {return turretMotor.getCurrentPosition();}
 
     public void setRampDegree(double rampDegree) {
-        rampServo.setPosition(rampDegree / 90);
+        double pos = 1.0/6.0 + 2.0/3.0*(73 - rampDegree)/(34.13);
+        rampServo.setPosition(pos);
     }
 }

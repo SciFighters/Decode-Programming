@@ -35,4 +35,5 @@ public class DischargeSubsystem extends SubsystemBase {
     public void setRampDegree(double rampDegree) {
         rampServo.setPosition(rampDegree/90);
     }
+
 }

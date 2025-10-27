@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class CarouselSubsystem extends SubsystemBase {
@@ -27,9 +28,16 @@ public class CarouselSubsystem extends SubsystemBase {
     public void setSpinPower(double power) {
         carouselMotor.setPower(power);
     }
+
     public double getPosition() {
         return carouselMotor.getCurrentPosition();
     }
+
+    public double getAngle() {
+        //weird algorithm for getting angle from 0 to 360
+        return ((carouselMotor.getCurrentPosition() / spinConversion * 3) % 360 + 360) % 360;
+    }
+
     public double getCurrent() {
         return carouselMotor.getCurrent(CurrentUnit.AMPS);
     }
@@ -45,7 +53,7 @@ public class CarouselSubsystem extends SubsystemBase {
         int green = colorSensor.green();
         int blue = colorSensor.blue();
 
-        if (red > green &&  blue > green) {
+        if (red > green && blue > green) {
             return SensorColors.Purple;
 
         } else if (green > red && green > blue) {

@@ -193,8 +193,7 @@ public class CarouselCommands {
         private final CarouselSubsystem carouselSubsystem;
         private double targetPos;
         double currentPos;
-        int tolerance = 50;
-        double kp = 0.1;
+        double power = 0.6;
 
         public Discharge(CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
@@ -204,20 +203,28 @@ public class CarouselCommands {
         @Override
         public void initialize() {
             // Set target position for a full rotation
-            targetPos = (carouselSubsystem.getPosition() + 3 * carouselSubsystem.spinConversion);
+            double angle = carouselSubsystem.getAngle();
+            if(100 < angle && angle < 140){
+                targetPos = (carouselSubsystem.getPosition() + 4 * carouselSubsystem.spinConversion);
+            }
+            else if(220 < angle && angle < 260){
+                targetPos = (carouselSubsystem.getPosition() + 5 * carouselSubsystem.spinConversion);
+
+            }
+            else if(340 < angle || angle < 20){
+                targetPos = (carouselSubsystem.getPosition() + 3 * carouselSubsystem.spinConversion);
+            }
         }
 
         @Override
         public void execute() {
             currentPos = carouselSubsystem.getPosition();
-            double error = targetPos - currentPos;
-            double power = kp * error;
             carouselSubsystem.setSpinPower(power);
         }
 
         @Override
         public boolean isFinished() {
-            return Math.abs(currentPos - targetPos) < tolerance;
+            return currentPos > targetPos;
         }
 
         @Override

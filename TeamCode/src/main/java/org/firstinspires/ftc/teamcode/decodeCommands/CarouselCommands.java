@@ -154,6 +154,54 @@ public class CarouselCommands {
 
         @Override
         public void initialize() {
+            targetPos = carouselSubsystem.getPosition();
+        }
+
+        @Override
+        public void execute() {
+            currentPos = carouselSubsystem.getPosition();
+            if (carouselSubsystem.colorIdentifier() == CarouselSubsystem.SensorColors.Green) {
+                isGreen = true;
+            }
+            if (Math.abs(targetPos - currentPos) < tolerance && moveCount < 3) {
+                targetPos += carouselSubsystem.spinConversion;
+                moveCount++;
+            }
+
+            double error = targetPos - currentPos;
+            double power = kp * error;
+            carouselSubsystem.setSpinPower(power);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return isGreen || moveCount >= 3;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            carouselSubsystem.setSpinPower(0);
+        }
+    }
+
+    public static class SortByMotif extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        private final Motif motif;
+        private int steps;
+        private double targetPos;
+        double currentPos;
+        int tolerance = 50;
+        double kp = 0.1;
+
+        public SortByMotif(Motif motif, int steps, CarouselSubsystem carouselSubsystem) {
+            this.carouselSubsystem = carouselSubsystem;
+            this.motif = motif;
+            this.steps = steps;
+            addRequirements(carouselSubsystem);
+        }
+
+        @Override
+        public void initialize() {
             switch (motif) {
                 case PGP:
                     steps = 1;
@@ -219,6 +267,8 @@ public class CarouselCommands {
         @Override
         public void execute() {
             currentPos = carouselSubsystem.getPosition();
+            double error = targetPos - currentPos;
+            double power = kp * error;
             carouselSubsystem.setSpinPower(power);
         }
 

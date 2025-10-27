@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.needle.OpModes;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
@@ -29,7 +30,7 @@ import org.firstinspires.ftc.teamcode.needle.subsystems.TelescopicArmSubsystem;
 
 import java.util.HashSet;
 import java.util.Set;
-
+@Disabled
 @TeleOp
 public class Needle extends ActionOpMode {
     ArmAxisSubsystem armAxisSubsystem;

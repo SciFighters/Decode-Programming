@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
@@ -31,7 +32,7 @@ import org.firstinspires.ftc.teamcode.needle.subsystems.TelescopicArmSubsystem;
 
 import java.util.HashSet;
 import java.util.Set;
-
+@Disabled
 @Autonomous
 public class KickoffAuto extends CommandOpMode {
     FtcDashboard dashboard = FtcDashboard.getInstance();

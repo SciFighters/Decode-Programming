@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.Subsystem;
@@ -23,7 +24,7 @@ import org.firstinspires.ftc.teamcode.actions.ActionCommand;
 import java.util.HashSet;
 import java.util.Set;
 
-
+@Disabled
 @Autonomous
 public class AutoTest extends LinearOpMode {
     FtcDashboard dashboard = FtcDashboard.getInstance();

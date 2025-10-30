@@ -30,7 +30,9 @@ public class DischargeSubsystem extends SubsystemBase {
     public void setFlyWheelRPM(double rpm){
         flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm + kP * (rpm - flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60));
     }
-
+    public double getRPM(){
+        return flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60;
+    }
     public void setTurretPower(double turretPower) {
         turretMotor.setPower(turretPower);
     }

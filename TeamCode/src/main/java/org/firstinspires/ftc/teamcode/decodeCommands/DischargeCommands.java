@@ -33,6 +33,7 @@ public class DischargeCommands{
         double flyWheelRPM;
         double rampDegree;
         double wantedPos;
+        public static boolean canShoot;//variable for knowing if you can shout, will be removed later with automatic shooting
         static final double kp = 0.01;
 
         public setState(DischargeSubsystem dischargeSubsystem, double flyWheelRPM, double turretPos, double rampDegree){
@@ -44,15 +45,18 @@ public class DischargeCommands{
         }
         @Override
         public  void initialize() {
-            dischargeSubsystem.setFlyWheelRPM(flyWheelRPM);
+            canShoot = false;
             dischargeSubsystem.setRampDegree(rampDegree);
         }
 
         @Override
         public void execute() {
+            dischargeSubsystem.setFlyWheelRPM(flyWheelRPM);
             double power = (wantedPos - dischargeSubsystem.getTurretPosition()) * kp;
             dischargeSubsystem.setTurretPower(power);
+            canShoot = Math. abs(dischargeSubsystem.getRPM() - flyWheelRPM) < 300;
         }
+
     }
     public static class SupplierGoTo extends CommandBase{
         DischargeSubsystem dischargeSubsystem;

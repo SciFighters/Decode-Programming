@@ -203,7 +203,6 @@ public class CarouselCommands {
 
         @Override
         public void initialize() {
-            // Set target position for a full rotation
             double angle = carouselSubsystem.getAngle();
             if(100 < angle && angle < 140){
                 targetPos = (carouselSubsystem.getPosition() + 4 * carouselSubsystem.spinConversion);

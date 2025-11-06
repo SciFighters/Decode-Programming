@@ -41,14 +41,14 @@ public class CarouselCommands {
         @Override
         public void execute() {
             currentPos = carouselSubsystem.getPosition();
-            double error = targetPos - currentPos;
+            double error = targetPos % (carouselSubsystem.spinConversion * 3) - currentPos % (carouselSubsystem.spinConversion * 3);
             double power = kp * error;
             carouselSubsystem.setSpinPower(power);
         }
 
         @Override
         public boolean isFinished() {
-            return Math.abs(currentPos - targetPos) < tolerance;
+            return Math.abs(currentPos % (carouselSubsystem.spinConversion * 3) - targetPos % (carouselSubsystem.spinConversion * 3)) < tolerance;
         }
 
 
@@ -205,14 +205,12 @@ public class CarouselCommands {
         public void initialize() {
             // Set target position for a full rotation
             double angle = carouselSubsystem.getAngle();
-            if(100 < angle && angle < 140){
+            if (100 < angle && angle < 140) {
                 targetPos = (carouselSubsystem.getPosition() + 4 * carouselSubsystem.spinConversion);
-            }
-            else if(220 < angle && angle < 260){
+            } else if (220 < angle && angle < 260) {
                 targetPos = (carouselSubsystem.getPosition() + 5 * carouselSubsystem.spinConversion);
 
-            }
-            else if(340 < angle || angle < 20){
+            } else if (340 < angle || angle < 20) {
                 targetPos = (carouselSubsystem.getPosition() + 3 * carouselSubsystem.spinConversion);
             }
         }
@@ -239,7 +237,7 @@ public class CarouselCommands {
         private boolean slot1 = false;
         private boolean slot2 = false;
         private boolean slot3 = false;
-        private double nextCheckPos ;
+        private double nextCheckPos;
         int currSlot;
 
         public WaitForFullCarousel(CarouselSubsystem carouselSubsystem) {
@@ -265,7 +263,7 @@ public class CarouselCommands {
                 if (color == CarouselSubsystem.SensorColors.Green
                         || color == CarouselSubsystem.SensorColors.Purple) {
 
-                    currSlot =  (int) (currentPos / carouselSubsystem.spinConversion);
+                    currSlot = (int) (currentPos / carouselSubsystem.spinConversion);
                     switch (currSlot) {
                         case 1:
                             slot1 = true;

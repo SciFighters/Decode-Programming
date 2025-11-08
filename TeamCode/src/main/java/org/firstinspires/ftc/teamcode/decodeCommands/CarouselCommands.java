@@ -205,14 +205,14 @@ public class CarouselCommands {
         public void initialize() {
             double angle = carouselSubsystem.getAngle();
             if(100 < angle && angle < 140){
-                targetPos = (carouselSubsystem.getPosition() + 4 * carouselSubsystem.spinConversion);
+                targetPos = (carouselSubsystem.getPosition() + 6 * carouselSubsystem.spinConversion);
             }
             else if(220 < angle && angle < 260){
                 targetPos = (carouselSubsystem.getPosition() + 5 * carouselSubsystem.spinConversion);
 
             }
             else if(340 < angle || angle < 20){
-                targetPos = (carouselSubsystem.getPosition() + 3 * carouselSubsystem.spinConversion);
+                targetPos = (carouselSubsystem.getPosition() + 4 * carouselSubsystem.spinConversion);
             }
         }
 

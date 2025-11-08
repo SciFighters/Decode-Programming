@@ -54,7 +54,7 @@ public class DischargeCommands{
             dischargeSubsystem.setFlyWheelRPM(flyWheelRPM);
             double power = (wantedPos - dischargeSubsystem.getTurretPosition()) * kp;
             dischargeSubsystem.setTurretPower(power);
-            canShoot = Math. abs(dischargeSubsystem.getRPM() - flyWheelRPM) < 300;
+            canShoot = Math. abs(dischargeSubsystem.getRPM() - flyWheelRPM) < 1000;
         }
 
     }

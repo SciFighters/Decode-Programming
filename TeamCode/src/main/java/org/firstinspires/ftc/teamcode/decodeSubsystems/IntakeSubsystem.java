@@ -11,11 +11,12 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DcMotorEx motor;
 
     private final Servo intakeServo1, intakeServo2;
+    private final double openedPos = 0.7, closedPos = 0.3;
 
     public IntakeSubsystem(HardwareMap hm) {
-        motor = hm.get(DcMotorEx.class, "motor");
-        intakeServo1 = hm.get(Servo.class, "intakeServo1");
-        intakeServo2 = hm.get(Servo.class, "intakeServo2");
+        motor = hm.get(DcMotorEx.class, "intakeMotor");
+        intakeServo1 = hm.get(Servo.class, "rightIntake");
+        intakeServo2 = hm.get(Servo.class, "leftIntake");
     }
 
     public void setPower(double power) {
@@ -23,8 +24,8 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setPosition(double position) {
-        intakeServo1.setPosition(position);
-        intakeServo2.setPosition(1 - position);
+        intakeServo1.setPosition(position * openedPos + (1-position) * closedPos);
+        intakeServo2.setPosition(position * (1 - openedPos) + (1-position) * (1 - closedPos));
     }
 
 

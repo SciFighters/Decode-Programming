@@ -17,7 +17,7 @@ public class CarouselSubsystem extends SubsystemBase {
     public ColorSensor colorSensor;
 
     public CarouselSubsystem(HardwareMap hm) {
-        carouselMotor = hm.get(DcMotorEx.class, "carousel");
+        carouselMotor = hm.get(DcMotorEx.class, "carouselMotor");
         carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

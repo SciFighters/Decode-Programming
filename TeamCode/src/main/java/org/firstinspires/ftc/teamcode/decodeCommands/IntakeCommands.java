@@ -7,12 +7,8 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 public class IntakeCommands {
 
     public static class IntakeState extends CommandBase {
-        //        variables(eg subsystems, targetPos etc)
         IntakeSubsystem intakeSubsystem;
 
-
-
-        //            addRequirements(subsystem)
         public IntakeState(IntakeSubsystem intakeSubsystem) {
             this.intakeSubsystem = intakeSubsystem;
             addRequirements(intakeSubsystem);
@@ -20,28 +16,20 @@ public class IntakeCommands {
 
         @Override
         public void initialize() {
-        intakeSubsystem.setPower(1);
-        intakeSubsystem.setPosition(1);
+            intakeSubsystem.setPower(0.7);
+//        intakeSubsystem.setPosition(1);
         }
 
-        @Override
-        public void execute() {
-            //every frame
-        }
 
         @Override
         public boolean isFinished() {
-            //returns if it is finished, false by default(runs forever), return true means instant finish
             return true;
         }
     }
-     public static class TransferState extends CommandBase {
-        //        variables(eg subsystems, targetPos etc)
+
+    public static class TransferState extends CommandBase {
         IntakeSubsystem intakeSubsystem;
 
-
-
-        //            addRequirements(subsystem)
         public TransferState(IntakeSubsystem intakeSubsystem) {
             this.intakeSubsystem = intakeSubsystem;
             addRequirements(intakeSubsystem);
@@ -49,28 +37,20 @@ public class IntakeCommands {
 
         @Override
         public void initialize() {
-            intakeSubsystem.setPower(1);
-            intakeSubsystem.setPosition(0);
-        }
-
-        @Override
-        public void execute() {
-            //every frame
+            intakeSubsystem.setPower(0.7);
+//            intakeSubsystem.setPosition(0);
         }
 
         @Override
         public boolean isFinished() {
-            //returns if it is finished, false by default(runs forever), return true means instant finish
             return true;
         }
     }
+
     public static class ClosedState extends CommandBase {
-        //        variables(eg subsystems, targetPos etc)
         IntakeSubsystem intakeSubsystem;
 
 
-
-        //            addRequirements(subsystem)
         public ClosedState(IntakeSubsystem intakeSubsystem) {
             this.intakeSubsystem = intakeSubsystem;
             addRequirements(intakeSubsystem);
@@ -79,19 +59,14 @@ public class IntakeCommands {
         @Override
         public void initialize() {
             intakeSubsystem.setPower(0);
-            intakeSubsystem.setPosition(1);
-        }
-
-        @Override
-        public void execute() {
-            //every frame
+//            intakeSubsystem.setPosition(1);
         }
 
         @Override
         public boolean isFinished() {
-            //returns if it is finished, false by default(runs forever), return true means instant finish
             return true;
         }
+
     }
 
 }

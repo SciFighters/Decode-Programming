@@ -11,16 +11,17 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 public class DischargeSubsystem extends SubsystemBase {
 
-    private final DcMotorEx turretMotor;
-    private final MotorEx flyWheelMotor;
+//    private final DcMotorEx turretMotor;
+    public final MotorEx flyWheelMotor;
     private final Servo rampServo;
-    private final double kS = 0.04, kV = 0.00015915963, kP = 0.0000833333;
+    private final double kS = 0.09, kV = 0.0002, kP = 0.0000833333;
+    private final double ticksPerDegree = 26;
 
     public DischargeSubsystem(HardwareMap hm) {
         flyWheelMotor = new MotorEx(hm,"flyWheelMotor", Motor.GoBILDA.BARE);
-        turretMotor = hm.get(DcMotorEx.class, "turretMotor");
-        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        turretMotor = hm.get(DcMotorEx.class, "turretMotor");
+//        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rampServo = hm.get(Servo.class, "rampServo");
     }
 
@@ -34,13 +35,21 @@ public class DischargeSubsystem extends SubsystemBase {
         return flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60;
     }
     public void setTurretPower(double turretPower) {
-        turretMotor.setPower(turretPower);
+//        turretMotor.setPower(turretPower);
     }
 
-    public double getTurretPosition() {return turretMotor.getCurrentPosition();}
+    public double getTurretPosition() {
+//        return turretMotor.getCurrentPosition();
+        return 0;
+    }
+    public double getTurretAngle(){
+//        return turretMotor.getCurrentPosition / ticksPerDegree;
+        return 0;
+    }
+
 
     public void setRampDegree(double rampDegree) {
-        double pos = 1.0/6.0 + 2.0/3.0*(73 - rampDegree)/(34.13);
+        double pos = -(34.13 - rampDegree)/(38.87);
         rampServo.setPosition(pos);
     }
 }

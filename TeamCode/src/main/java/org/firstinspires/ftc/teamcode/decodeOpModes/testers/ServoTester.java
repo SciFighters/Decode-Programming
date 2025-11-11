@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 public class ServoTester extends ActionOpMode {
     Servo servo1, servo2;
     GamepadEx gamepad;
-    GamepadButton A, B;
+    GamepadButton A, B, Y, X;
     double pos = 0;
 
     @Override
@@ -21,9 +21,14 @@ public class ServoTester extends ActionOpMode {
         servo2 = hardwareMap.servo.get("leftIntake");
         gamepad = new GamepadEx(gamepad1);
         A = new GamepadButton(gamepad, GamepadKeys.Button.A);
+        Y = new GamepadButton(gamepad, GamepadKeys.Button.Y);
+        X = new GamepadButton(gamepad, GamepadKeys.Button.X);
         B = new GamepadButton(gamepad, GamepadKeys.Button.B);
         A.whenPressed(() -> pos += 0.01);
         B.whenPressed(() -> pos -= 0.01);
+        X.whenPressed(() -> pos -= 0.1);
+        Y.whenPressed(() -> pos += 0.1);
+
     }
 
     @Override
@@ -31,7 +36,7 @@ public class ServoTester extends ActionOpMode {
         super.run();
         servo1.setPosition(pos);
         servo2.setPosition(1 - pos);
-        multipleTelemetry.addData("pos",pos);
+        multipleTelemetry.addData("pos", pos);
         multipleTelemetry.update();
     }
 }

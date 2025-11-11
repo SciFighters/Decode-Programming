@@ -19,7 +19,7 @@ public class ManualCarouselTest extends ActionOpMode {
     public static double extraIntake = 0;
     @Override
     public void initialize() {
-        carousel = hardwareMap.dcMotor.get("carousel");
+        carousel = hardwareMap.dcMotor.get("carouselMotor");
         intake = hardwareMap.dcMotor.get("intakeMotor");
         gamepad = new GamepadEx(gamepad1);
 //        up = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP);

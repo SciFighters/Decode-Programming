@@ -194,7 +194,7 @@ public class CarouselCommands {
         private final CarouselSubsystem carouselSubsystem;
         private double targetPos;
         double currentPos;
-        double power = 0.6;
+        double power = 0.25;
 
         public Discharge(CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
@@ -208,11 +208,11 @@ public class CarouselCommands {
                 targetPos = (carouselSubsystem.getPosition() + 6 * carouselSubsystem.spinConversion);
             }
             else if(220 < angle && angle < 260){
-                targetPos = (carouselSubsystem.getPosition() + 5 * carouselSubsystem.spinConversion);
+                targetPos = (carouselSubsystem.getPosition() + 6 * carouselSubsystem.spinConversion);
 
             }
             else if(340 < angle || angle < 20){
-                targetPos = (carouselSubsystem.getPosition() + 4 * carouselSubsystem.spinConversion);
+                targetPos = (carouselSubsystem.getPosition() + 6 * carouselSubsystem.spinConversion);
             }
         }
 

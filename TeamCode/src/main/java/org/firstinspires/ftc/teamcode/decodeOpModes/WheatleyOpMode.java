@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.decodeOpModes;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 
 @TeleOp
-public class OpModeTest extends ActionOpMode {
+public class WheatleyOpMode extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
     CarouselSubsystem carouselSubsystem;
@@ -39,24 +40,33 @@ public class OpModeTest extends ActionOpMode {
     Button driverStart, systemStart;
     Button driverBack, systemBack;
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
+
     @Override
     public void initialize() {
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
 
-        mecanumDrive = new MecanumDrive(hardwareMap,new Pose2d(new Vector2d(0,-64),Math.PI/2));
+        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(0, -64), Math.PI / 2));
 
 
         driver = new GamepadEx(gamepad1);
         system = new GamepadEx(gamepad2);
         initButtons();
-        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive,() -> driver.getLeftY(),() -> driver.getLeftX(),() -> driver.getRightX(),() -> 0.6 + 0.4 * driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(), () -> 0.6 + 0.4 * driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
         driverA.whenPressed(new IntakeCommands.IntakeState(intakeSubsystem));
-        driverB.whenPressed(new CarouselCommands.MoveToPos(carouselSubsystem,carouselSubsystem.spinConversion * 11 / 12));
-        driverX.whenPressed(new CommandGroups.Shoot(dischargeSubsystem,intakeSubsystem,carouselSubsystem));
-        driverY.whenPressed(new DischargeCommands.setState(dischargeSubsystem,0,0,54));
+        driverB.whenPressed(new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion*1.1));
+        driverX.whenPressed(new CommandGroups.Shoot(dischargeSubsystem, intakeSubsystem, carouselSubsystem));
+        driverRightStick.whenPressed(
+                new ParallelCommandGroup(
+                    new DischargeCommands.setState(dischargeSubsystem, 0, 0, 54),
+                    new IntakeCommands.IntakeState(intakeSubsystem),
+                    new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion*1.1)
+                ));
+        driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
+        driverDPadDown.whenPressed(new DischargeCommands.setState(dischargeSubsystem, 0, 0, 54));
         driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
+        driverDPadLeft.whenPressed(new CarouselCommands.MoveToPos(carouselSubsystem, -carouselSubsystem.spinConversion*1.1));
 
     }
 
@@ -64,8 +74,8 @@ public class OpModeTest extends ActionOpMode {
     public void run() {
 
         super.run();
-//        multipleTelemetry.addData("heading deg",Math.toDegrees(mecanumDrive.localizer.getPose().heading.toDouble()));
-//        multipleTelemetry.update();
+        multipleTelemetry.addData("rpm",dischargeSubsystem.getRPM());
+        multipleTelemetry.update();
     }
 
     public void initButtons() {

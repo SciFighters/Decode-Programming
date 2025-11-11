@@ -17,7 +17,7 @@ public class IntakeCommands {
         @Override
         public void initialize() {
             intakeSubsystem.setPower(0.7);
-//        intakeSubsystem.setPosition(1);
+            intakeSubsystem.setPosition(0);
         }
 
 
@@ -37,8 +37,8 @@ public class IntakeCommands {
 
         @Override
         public void initialize() {
-            intakeSubsystem.setPower(0.7);
-//            intakeSubsystem.setPosition(0);
+            intakeSubsystem.setPower(1);
+            intakeSubsystem.setPosition(1);
         }
 
         @Override
@@ -59,7 +59,7 @@ public class IntakeCommands {
         @Override
         public void initialize() {
             intakeSubsystem.setPower(0);
-//            intakeSubsystem.setPosition(1);
+            intakeSubsystem.setPosition(0);
         }
 
         @Override
@@ -68,5 +68,27 @@ public class IntakeCommands {
         }
 
     }
+    public static class OutTakeState extends CommandBase {
+        IntakeSubsystem intakeSubsystem;
+
+
+        public OutTakeState(IntakeSubsystem intakeSubsystem) {
+            this.intakeSubsystem = intakeSubsystem;
+            addRequirements(intakeSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            intakeSubsystem.setPower(-0.7);
+            intakeSubsystem.setPosition(0);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return true;
+        }
+
+    }
+
 
 }

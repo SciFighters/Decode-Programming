@@ -10,9 +10,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class CarouselSubsystem extends SubsystemBase {
     private final DcMotorEx carouselMotor;
-    double tickPerRev = 383.6;
+    double tickPerRev = 537.6;
     // accurate amount of tick per revolution
-    public final double spinConversion = tickPerRev * 5.0 / 3.0; // for moving the motor about a third of a spin
+    public final double spinConversion = tickPerRev * 132.0 / 39.0 / 3.0; // for moving the motor about a third of a spin
     // calculation for a third of a spin knowing the amount of ticks per revolution
     public ColorSensor colorSensor;
 
@@ -35,7 +35,7 @@ public class CarouselSubsystem extends SubsystemBase {
 
     public double getAngle() {
         //weird algorithm for getting angle from 0 to 360
-        return ((carouselMotor.getCurrentPosition() / spinConversion * 3) % 360 + 360) % 360;
+        return ((carouselMotor.getCurrentPosition() / (spinConversion * 3)) % 360 + 360) % 360;
     }
 
     public double getCurrent() {

@@ -17,10 +17,10 @@ public class CommandGroups {
             addCommands(
                     new SequentialCommandGroup(
                             new IntakeCommands.TransferState(intakeSubsystem),
-                            new WaitUntilCommand(() -> DischargeCommands.setState.canShoot),
+                            new WaitUntilCommand(() -> DischargeCommands.setState.canShoot).withTimeout(3000),
                             new CarouselCommands.Discharge(carouselSubsystem)
                     ),
-                    new DischargeCommands.setState(dischargeSubsystem, 3200, 0, 54)
+                    new DischargeCommands.setState(dischargeSubsystem, 2800, 0, 50)
 
             );
         }

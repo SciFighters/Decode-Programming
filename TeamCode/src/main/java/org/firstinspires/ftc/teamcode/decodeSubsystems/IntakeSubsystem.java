@@ -24,8 +24,8 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setPosition(double position) {
-        intakeServo1.setPosition(position * openedPos + (1-position) * closedPos);
-        intakeServo2.setPosition(position * (1 - openedPos) + (1-position) * (1 - closedPos));
+        intakeServo1.setPosition(position);
+        intakeServo2.setPosition(1 - position);
     }
 
 

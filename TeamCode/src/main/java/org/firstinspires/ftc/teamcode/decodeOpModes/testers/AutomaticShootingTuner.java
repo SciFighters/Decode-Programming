@@ -1,9 +1,12 @@
-package org.firstinspires.ftc.teamcode.decodeOpModes;
+package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
+
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -23,8 +26,8 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 
-@TeleOp
-public class WheatleyOpMode extends ActionOpMode {
+@TeleOp(group = "tests")
+public class AutomaticShootingTuner extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
     CarouselSubsystem carouselSubsystem;
@@ -44,6 +47,7 @@ public class WheatleyOpMode extends ActionOpMode {
     Button driverStart, systemStart;
     Button driverBack, systemBack;
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
+    double wantedRPM = 1000, wantedDegree = 50;
 
     @Override
     public void initialize() {
@@ -60,43 +64,59 @@ public class WheatleyOpMode extends ActionOpMode {
         initButtons();
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(), () -> 0.6 + 0.4 * driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
         driverA.whenPressed(new IntakeCommands.IntakeState(intakeSubsystem));
-        driverB.whenPressed(new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion));
-        driverX.whenPressed(new CommandGroups.Shoot(dischargeSubsystem, intakeSubsystem, carouselSubsystem, 4000, 60));
+        driverB.whenPressed(new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion * 1.1));
+        driverX.whenPressed(new SequentialCommandGroup(
+                new IntakeCommands.TransferState(intakeSubsystem),
+                new WaitCommand(2000),
+                new CarouselCommands.Discharge(carouselSubsystem)
+//                new IntakeCommands.TransferState(intakeSubsystem)
+        ));
+        systemDPadUp.whenPressed(() -> wantedRPM += 100);
+        systemDPadDown.whenPressed(() -> wantedRPM -= 100);
+        systemA.whenPressed(() -> wantedDegree += 2);
+        systemY.whenPressed(() -> wantedDegree -= 2);
+        systemX.whenPressed(() -> wantedDegree += 0.2);
+        systemB.whenPressed(() -> wantedDegree -= 0.2);
         driverRightStick.whenPressed(
                 new ParallelCommandGroup(
-                        new DischargeCommands.setState(dischargeSubsystem, 0,  54),
+//                        new DischargeCommands.setState(dischargeSubsystem, 0, 54),
                         new IntakeCommands.IntakeState(intakeSubsystem),
-                        new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion * 1.1)
+                        new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion * 1)
                 ));
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
         driverDPadDown.whenPressed(new DischargeCommands.setState(dischargeSubsystem, 0, 54));
         driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
-        driverDPadLeft.whenPressed(new CarouselCommands.MoveToPos(carouselSubsystem, -carouselSubsystem.spinConversion * 1.1));
-        driverDPadRight.whenPressed(new CommandGroups.Shoot(dischargeSubsystem, intakeSubsystem, carouselSubsystem, 2800, 50));
+
         limelightSubsystem.startLimelight();
     }
 
     @Override
     public void run() {
-        com.seattlesolvers.solverslib.geometry.Vector2d pos =
-                limelightSubsystem.getRobotPos(mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI, dischargeSubsystem.getTurretAngle());
-        double launchAngle =
-                AutoShooter.getLaunchAngle(new Pose2d(pos.getX(), pos.getY(), mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI), AutoShooter.TeamColor.RED);
-        if (pos.getX() < 1000) {
-            double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle()) * 0.028;
-            power += Math.signum(power) * 0.04;
-            power = Range.clip(power,-0.4,0.4);
-            dischargeSubsystem.setTurretPower(power);
-        } else {
-            dischargeSubsystem.setTurretPower(0);
-        }
+//        com.seattlesolvers.solverslib.geometry.Vector2d pos =
+//                limelightSubsystem.getRobotPos(mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI, dischargeSubsystem.getTurretAngle());
+//        double launchAngle =
+//                AutoShooter.getLaunchAngle(new Pose2d(pos.getX(), pos.getY(), mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI), AutoShooter.TeamColor.RED);
+//        if (pos.getX() < 1000) {
+//            double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle()) * 0.028;
+//            power += Math.signum(power) * 0.04;
+//            power = Range.clip(power, -0.4, 0.4);
+//            dischargeSubsystem.setTurretPower(power);
+//        } else {
+//            dischargeSubsystem.setTurretPower(0);
+//        }
+        dischargeSubsystem.setFlyWheelRPM(wantedRPM);
+        dischargeSubsystem.setRampDegree(wantedDegree);
         super.run();
-        multipleTelemetry.addData("err", ((launchAngle - dischargeSubsystem.getTurretAngle() + 180) % 360));
-        multipleTelemetry.addData("fsdf", dischargeSubsystem.getTurretAngle());
-        multipleTelemetry.addData("x", pos.getX());
-        multipleTelemetry.addData("y", pos.getY());
-        multipleTelemetry.addData("angle", launchAngle);
+        multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
+//        multipleTelemetry.addData("x", pos.getX());
+//        multipleTelemetry.addData("y", pos.getY());
+//        multipleTelemetry.addData("angle", launchAngle);
+        multipleTelemetry.addData("rampDegree", wantedDegree);
+        multipleTelemetry.addData("wantedRPM", wantedRPM);
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
+        multipleTelemetry.addData("left artifact", carouselSubsystem.colorIdentifier(carouselSubsystem.leftColorSensor));
+        multipleTelemetry.addData("middle artifact", carouselSubsystem.colorIdentifier(carouselSubsystem.middleColorSensor));
+        multipleTelemetry.addData("right artifact", carouselSubsystem.colorIdentifier(carouselSubsystem.rightColorSensor));
         multipleTelemetry.update();
     }
 
@@ -136,3 +156,4 @@ public class WheatleyOpMode extends ActionOpMode {
         systemBack = new GamepadButton(system, GamepadKeys.Button.BACK);
     }
 }
+

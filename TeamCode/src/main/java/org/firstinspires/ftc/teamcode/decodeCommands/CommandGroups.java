@@ -13,14 +13,14 @@ import java.util.function.Supplier;
 
 public class CommandGroups {
     public static class Shoot extends ParallelCommandGroup {
-        public Shoot(DischargeSubsystem dischargeSubsystem, IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
+        public Shoot(DischargeSubsystem dischargeSubsystem, IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem, double rpm, double angle) {
             addCommands(
                     new SequentialCommandGroup(
                             new IntakeCommands.TransferState(intakeSubsystem),
-                            new WaitUntilCommand(() -> DischargeCommands.setState.canShoot).withTimeout(3000),
+                            new WaitUntilCommand(() -> DischargeCommands.setState.canShoot).withTimeout(4500),
                             new CarouselCommands.Discharge(carouselSubsystem)
                     ),
-                    new DischargeCommands.setState(dischargeSubsystem, 2800, 0, 50)
+                    new DischargeCommands.setState(dischargeSubsystem, rpm, angle)
 
             );
         }

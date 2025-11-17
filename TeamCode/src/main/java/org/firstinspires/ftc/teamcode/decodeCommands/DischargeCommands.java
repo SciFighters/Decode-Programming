@@ -6,13 +6,15 @@ import com.seattlesolvers.solverslib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
 
 import java.util.function.Supplier;
+
 @Config
-public class DischargeCommands{
-    public static class DischargeManual extends CommandBase{
+public class DischargeCommands {
+    public static class DischargeManual extends CommandBase {
         DischargeSubsystem dischargeSubsystem;
         Supplier<Double> flyWheelPower;
         Supplier<Double> turretPower;
         Supplier<Double> rampDegree;
+
         public DischargeManual(DischargeSubsystem dischargeSubsystem, Supplier<Double> flyWheelPower, Supplier<Double> turretPower, Supplier<Double> rampDegree) {
             this.dischargeSubsystem = dischargeSubsystem;
             this.flyWheelPower = flyWheelPower;
@@ -28,7 +30,8 @@ public class DischargeCommands{
             dischargeSubsystem.setRampDegree(rampDegree.get());
         }
     }
-    public static class setState extends CommandBase{
+
+    public static class setState extends CommandBase {
         DischargeSubsystem dischargeSubsystem;
         double flyWheelRPM;
         double rampDegree;
@@ -36,15 +39,16 @@ public class DischargeCommands{
         public static boolean canShoot;//variable for knowing if you can shout, will be removed later with automatic shooting
         static final double kp = 0.01;
 
-        public setState(DischargeSubsystem dischargeSubsystem, double flyWheelRPM, double turretPos, double rampDegree){
+        public setState(DischargeSubsystem dischargeSubsystem, double flyWheelRPM, double rampDegree) {
             this.dischargeSubsystem = dischargeSubsystem;
             this.flyWheelRPM = flyWheelRPM;
             this.rampDegree = rampDegree;
-            wantedPos = turretPos;
+
             addRequirements(dischargeSubsystem);
         }
+
         @Override
-        public  void initialize() {
+        public void initialize() {
             canShoot = false;
             dischargeSubsystem.setRampDegree(rampDegree);
         }
@@ -53,18 +57,19 @@ public class DischargeCommands{
         public void execute() {
             dischargeSubsystem.setFlyWheelRPM(flyWheelRPM);
             double power = (wantedPos - dischargeSubsystem.getTurretPosition()) * kp;
-            dischargeSubsystem.setTurretPower(power);
-            canShoot = Math. abs(dischargeSubsystem.getRPM() - flyWheelRPM) < 300;
+            canShoot = Math.abs(dischargeSubsystem.getRPM() - flyWheelRPM) < 300;
         }
 
     }
-    public static class SupplierGoTo extends CommandBase{
+
+    public static class SupplierGoTo extends CommandBase {
         DischargeSubsystem dischargeSubsystem;
         Supplier<Double> flyWheelPower;
         Supplier<Double> turretPower;
         Supplier<Double> rampDegree;
         double wantedPos;
-        static final double kp = 0.01;
+        static final double kp = 0.001;
+
         public SupplierGoTo(DischargeSubsystem dischargeSubsystem, Supplier<Double> flyWheelPower, Supplier<Double> turretPower, Supplier<Double> rampDegree) {
             this.dischargeSubsystem = dischargeSubsystem;
             this.flyWheelPower = flyWheelPower;
@@ -76,7 +81,7 @@ public class DischargeCommands{
         @Override
         public void execute() {
             dischargeSubsystem.setFlyWheelPower(flyWheelPower.get());
-            double power = (wantedPos - dischargeSubsystem.getTurretPosition()) * kp;
+            double power = ((wantedPos - dischargeSubsystem.getTurretAngle() + 360) % 360) * kp;
             dischargeSubsystem.setTurretPower(power);
             dischargeSubsystem.setRampDegree(rampDegree.get());
         }

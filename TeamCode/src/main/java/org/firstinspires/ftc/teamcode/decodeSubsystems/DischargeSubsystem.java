@@ -11,18 +11,20 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 public class DischargeSubsystem extends SubsystemBase {
 
-//    private final DcMotorEx turretMotor;
+    private final DcMotorEx turretMotor;
     public final MotorEx flyWheelMotor;
     private final Servo rampServo;
-    private final double kS = 0.14, kV = 0.00023424689, kP = 0.000833333;
-    private final double ticksPerDegree = 26;
+    private final double kS = 0.10, kV = 0.00018864365, kP = 0.000833333;
+    private final double ticksPerDegree = 383.6 * 3.96 / 360.0;
+    final double startAngle;
 
     public DischargeSubsystem(HardwareMap hm) {
         flyWheelMotor = new MotorEx(hm,"flyWheelMotor", Motor.GoBILDA.BARE);
-//        turretMotor = hm.get(DcMotorEx.class, "turretMotor");
-//        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        turretMotor = hm.get(DcMotorEx.class, "turretMotor");
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rampServo = hm.get(Servo.class, "rampServo");
+        startAngle = 180;
     }
 
     public void setFlyWheelPower(double flyWheelPower) {
@@ -35,21 +37,22 @@ public class DischargeSubsystem extends SubsystemBase {
         return flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60;
     }
     public void setTurretPower(double turretPower) {
-//        turretMotor.setPower(turretPower);
+        turretMotor.setPower(turretPower);
     }
 
     public double getTurretPosition() {
-//        return turretMotor.getCurrentPosition();
-        return 0;
+        return turretMotor.getCurrentPosition();
+//        return 0;
     }
     public double getTurretAngle(){
-//        return turretMotor.getCurrentPosition / ticksPerDegree;
-        return 0;
+        return 360 - (turretMotor.getCurrentPosition() / ticksPerDegree + startAngle);
+//        return 0;
     }
 
 
     public void setRampDegree(double rampDegree) {
-        double pos = -(34.13 - rampDegree)/(38.87);
+        double pos = (73 - rampDegree)/(38.87);
+//        double pos = -(34.13 - rampDegree)/(38.87);
         rampServo.setPosition(pos);
     }
 }

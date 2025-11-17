@@ -16,8 +16,8 @@ public class IntakeCommands {
 
         @Override
         public void initialize() {
-            intakeSubsystem.setPower(0.7);
-            intakeSubsystem.setPosition(0);
+            intakeSubsystem.setPower(0.6);
+            intakeSubsystem.setPosition(1);
         }
 
 
@@ -37,8 +37,8 @@ public class IntakeCommands {
 
         @Override
         public void initialize() {
-            intakeSubsystem.setPower(1);
-            intakeSubsystem.setPosition(1);
+            intakeSubsystem.setPower(0.8);
+            intakeSubsystem.setPosition(0);
         }
 
         @Override
@@ -59,7 +59,7 @@ public class IntakeCommands {
         @Override
         public void initialize() {
             intakeSubsystem.setPower(0);
-            intakeSubsystem.setPosition(0);
+            intakeSubsystem.setPosition(1);
         }
 
         @Override
@@ -80,7 +80,7 @@ public class IntakeCommands {
         @Override
         public void initialize() {
             intakeSubsystem.setPower(-0.7);
-            intakeSubsystem.setPosition(0);
+            intakeSubsystem.setPosition(1);
         }
 
         @Override

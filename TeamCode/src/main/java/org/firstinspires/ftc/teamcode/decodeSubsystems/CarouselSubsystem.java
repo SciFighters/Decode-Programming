@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
@@ -14,7 +15,7 @@ public class CarouselSubsystem extends SubsystemBase {
     // accurate amount of tick per revolution
     public final double spinConversion = tickPerRev * 132.0 / 39.0 / 3.0; // for moving the motor about a third of a spin
     // calculation for a third of a spin knowing the amount of ticks per revolution
-    public ColorSensor colorSensor;
+    public ColorSensor leftColorSensor, rightColorSensor, middleColorSensor;
 
     public CarouselSubsystem(HardwareMap hm) {
         carouselMotor = hm.get(DcMotorEx.class, "carouselMotor");
@@ -22,7 +23,9 @@ public class CarouselSubsystem extends SubsystemBase {
         carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-//        colorSensor = hm.get(ColorSensor.class, "colorSensor");
+//        leftColorSensor = hm.get(ColorSensor.class, "leftColorSensor");
+//        rightColorSensor = hm.get(ColorSensor.class, "rightColorSensor");
+//        middleColorSensor = hm.get(ColorSensor.class, "middleColorSensor");
     }
 
     public void setSpinPower(double power) {
@@ -48,17 +51,16 @@ public class CarouselSubsystem extends SubsystemBase {
         Unknown
     }
 
-    public SensorColors colorIdentifier() {
-        int red = colorSensor.red();
-        int green = colorSensor.green();
-        int blue = colorSensor.blue();
-
-        if (red > green && blue > green) {
-            return SensorColors.Purple;
-
-        } else if (green > red && green > blue) {
-            return SensorColors.Green;
-        }
+    public SensorColors colorIdentifier(ColorSensor colorSensor) {
+//        int red = colorSensor.red();
+//        int green = colorSensor.green();
+//        int blue = colorSensor.blue();
+//
+//        if (red > green && blue > green) {
+//            return SensorColors.Purple;
+//        } else if (green > red && green > blue) {
+//            return SensorColors.Green;
+//        }
         return SensorColors.Unknown;
     }
 }

@@ -40,11 +40,12 @@ public class FlyWheelTester extends ActionOpMode {
         down.whenPressed(() -> wantedAngle -= 1);
         A.whenPressed(() -> wantedRpm += 100);
         B.whenPressed(() -> wantedRpm -= 100);
-        X.whenPressed(() -> wantedAngle = 75);
-        Y.whenPressed(() -> wantedAngle = 30);
+//        X.whenPressed(() -> wantedAngle = 75);
+//        Y.whenPressed(() -> wantedAngle = 30);
         A.whenPressed(() -> power += 0.01);
         B.whenPressed(() -> power -= 0.01);
-        X.whenPressed(() -> power = 0);
+        X.whenPressed(() -> power += 0.1);
+        Y.whenPressed(() -> power -= 0.1);
 //        X.whenPressed(new Runnable() {
 //            @Override
 //            public void run() {

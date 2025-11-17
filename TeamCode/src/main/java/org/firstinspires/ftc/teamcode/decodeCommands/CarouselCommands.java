@@ -112,9 +112,9 @@ public class CarouselCommands {
         @Override
         public void execute() {
             currentPos = carouselSubsystem.getPosition();
-            if (carouselSubsystem.colorIdentifier() == CarouselSubsystem.SensorColors.Green) {
-                isGreen = true;
-            }
+//            if (carouselSubsystem.colorIdentifier() == CarouselSubsystem.SensorColors.Green) {
+//                isGreen = true;
+//            }
             if (Math.abs(targetPos - currentPos) < tolerance && moveCount < 3) {
                 targetPos += carouselSubsystem.spinConversion;
                 moveCount++;
@@ -194,7 +194,8 @@ public class CarouselCommands {
         private final CarouselSubsystem carouselSubsystem;
         private double targetPos;
         double currentPos;
-        double power = 0.25;
+        double transferPower = 0.25;
+        double toNextPower = 0.75; // when it moves until the next ball
 
         public Discharge(CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
@@ -219,7 +220,10 @@ public class CarouselCommands {
         @Override
         public void execute() {
             currentPos = carouselSubsystem.getPosition();
-            carouselSubsystem.setSpinPower(power);
+            //if (DOESNT PUSHES BALLS)
+            //    carouselSubsystem.setSpinPower(toNextPower);
+            //else
+                carouselSubsystem.setSpinPower(transferPower);
         }
 
         @Override
@@ -258,25 +262,25 @@ public class CarouselCommands {
             double currentPos = carouselSubsystem.getPosition();
 
             if (currentPos >= nextCheckPos) {
-                CarouselSubsystem.SensorColors color = carouselSubsystem.colorIdentifier();
-                nextCheckPos += carouselSubsystem.spinConversion;
-
-                if (color == CarouselSubsystem.SensorColors.Green
-                        || color == CarouselSubsystem.SensorColors.Purple) {
-
-                    currSlot =  (int) (currentPos / carouselSubsystem.spinConversion);
-                    switch (currSlot) {
-                        case 1:
-                            slot1 = true;
-                            break;
-                        case 2:
-                            slot2 = true;
-                            break;
-                        case 3:
-                            slot3 = true;
-                            break;
-                    }
-                }
+//                CarouselSubsystem.SensorColors color = carouselSubsystem.colorIdentifier();
+//                nextCheckPos += carouselSubsystem.spinConversion;
+//
+//                if (color == CarouselSubsystem.SensorColors.Green
+//                        || color == CarouselSubsystem.SensorColors.Purple) {
+//
+//                    currSlot =  (int) (currentPos / carouselSubsystem.spinConversion);
+//                    switch (currSlot) {
+//                        case 1:
+//                            slot1 = true;
+//                            break;
+//                        case 2:
+//                            slot2 = true;
+//                            break;
+//                        case 3:
+//                            slot3 = true;
+//                            break;
+//                    }
+//                }
             }
         }
 

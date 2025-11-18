@@ -4,6 +4,8 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -51,51 +53,48 @@ public class WheatleyOpMode extends ActionOpMode {
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
 
-        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(0, -64), Math.PI));
-        mecanumDrive.lazyImu.get().resetYaw();
+        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(63, 0), Math.PI));
+
         limelightSubsystem = new LimelightSubsystem(hardwareMap, AutoShooter.TeamColor.RED, mecanumDrive);
 
         driver = new GamepadEx(gamepad1);
         system = new GamepadEx(gamepad2);
         initButtons();
+
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(), () -> 0.6 + 0.4 * driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+//        dischargeSubsystem.setDefaultCommand(new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, AutoShooter.TeamColor.RED));
         driverA.whenPressed(new IntakeCommands.IntakeState(intakeSubsystem));
         driverB.whenPressed(new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion));
-        driverX.whenPressed(new CommandGroups.Shoot(dischargeSubsystem, intakeSubsystem, carouselSubsystem, 4000, 60));
+        driverX.whenPressed(new SequentialCommandGroup(
+                new IntakeCommands.TransferState(intakeSubsystem),
+                new WaitCommand(2000),
+                new CarouselCommands.Discharge(carouselSubsystem)
+//                new IntakeCommands.TransferState(intakeSubsystem)
+        ));
         driverRightStick.whenPressed(
                 new ParallelCommandGroup(
-                        new DischargeCommands.setState(dischargeSubsystem, 0,  54),
                         new IntakeCommands.IntakeState(intakeSubsystem),
-                        new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion * 1.1)
+                        new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion * 1)
                 ));
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
         driverDPadDown.whenPressed(new DischargeCommands.setState(dischargeSubsystem, 0, 54));
         driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
         driverDPadLeft.whenPressed(new CarouselCommands.MoveToPos(carouselSubsystem, -carouselSubsystem.spinConversion * 1.1));
-        driverDPadRight.whenPressed(new CommandGroups.Shoot(dischargeSubsystem, intakeSubsystem, carouselSubsystem, 2800, 50));
+//        driverDPadRight.whenPressed(new CommandGroups.Shoot(dischargeSubsystem, intakeSubsystem, carouselSubsystem, 2800, 50));
         limelightSubsystem.startLimelight();
+        mecanumDrive.lazyImu.get().resetYaw();
     }
 
     @Override
     public void run() {
-        com.seattlesolvers.solverslib.geometry.Vector2d pos =
-                limelightSubsystem.getRobotPos(mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI, dischargeSubsystem.getTurretAngle());
-        double launchAngle =
-                AutoShooter.getLaunchAngle(new Pose2d(pos.getX(), pos.getY(), mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI), AutoShooter.TeamColor.RED);
-        if (pos.getX() < 1000) {
-            double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle()) * 0.028;
-            power += Math.signum(power) * 0.04;
-            power = Range.clip(power,-0.4,0.4);
-            dischargeSubsystem.setTurretPower(power);
-        } else {
-            dischargeSubsystem.setTurretPower(0);
-        }
+        mecanumDrive.localizer.update();
         super.run();
-        multipleTelemetry.addData("err", ((launchAngle - dischargeSubsystem.getTurretAngle() + 180) % 360));
-        multipleTelemetry.addData("fsdf", dischargeSubsystem.getTurretAngle());
-        multipleTelemetry.addData("x", pos.getX());
-        multipleTelemetry.addData("y", pos.getY());
-        multipleTelemetry.addData("angle", launchAngle);
+//        multipleTelemetry.addData("err", ((launchAngle - dischargeSubsystem.getTurretAngle() + 180) % 360));
+        multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
+        multipleTelemetry.addData("launchAngle", DischargeCommands.AutomaticAiming.launchAngle);
+        multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
+        multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
+//        multipleTelemetry.addData("angle", launchAngle);
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
         multipleTelemetry.update();
     }

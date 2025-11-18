@@ -8,9 +8,16 @@ public class AutoShooter {
     private static final double goalHeight = 40;//inch
     private static final double g = 386.1;//inch/s^2
     private static final Vector2d goalPos = new Vector2d(-66, 66);//red
-
+    private static final double[][] points =
+                    {{42.6, 56, 2300},
+                    {64.8, 44, 2700},
+                    {82.4, 40, 2900},
+                    {101.5, 36, 3100},
+                    {116.5, 36, 3300},
+                    {132.5, 36, 3450},
+                    {148.5, 36, 3650}};//[distance,angle,rpm} todo: change to actual points
     //robot corners
-    private static final Vector2d[] points = {new Vector2d(robotWidth / 2, robotLength / 2),
+    private static final Vector2d[] edges = {new Vector2d(robotWidth / 2, robotLength / 2),
             new Vector2d(-robotWidth / 2, robotLength / 2),
             new Vector2d(robotWidth / 2, -robotLength / 2),
             new Vector2d(-robotWidth / 2, -robotLength / 2)};
@@ -20,7 +27,7 @@ public class AutoShooter {
         double x = robotPose.position.x;
         double y = robotPose.position.y;
         double heading = robotPose.heading.toDouble();
-        for (Vector2d p : points) {
+        for (Vector2d p : edges) {
             p = p.rotateBy(Math.toDegrees(heading));
             if (isInZone(x + p.getX(), y + p.getY())) {
                 return true;
@@ -40,16 +47,38 @@ public class AutoShooter {
         return 180;
     }
 
-    public static double getLaunchRampAngle(Pose2d robotPose, TeamColor teamColor) {//degrees
+//    public static double getLaunchRampAngle(Pose2d robotPose, TeamColor teamColor) {//degrees
+//        double distance = getGoalDistance(robotPose, teamColor);
+//        return Math.toDegrees(Math.atan((goalHeight + Math.sqrt(Math.pow(distance, 2) + Math.pow(goalHeight, 2))) / distance));
+//    }
+
+    public static double[] getLaunchVector(Pose2d robotPose, TeamColor teamColor) {
+//        return Math.sqrt(g * (Math.sqrt(Math.pow(getGoalDistance(robotPose, teamColor), 2) + Math.pow(goalHeight, 2)) + goalHeight));
         double distance = getGoalDistance(robotPose, teamColor);
-        return Math.toDegrees(Math.atan((goalHeight + Math.sqrt(Math.pow(distance, 2) + Math.pow(goalHeight, 2))) / distance));
+        double[] min = {0, 0, 0};
+        double[] max = {200, 0, 0};
+        for (double[] point : points) {
+            if (point[0] < distance & point[0] > min[0]) {
+                min = point;
+            } else if (point[0] < max[0]) {
+                max = point;
+            }
+        }
+        if (min[0] == 0) {
+            return new double[]{max[1], max[2]};
+        } else if (max[0] == 0) {
+            return new double[]{min[1], min[2]};
+        }
+        double lowerRatio = distance - min[0];
+        double higherRatio = max[0] - distance;
+        double ratio = 1 / (max[0] - min[0]);
+
+        return new double[]{(lowerRatio * max[1] + higherRatio * min[1]) * ratio, (lowerRatio * max[2] + higherRatio * min[2]) * ratio};
+
     }
 
-    public static double getLaunchVelocity(Pose2d robotPose, TeamColor teamColor) {//might be too low, returns in inch/s
-        return Math.sqrt(g * (Math.sqrt(Math.pow(getGoalDistance(robotPose, teamColor), 2) + Math.pow(goalHeight, 2)) + goalHeight));
-    }
 
-    private static double getGoalDistance(Pose2d robotPose, TeamColor teamColor) {
+    public static double getGoalDistance(Pose2d robotPose, TeamColor teamColor) {
         switch (teamColor) {
             case RED:
                 return Math.hypot(robotPose.position.x - goalPos.getX(), robotPose.position.y - goalPos.getY());

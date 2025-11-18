@@ -37,7 +37,7 @@ public class IntakeCommands {
 
         @Override
         public void initialize() {
-            intakeSubsystem.setPower(0.8);
+            intakeSubsystem.setPower(1);
             intakeSubsystem.setPosition(0);
         }
 

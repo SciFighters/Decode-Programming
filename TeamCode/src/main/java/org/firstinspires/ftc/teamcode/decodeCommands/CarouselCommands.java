@@ -194,7 +194,7 @@ public class CarouselCommands {
         private final CarouselSubsystem carouselSubsystem;
         private double targetPos;
         double currentPos;
-        double transferPower = 0.25;
+        double transferPower = 0.35;
         double toNextPower = 0.75; // when it moves until the next ball
 
         public Discharge(CarouselSubsystem carouselSubsystem) {

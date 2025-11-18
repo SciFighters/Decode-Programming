@@ -51,12 +51,13 @@ public class AutomaticShootingTuner extends ActionOpMode {
 
     @Override
     public void initialize() {
+
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
 
-        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(0, -64), Math.PI));
-        mecanumDrive.lazyImu.get().resetYaw();
+        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(63, 0), Math.PI));
+
         limelightSubsystem = new LimelightSubsystem(hardwareMap, AutoShooter.TeamColor.RED, mecanumDrive);
 
         driver = new GamepadEx(gamepad1);
@@ -92,31 +93,27 @@ public class AutomaticShootingTuner extends ActionOpMode {
 
     @Override
     public void run() {
-//        com.seattlesolvers.solverslib.geometry.Vector2d pos =
-//                limelightSubsystem.getRobotPos(mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI, dischargeSubsystem.getTurretAngle());
-//        double launchAngle =
-//                AutoShooter.getLaunchAngle(new Pose2d(pos.getX(), pos.getY(), mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI), AutoShooter.TeamColor.RED);
-//        if (pos.getX() < 1000) {
-//            double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle()) * 0.028;
-//            power += Math.signum(power) * 0.04;
-//            power = Range.clip(power, -0.4, 0.4);
-//            dischargeSubsystem.setTurretPower(power);
-//        } else {
-//            dischargeSubsystem.setTurretPower(0);
-//        }
+        mecanumDrive.localizer.update();
+        double launchAngle =
+                (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position,mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), AutoShooter.TeamColor.RED) + 360) % 360;
+//        double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle()) * kp;
+//        power += Math.signum(power) * 0.03;
+//        power = Range.clip(power, -0.4, 0.4);
+//        dischargeSubsystem.setTurretPower(power);
+
+
         dischargeSubsystem.setFlyWheelRPM(wantedRPM);
         dischargeSubsystem.setRampDegree(wantedDegree);
         super.run();
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
-//        multipleTelemetry.addData("x", pos.getX());
-//        multipleTelemetry.addData("y", pos.getY());
-//        multipleTelemetry.addData("angle", launchAngle);
+
         multipleTelemetry.addData("rampDegree", wantedDegree);
         multipleTelemetry.addData("wantedRPM", wantedRPM);
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
-        multipleTelemetry.addData("left artifact", carouselSubsystem.colorIdentifier(carouselSubsystem.leftColorSensor));
-        multipleTelemetry.addData("middle artifact", carouselSubsystem.colorIdentifier(carouselSubsystem.middleColorSensor));
-        multipleTelemetry.addData("right artifact", carouselSubsystem.colorIdentifier(carouselSubsystem.rightColorSensor));
+        multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
+        multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
+        multipleTelemetry.addData("distance", AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), AutoShooter.TeamColor.RED));
+        multipleTelemetry.addData("anglee", launchAngle);
         multipleTelemetry.update();
     }
 

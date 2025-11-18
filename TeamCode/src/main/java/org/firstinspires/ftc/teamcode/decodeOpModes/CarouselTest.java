@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.decodeCommands.CarouselCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 
-@TeleOp(name = "CarouselTest")
+@TeleOp(name = "CarouselTest",group = "tests")
 public class CarouselTest extends ActionOpMode {
     CarouselSubsystem carouselSubsystem;
 

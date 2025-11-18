@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode.decodeCommands;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
+import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
 
 import java.util.function.Supplier;
 
@@ -62,28 +67,63 @@ public class DischargeCommands {
 
     }
 
-    public static class SupplierGoTo extends CommandBase {
+    public static class AutomaticAiming extends CommandBase {
         DischargeSubsystem dischargeSubsystem;
-        Supplier<Double> flyWheelPower;
-        Supplier<Double> turretPower;
-        Supplier<Double> rampDegree;
+        LimelightSubsystem limelightSubsystem;
+        MecanumDrive mecanumDrive;
+        AutoShooter.TeamColor teamColor;
+        //        Supplier<Double> flyWheelPower;
+//        Supplier<Double> turretPower;
+//        Supplier<Double> rampDegree;
         double wantedPos;
-        static final double kp = 0.001;
-
-        public SupplierGoTo(DischargeSubsystem dischargeSubsystem, Supplier<Double> flyWheelPower, Supplier<Double> turretPower, Supplier<Double> rampDegree) {
+        static final double kp = 0.028;
+        public static double launchAngle;
+        public AutomaticAiming(DischargeSubsystem dischargeSubsystem, LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, AutoShooter.TeamColor teamColor) {
             this.dischargeSubsystem = dischargeSubsystem;
-            this.flyWheelPower = flyWheelPower;
-            this.turretPower = turretPower;
-            this.rampDegree = rampDegree;
+            this.limelightSubsystem = limelightSubsystem;
+            this.mecanumDrive = mecanumDrive;
+            this.teamColor = teamColor;
+//            this.flyWheelPower = flyWheelPower;
+//            this.turretPower = turretPower;
+//            this.rampDegree = rampDegree;
             addRequirements(dischargeSubsystem);
         }
 
         @Override
         public void execute() {
-            dischargeSubsystem.setFlyWheelPower(flyWheelPower.get());
-            double power = ((wantedPos - dischargeSubsystem.getTurretAngle() + 360) % 360) * kp;
+            aimTurret();
+            if (AutoShooter.canLaunch(mecanumDrive.localizer.getPose())){
+                double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
+                dischargeSubsystem.setRampDegree(launchVector[0]);
+                dischargeSubsystem.setFlyWheelRPM(launchVector[1]);
+            }else {
+                dischargeSubsystem.setFlyWheelRPM(0);
+            }
+
+        }
+
+        private void aimTurret() {
+
+            launchAngle =
+                    (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position,mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360) % 360;
+
+            double power = -(launchAngle - dischargeSubsystem.getTurretAngle()) * kp;
+            power += Math.signum(power) * 0.07;
+            power = Range.clip(power, -0.4, 0.4);
             dischargeSubsystem.setTurretPower(power);
-            dischargeSubsystem.setRampDegree(rampDegree.get());
+//            com.seattlesolvers.solverslib.geometry.Vector2d pos =
+//                    limelightSubsystem.getRobotPos(mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI, dischargeSubsystem.getTurretAngle());
+//            double launchAngle =
+//                    AutoShooter.getLaunchAngle(new Pose2d(pos.getX(), pos.getY(), mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI), AutoShooter.TeamColor.RED);
+//            if (pos.getX() < 1000) {
+//                double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle()) * 0.028;
+//                power += Math.signum(power) * 0.04;
+//                power = Range.clip(power,-0.4,0.4);
+//                dischargeSubsystem.setTurretPower(power);
+//            } else {
+//                dischargeSubsystem.setTurretPower(0);
+//            }
+
         }
     }
 }

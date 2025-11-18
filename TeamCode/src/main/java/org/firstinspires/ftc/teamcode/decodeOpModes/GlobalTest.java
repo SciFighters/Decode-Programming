@@ -9,7 +9,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 
-@TeleOp
+@TeleOp(group = "tests")
 public class GlobalTest extends ActionOpMode {
     DcMotorEx carousel, intake, discharge;
     double carouselPower = 0, intakePower = 0, dischargePower = 0;

@@ -66,28 +66,28 @@ public final class MecanumDrive extends SubsystemBase {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
         // drive model parameters
-        public double inPerTick = 0.00195699564;
-        public double lateralInPerTick = 0.0015676388171972015;
-        public double trackWidthTicks = 7776.781909839368;
+        public double inPerTick = -0.00196822101;
+        public double lateralInPerTick =  -0.0013944488409228586;
+        public double trackWidthTicks = -6347.664220437972;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.4589086829599496;
-        public double kV = 0.00035350749623995844;
-        public double kA = 0.00004;
+        public double kS = 1.54064929135061;
+        public double kV = -0.0002620507126246885;
+        public double kA = 0.00006;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 60;
+        public double maxWheelVel = 50;
         public double minProfileAccel = -30;
-        public double maxProfileAccel = 60;
+        public double maxProfileAccel = 50;
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 3.0;
-        public double lateralGain = 4.0;
-        public double headingGain = 3.0; // shared with turn
+        public double axialGain = 4.5;
+        public double lateralGain = 4.5;
+        public double headingGain = 4.5; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -115,7 +115,7 @@ public final class MecanumDrive extends SubsystemBase {
 
     public final LazyImu lazyImu;
 
-    public Localizer localizer;//todo: make final again
+    public final Localizer localizer;
     public final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
@@ -248,8 +248,8 @@ public final class MecanumDrive extends SubsystemBase {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-//        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
-//        localizer.getPose();
+        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        localizer.getPose();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
@@ -278,6 +278,12 @@ public final class MecanumDrive extends SubsystemBase {
     public void resetPosAndIMU(){
         if(localizer instanceof PinpointLocalizer){
             ((PinpointLocalizer)localizer).resetPosAndIMU();
+        }
+    }
+
+    public void resetAngle(){
+        if(localizer instanceof PinpointLocalizer){
+            ((PinpointLocalizer)localizer).setPose(new Pose2d(new Vector2d(localizer.getPose().position.x,localizer.getPose().position.y), new Rotation2d(0,0)));
         }
     }
 
@@ -546,5 +552,4 @@ public final class MecanumDrive extends SubsystemBase {
         }
         return actionBuilder(beginPose);
     }
-
 }

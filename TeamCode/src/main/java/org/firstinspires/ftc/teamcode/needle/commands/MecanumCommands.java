@@ -42,7 +42,7 @@ public class MecanumCommands {
         @Override
         public void execute() {
             com.seattlesolvers.solverslib.geometry.Vector2d vector = new com.seattlesolvers.solverslib.geometry.Vector2d(
-                    -x.get() * boost.get(), y.get() * boost.get()).rotateBy(Math.toDegrees(-mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw()/ 180 * Math.PI + Math.PI));
+                    -x.get() * boost.get(), y.get() * boost.get()).rotateBy(Math.toDegrees(-mecanumDrive.localizer.getPose().heading.toDouble()));
             Vector2d vector2d = new Vector2d(vector.getX(), vector.getY());
             mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(vector2d.x, vector2d.y),-r.get() * boost.get()));
         }

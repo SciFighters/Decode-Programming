@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.needle.tuning;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.needle.subsystems.ArmAxisSubsystem;
-
+@Disabled
 @TeleOp
 public class AxisMinPowerFinder extends LinearOpMode {
     ArmAxisSubsystem armAxisSubsystem;

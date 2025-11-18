@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.needle.tuning;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.needle.commands.TelescopicArmCommands;
 import org.firstinspires.ftc.teamcode.needle.subsystems.TelescopicArmSubsystem;
+@Disabled
 @TeleOp
 public class TelescopicArmTuner extends ActionOpMode {
     TelescopicArmSubsystem telescopicArmSubsystem;

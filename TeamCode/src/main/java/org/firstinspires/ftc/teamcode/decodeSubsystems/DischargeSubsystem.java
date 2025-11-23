@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
@@ -14,9 +15,10 @@ public class DischargeSubsystem extends SubsystemBase {
     private final DcMotorEx turretMotor;
     public final MotorEx flyWheelMotor;
     private final Servo rampServo;
-    private final double kS = 0.10, kV = 0.00018864365, kP = 0.000833333;
+    private final double kS = 0.0866319, kV = 0.000168344, kP = 0.000833333, kI = 0.000005;
     private final double ticksPerDegree = 383.6 * 3.96 / 360.0;
     final double startAngle;
+    double integral;
 
     public DischargeSubsystem(HardwareMap hm) {
         flyWheelMotor = new MotorEx(hm,"flyWheelMotor", Motor.GoBILDA.BARE);
@@ -25,13 +27,17 @@ public class DischargeSubsystem extends SubsystemBase {
         turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rampServo = hm.get(Servo.class, "rampServo");
         startAngle = 180;
+        integral = 0;
     }
 
     public void setFlyWheelPower(double flyWheelPower) {
         flyWheelMotor.set(flyWheelPower);
     }
     public void setFlyWheelRPM(double rpm){
-        flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm + kP * (rpm - flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60));
+        double currentRPM = flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60;
+        integral += (rpm - currentRPM) * kI;
+        integral = Range.clip(integral,-0.1,0.1);
+        flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm + kP * (rpm - flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60) + integral);
     }
     public double getRPM(){
         return flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60;

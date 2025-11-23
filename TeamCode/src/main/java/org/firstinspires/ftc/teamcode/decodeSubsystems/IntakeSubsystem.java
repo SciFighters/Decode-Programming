@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Command;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 public class IntakeSubsystem extends SubsystemBase {
     private final DcMotorEx motor;
 
@@ -26,6 +28,9 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setPosition(double position) {
         intakeServo1.setPosition(position);
         intakeServo2.setPosition(1 - position);
+    }
+    public double getCurrent(){
+        return motor.getCurrent(CurrentUnit.AMPS);
     }
 
 

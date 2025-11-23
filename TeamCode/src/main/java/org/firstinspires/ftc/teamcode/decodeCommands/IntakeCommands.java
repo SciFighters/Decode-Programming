@@ -16,7 +16,7 @@ public class IntakeCommands {
 
         @Override
         public void initialize() {
-            intakeSubsystem.setPower(0.6);
+            intakeSubsystem.setPower(1);
             intakeSubsystem.setPosition(1);
         }
 
@@ -39,6 +39,25 @@ public class IntakeCommands {
         public void initialize() {
             intakeSubsystem.setPower(1);
             intakeSubsystem.setPosition(0);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return true;
+        }
+    }
+    public static class SemiTransferState extends CommandBase {
+        IntakeSubsystem intakeSubsystem;
+
+        public SemiTransferState(IntakeSubsystem intakeSubsystem) {
+            this.intakeSubsystem = intakeSubsystem;
+            addRequirements(intakeSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            intakeSubsystem.setPower(1);
+            intakeSubsystem.setPosition(0.27);
         }
 
         @Override

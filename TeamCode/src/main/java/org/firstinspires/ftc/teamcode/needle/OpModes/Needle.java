@@ -65,7 +65,7 @@ public class Needle extends ActionOpMode {
         initButtons();
         CommandScheduler.getInstance().schedule(new ArmAxisCommands.AxisControl(armAxisSubsystem,telescopicArmSubsystem, system::getRightY));
         telescopicArmSubsystem.setDefaultCommand(new TelescopicArmCommands.ExtensionManual(telescopicArmSubsystem, system::getLeftY));
-        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX(),() -> 0.6 + 0.4 * driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive,() -> driver.getLeftX(),() -> driver.getLeftY(),() -> driver.getRightX()));
         driverB.whenPressed(new Runnable() {
             @Override
             public void run() {

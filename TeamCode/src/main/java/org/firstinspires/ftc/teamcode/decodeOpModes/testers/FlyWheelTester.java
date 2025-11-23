@@ -20,7 +20,7 @@ public class FlyWheelTester extends ActionOpMode {
     //    MotorEx flyWheelMotor;
 //    Servo servo;
     double power = 0.00;
-    double kS = 0.09, kV = 0.0002, kP = 0.000833333;
+    double kS = 0.09, kV = 0.0002, kP = 0.000833333, kI = 0.001;
     public static double wantedRpm = 2000;
     double wantedAngle = 45;
     DischargeSubsystem dischargeSubsystem;

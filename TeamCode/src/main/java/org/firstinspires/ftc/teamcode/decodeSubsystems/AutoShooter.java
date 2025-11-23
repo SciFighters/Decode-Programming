@@ -8,14 +8,14 @@ public class AutoShooter {
     private static final double goalHeight = 40;//inch
     private static final double g = 386.1;//inch/s^2
     private static final Vector2d goalPos = new Vector2d(-66, 66);//red
-    private static final double[][] points =
-                    {{42.6, 56, 2300},
-                    {64.8, 44, 2700},
-                    {82.4, 40, 2900},
-                    {101.5, 36, 3100},
-                    {116.5, 36, 3300},
-                    {132.5, 36, 3450},
-                    {148.5, 36, 3650}};//[distance,angle,rpm} todo: change to actual points
+    private static final double[][] points ={{38.4,58,2100},{54.8,53.8,2150},{73.5,44,2450}, {88.8,40,2650},{105.5,36,2950},{124.45,34.8,3300},{138.8,34.2,3400},{153.4,34.2,3500}};//distance, angle, rpm
+//            {{42.6, 56, 2300},
+//                    {64.8, 44, 2650},
+//                    {82.4, 40, 2800},
+//                    {101.5, 36, 2950},
+//                    {116.5, 36, 3150},
+//                    {132.5, 36, 3450},
+//                    {148.5, 36, 3650}};//[distance,angle,rpm}
     //robot corners
     private static final Vector2d[] edges = {new Vector2d(robotWidth / 2, robotLength / 2),
             new Vector2d(-robotWidth / 2, robotLength / 2),
@@ -40,9 +40,9 @@ public class AutoShooter {
     public static double getLaunchAngle(Pose2d robotPose, TeamColor teamColor) {//returns in degrees, 180 is towards motifs
         switch (teamColor) {
             case RED:
-                return Math.toDegrees(Math.atan2(goalPos.getY() - robotPose.position.y, goalPos.getX() - robotPose.position.x) - robotPose.heading.toDouble());
+                return Math.toDegrees(Math.atan2(goalPos.getY() - robotPose.position.y, goalPos.getX() - robotPose.position.x /*+ 3.5*/) - robotPose.heading.toDouble());
             case BLUE:
-                return Math.toDegrees(Math.atan2(goalPos.getY() + robotPose.position.y, goalPos.getX() - robotPose.position.x) - robotPose.heading.toDouble());
+                return -Math.toDegrees(Math.atan2(goalPos.getY() + robotPose.position.y, goalPos.getX() - robotPose.position.x /*+ 3.5*/) - robotPose.heading.toDouble());
         }
         return 180;
     }

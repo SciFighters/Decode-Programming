@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.decodeOpModes;
+package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,6 +8,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
+
 @Config
 @TeleOp(group = "tests")
 public class ManualCarouselTest extends ActionOpMode {
@@ -17,6 +18,7 @@ public class ManualCarouselTest extends ActionOpMode {
     GamepadButton up, down, left, right, a;
     boolean work = true;
     public static double extraIntake = 0;
+
     @Override
     public void initialize() {
         carousel = hardwareMap.dcMotor.get("carouselMotor");
@@ -37,10 +39,10 @@ public class ManualCarouselTest extends ActionOpMode {
     @Override
     public void run() {
         super.run();
-        if (work){
+        if (work) {
             intake.setPower(intakePower + extraIntake);
-            carousel.setPower(gamepad.getRightX()/2);
-        }else {
+            carousel.setPower(gamepad.getRightX());
+        } else {
             intake.setPower(0);
             carousel.setPower(0);
         }

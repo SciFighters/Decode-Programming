@@ -63,32 +63,21 @@ public class AutomaticShootingTuner extends ActionOpMode {
         driver = new GamepadEx(gamepad1);
         system = new GamepadEx(gamepad2);
         initButtons();
-        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(), () -> 0.6 + 0.4 * driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
-        driverA.whenPressed(new IntakeCommands.IntakeState(intakeSubsystem));
-        driverB.whenPressed(new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion * 1.1));
-        driverX.whenPressed(new SequentialCommandGroup(
-                new IntakeCommands.TransferState(intakeSubsystem),
-                new WaitCommand(2000),
-                new CarouselCommands.Discharge(carouselSubsystem)
-//                new IntakeCommands.TransferState(intakeSubsystem)
-        ));
-        systemDPadUp.whenPressed(() -> wantedRPM += 100);
-        systemDPadDown.whenPressed(() -> wantedRPM -= 100);
+        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX()));
+        driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem));
+        driverX.whenPressed(new CommandGroups.Shoot(intakeSubsystem,carouselSubsystem));
+        systemDPadUp.whenPressed(() -> wantedRPM += 50);
+        systemDPadDown.whenPressed(() -> wantedRPM -= 50);
         systemA.whenPressed(() -> wantedDegree += 2);
         systemY.whenPressed(() -> wantedDegree -= 2);
         systemX.whenPressed(() -> wantedDegree += 0.2);
         systemB.whenPressed(() -> wantedDegree -= 0.2);
-        driverRightStick.whenPressed(
-                new ParallelCommandGroup(
-//                        new DischargeCommands.setState(dischargeSubsystem, 0, 54),
-                        new IntakeCommands.IntakeState(intakeSubsystem),
-                        new CarouselCommands.MoveToPos(carouselSubsystem, carouselSubsystem.spinConversion * 1)
-                ));
+
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
         driverDPadDown.whenPressed(new DischargeCommands.setState(dischargeSubsystem, 0, 54));
         driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
 
-        limelightSubsystem.startLimelight();
+//        limelightSubsystem.startLimelight();
     }
 
     @Override

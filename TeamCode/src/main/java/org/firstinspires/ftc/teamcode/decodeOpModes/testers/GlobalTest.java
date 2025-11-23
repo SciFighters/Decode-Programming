@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.decodeOpModes;
+package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -13,7 +12,7 @@ import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 public class GlobalTest extends ActionOpMode {
     DcMotorEx carousel, intake, discharge;
     double carouselPower = 0, intakePower = 0, dischargePower = 0;
-    int motorCount = 0;
+    int motorCount = 3;
     GamepadEx gamepad;
 
     int currentMotor = 0;

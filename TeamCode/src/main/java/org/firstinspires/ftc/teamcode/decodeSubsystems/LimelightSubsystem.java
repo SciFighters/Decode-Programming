@@ -36,6 +36,7 @@ public class LimelightSubsystem extends SubsystemBase {
         limelight.pipelineSwitch(pipeline);
     }
 
+
     public void startLimelight() {
         limelight.start();
     }
@@ -154,4 +155,21 @@ public class LimelightSubsystem extends SubsystemBase {
         }
         return new Vector2d(1000, 1000); // only if result isn't in field and or is invalid
     }
+    public double getTx(){
+        List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
+        for (LLResultTypes.FiducialResult fiducialResult : results) {
+            switch (color) {
+                case RED:
+                    if(fiducialResult.getFiducialId() == 24){
+                        return fiducialResult.getTargetXPixels();
+                    }
+                case BLUE:
+                    if(fiducialResult.getFiducialId() == 20){
+                        return fiducialResult.getTargetXPixels();
+                    }
+            }
+        }
+        return 0;
+        }
+
 }

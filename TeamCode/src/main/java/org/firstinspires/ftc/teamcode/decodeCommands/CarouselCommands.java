@@ -1,10 +1,20 @@
 package org.firstinspires.ftc.teamcode.decodeCommands;
 
+import androidx.annotation.NonNull;
+
+import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandBase;
+import com.seattlesolvers.solverslib.command.SelectCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
+import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
+import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class CarouselCommands {
@@ -49,6 +59,40 @@ public class CarouselCommands {
         @Override
         public boolean isFinished() {
             return Math.abs(currentPos - targetPos) < tolerance;
+        }
+
+
+        @Override
+        public void end(boolean interrupted) {
+            carouselSubsystem.setSpinPower(0);
+        }
+    }
+
+    public static class MoveToAngle extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        double targetAngle;
+        double currentAngle;
+        double kp = 0.03;
+        int tolerance = 1;
+
+        public MoveToAngle(CarouselSubsystem carouselSubsystem, double angle) {
+            this.carouselSubsystem = carouselSubsystem;
+            this.targetAngle = angle;
+            addRequirements(carouselSubsystem);
+        }
+
+        @Override
+        public void execute() {
+            currentAngle = carouselSubsystem.getAngle();
+            double error = targetAngle - currentAngle;
+            double power = kp * error;
+            carouselSubsystem.setSpinPower(power);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return false;
+//            return Math.abs(currentAngle - targetAngle) < tolerance;
         }
 
 
@@ -140,16 +184,15 @@ public class CarouselCommands {
     public static class SortByMotif extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
         private final Motif motif;
-        private int steps;
+        private int steps = 0;
         private double targetPos;
         double currentPos;
         int tolerance = 50;
-        double kp = 0.1;
+        double kp = 1;
 
-        public SortByMotif(Motif motif, int steps, CarouselSubsystem carouselSubsystem) {
+        public SortByMotif(Motif motif, CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
             this.motif = motif;
-            this.steps = steps;
             addRequirements(carouselSubsystem);
         }
 
@@ -157,13 +200,13 @@ public class CarouselCommands {
         public void initialize() {
             switch (motif) {
                 case PGP:
-                    steps = 1;
+                    steps = (carouselSubsystem.getGreenPlacement() - 1) % 3;
                     break;
                 case GPP:
-                    steps = -1;
+                    steps = carouselSubsystem.getGreenPlacement() % 3;
                     break;
-                default: // for PPG case
-                    steps = 0;
+                case PPG: // for PPG case
+                    steps = (carouselSubsystem.getGreenPlacement() + 1) % 3;
                     break;
             }
             targetPos = (carouselSubsystem.getPosition() + steps * carouselSubsystem.spinConversion);
@@ -189,12 +232,101 @@ public class CarouselCommands {
         }
     }
 
+    public static class SlideDistance extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        private double targetPos;
+        double currentPos;
+        double power;
+        double distance;
+
+        public SlideDistance(CarouselSubsystem carouselSubsystem, double distance, double power) {//distance in thirds
+            this.carouselSubsystem = carouselSubsystem;
+            this.power = power;
+            this.distance = distance;
+            addRequirements(carouselSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            targetPos = (carouselSubsystem.getPosition() + distance * carouselSubsystem.spinConversion);
+        }
+
+        @Override
+        public void execute() {
+            carouselSubsystem.setSpinPower(power);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return carouselSubsystem.getPosition() > targetPos;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            carouselSubsystem.setSpinPower(0);
+        }
+    }
+
+    public static class SmartDischarge extends SelectCommand {
+        private static final double transferSpeed = 0.7, travelSpeed = 1;
+
+        enum Position {
+            MIDDLE,
+            LEFT,
+            RIGHT,
+            NONE
+        }
+
+        public SmartDischarge(CarouselSubsystem carouselSubsystem, IntakeSubsystem intakeSubsystem, boolean far) {
+
+            super(new HashMap<Object, Command>() {{
+                put(Position.MIDDLE,
+                        new SequentialCommandGroup(
+                                new IntakeCommands.SemiTransferState(intakeSubsystem),
+                                new SlideDistance(carouselSubsystem,0.9, transferSpeed),
+                                new IntakeCommands.TransferState(intakeSubsystem),
+                                new WaitCommand((far) ? 700: 400),
+                                new SlideDistance(carouselSubsystem, 2 - 0.9, transferSpeed),
+                                new WaitCommand((far) ? 450: 150),
+                                new SlideDistance(carouselSubsystem,1,transferSpeed)
+                        ));
+                put(Position.LEFT,
+                        new SequentialCommandGroup(
+                                new SlideDistance(carouselSubsystem, 1.7, transferSpeed),
+                                new SlideDistance(carouselSubsystem, 2.3, travelSpeed),
+                                new SlideDistance(carouselSubsystem, 1, transferSpeed)
+                        ));
+                put(Position.RIGHT,
+                        new SequentialCommandGroup(
+                                new SlideDistance(carouselSubsystem, 1, transferSpeed),
+                                new SlideDistance(carouselSubsystem, 1, travelSpeed),
+                                new SlideDistance(carouselSubsystem, 2, transferSpeed)
+                        ));
+                put(Position.NONE, new SlideDistance(carouselSubsystem, 6, transferSpeed));
+            }}, () -> getPosition(carouselSubsystem));
+        }
+
+        private static Position getPosition(CarouselSubsystem carouselSubsystem) {
+            double angle = carouselSubsystem.getAngle();
+            if (280 < angle && angle < 320) {
+                return Position.LEFT;
+
+            } else if (40 < angle && angle < 80) {
+                return Position.RIGHT;
+
+            } else if (160 < angle || angle < 200) {
+                return Position.MIDDLE;
+            }
+            return Position.NONE;
+
+        }
+    }
 
     public static class Discharge extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
         private double targetPos;
         double currentPos;
-        double transferPower = 0.35;
+        double transferPower = 0.3;
         double toNextPower = 0.75; // when it moves until the next ball
 
         public Discharge(CarouselSubsystem carouselSubsystem) {
@@ -205,14 +337,12 @@ public class CarouselCommands {
         @Override
         public void initialize() {
             double angle = carouselSubsystem.getAngle();
-            if(100 < angle && angle < 140){
+            if (100 < angle && angle < 140) {
                 targetPos = (carouselSubsystem.getPosition() + 6 * carouselSubsystem.spinConversion);
-            }
-            else if(220 < angle && angle < 260){
+            } else if (220 < angle && angle < 260) {
                 targetPos = (carouselSubsystem.getPosition() + 6 * carouselSubsystem.spinConversion);
 
-            }
-            else if(340 < angle || angle < 20){
+            } else if (340 < angle || angle < 20) {
                 targetPos = (carouselSubsystem.getPosition() + 6 * carouselSubsystem.spinConversion);
             }
         }
@@ -223,7 +353,7 @@ public class CarouselCommands {
             //if (DOESNT PUSHES BALLS)
             //    carouselSubsystem.setSpinPower(toNextPower);
             //else
-                carouselSubsystem.setSpinPower(transferPower);
+            carouselSubsystem.setSpinPower(transferPower);
         }
 
         @Override
@@ -242,7 +372,7 @@ public class CarouselCommands {
         private boolean slot1 = false;
         private boolean slot2 = false;
         private boolean slot3 = false;
-        private double nextCheckPos ;
+        private double nextCheckPos;
         int currSlot;
 
         public WaitForFullCarousel(CarouselSubsystem carouselSubsystem) {

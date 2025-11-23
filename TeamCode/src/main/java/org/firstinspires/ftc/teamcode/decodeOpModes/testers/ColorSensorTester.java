@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
+import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 
+@TeleOp
 public class ColorSensorTester extends ActionOpMode {
     ColorSensor left, right, middle;
 
@@ -16,15 +19,18 @@ public class ColorSensorTester extends ActionOpMode {
 
     @Override
     public void run() {
-        multipleTelemetry.addData("leftRed",left.green());
+        multipleTelemetry.addData("left", CarouselSubsystem.colorIdentifier(left));
+        multipleTelemetry.addData("right", CarouselSubsystem.colorIdentifier(right));
+        multipleTelemetry.addData("middle", CarouselSubsystem.colorIdentifier(middle));
+        multipleTelemetry.addData("leftRed",left.red());
         multipleTelemetry.addData("leftBlue",left.blue());
-        multipleTelemetry.addData("leftGreen",left.red());
-        multipleTelemetry.addData("rightRed",right.green());
+        multipleTelemetry.addData("leftGreen",left.green());
+        multipleTelemetry.addData("rightRed",right.red());
         multipleTelemetry.addData("rightBlue",right.blue());
-        multipleTelemetry.addData("rightGreen",right.red());
-        multipleTelemetry.addData("middleRed",middle.green());
+        multipleTelemetry.addData("rightGreen",right.green());
+        multipleTelemetry.addData("middleRed",middle.red());
         multipleTelemetry.addData("middleBlue",middle.blue());
-        multipleTelemetry.addData("middleGreen",middle.red());
+        multipleTelemetry.addData("middleGreen",middle.green());
         multipleTelemetry.update();
     }
 }

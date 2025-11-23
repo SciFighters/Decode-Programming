@@ -14,13 +14,13 @@ public class MeepMeepTesting {
         MeepMeep meepMeep = new MeepMeep(800);
 
 
-        RoadRunnerBotEntity clankerTestsBot = new DefaultBotBuilder(meepMeep)
+        RoadRunnerBotEntity wheatley = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.PI, Math.PI, 15)
+                .setConstraints(50, 50, Math.PI, Math.PI, 15)
                 .setDimensions(18, 18)
                 .build();
 
-        TrajectoryActionBuilder normalAuto = clankerTestsBot.getDrive().actionBuilder(new Pose2d(-38, 56, 0))
+        TrajectoryActionBuilder normalAuto = wheatley.getDrive().actionBuilder(new Pose2d(-38, 56, 0))
                 .setTangent(-Math.PI / 4)
                 .splineToLinearHeading(new Pose2d(-22, 34, Math.PI / 4), -Math.PI / 4)
 //                .waitSeconds(1)
@@ -40,7 +40,7 @@ public class MeepMeepTesting {
                 .splineTo(new Vector2d(36, 54), Math.PI / 2)
                 .splineToSplineHeading(new Pose2d(36, 56, Math.PI / 2), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(56, 16), -Math.PI / 2);
-        TrajectoryActionBuilder betterAuto = clankerTestsBot.getDrive().actionBuilder(new Pose2d(-38, 56, 0))
+        TrajectoryActionBuilder betterAuto = wheatley.getDrive().actionBuilder(new Pose2d(-38, 56, 0))
                 .setTangent(-Math.PI / 4)
                 .splineToLinearHeading(new Pose2d(-22, 34, Math.PI / 4), -Math.PI / 4)
 //                .waitSeconds(1)
@@ -62,10 +62,10 @@ public class MeepMeepTesting {
                 .splineTo(new Vector2d(36, 54), Math.PI / 2)
                 .splineToSplineHeading(new Pose2d(36, 56, Math.PI / 2), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(56, 16), -Math.PI / 2);
-        TrajectoryActionBuilder showcase = clankerTestsBot.getDrive().actionBuilder(new Pose2d(0, 36, -Math.PI))
+        TrajectoryActionBuilder showcase = wheatley.getDrive().actionBuilder(new Pose2d(0, 36, -Math.PI))
                 .setTangent(0)
                 .splineToLinearHeading(new Pose2d(38, -33, 0), 0);
-        TrajectoryActionBuilder fifteen = clankerTestsBot.getDrive().actionBuilder((new Pose2d(61, 23.0 + 1.0 / 3, Math.PI)))
+        TrajectoryActionBuilder fifteen = wheatley.getDrive().actionBuilder((new Pose2d(61, 23.0 + 1.0 / 3, Math.PI)))
                 .splineToSplineHeading(new Pose2d(52, 23.0, Math.PI / 2), Math.PI)
                 .setTangent(Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(61, 61), Math.PI / 2)
@@ -85,7 +85,7 @@ public class MeepMeepTesting {
                 .splineTo(new Vector2d(35.5, 47), 0)
                 .splineToSplineHeading(new Pose2d(35.6, 47, 0), 0)
                 .splineToConstantHeading(new Vector2d(58, 20), -Math.PI / 2);
-        TrajectoryActionBuilder twentyFour = clankerTestsBot.getDrive().actionBuilder((new Pose2d(61, 23.0 + 1.0 / 3, Math.PI)))
+        TrajectoryActionBuilder twentyFour = wheatley.getDrive().actionBuilder((new Pose2d(61, 23.0 + 1.0 / 3, Math.PI)))
                 .splineToSplineHeading(new Pose2d(52, 23.0, Math.PI / 2), Math.PI)
 //                .waitSeconds(0.5)
                 .setTangent(Math.PI / 2)
@@ -125,7 +125,7 @@ public class MeepMeepTesting {
 //                .splineToConstantHeading(new Vector2d(58, 20), -Math.PI / 2)
                 ;
         double waitTime = 1.5;
-        TrajectoryActionBuilder twentyFourSafe = clankerTestsBot.getDrive().actionBuilder((new Pose2d(61, 23.0 + 1.0 / 3, Math.PI)))
+        TrajectoryActionBuilder twentyFourSafe = wheatley.getDrive().actionBuilder((new Pose2d(61, 23.0 + 1.0 / 3, Math.PI)))
                 .splineToSplineHeading(new Pose2d(52, 23.0, Math.PI / 2), Math.PI)
                 .waitSeconds(waitTime - 1)
                 .setTangent(Math.PI / 2)
@@ -162,7 +162,7 @@ public class MeepMeepTesting {
                 .waitSeconds(waitTime - 1.08)
                 .splineToConstantHeading(new Vector2d(61, 54), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(58, 20), -Math.PI / 2);
-        TrajectoryActionBuilder twentySevenSafe = clankerTestsBot.getDrive().actionBuilder((new Pose2d(61, 23.0 + 1.0 / 3, Math.PI)))
+        TrajectoryActionBuilder twentySevenSafe = wheatley.getDrive().actionBuilder((new Pose2d(61, 23.0 + 1.0 / 3, Math.PI)))
                 .splineToSplineHeading(new Pose2d(52, 23.0, Math.PI / 2), Math.PI)
                 .waitSeconds(waitTime - 1)
                 .setTangent(Math.PI / 2)
@@ -203,14 +203,42 @@ public class MeepMeepTesting {
                 .waitSeconds(waitTime - 1.08)
                 .splineToConstantHeading(new Vector2d(61, 54), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(58, 20), -Math.PI / 2);
-
-        clankerTestsBot.runAction(twentySevenSafe.build());
+        TrajectoryActionBuilder wheatleyAuto = wheatley.getDrive().actionBuilder((new Pose2d(-47.2, 47.7, Math.PI)))
+                .setTangent(-Math.PI / 4)
+                .splineToLinearHeading(new Pose2d(-30, 30, Math.PI * 3 / 4), -Math.PI / 4)
+                .splineToLinearHeading(new Pose2d(-24, 24, Math.PI / 2), -Math.PI / 4)
+                .splineToSplineHeading(new Pose2d(-23.9, 23.9, Math.PI / 2), Math.PI / 6)
+//                .waitSeconds(1)
+                .setTangent(Math.PI * 3 / 18)
+                .splineToConstantHeading(new Vector2d(-11, 54), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(-11, 54.1, Math.PI / 2), -Math.PI / 2)
+                .setTangent(-Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(-11, 14, Math.PI * 3 / 4), -Math.PI / 2)
+//                .turnTo(Math.PI/4)
+                .setTangent(Math.PI / 6)
+                .splineToSplineHeading(new Pose2d(12, 30, Math.PI / 2), Math.PI / 2)
+//                .splineToSplineHeading(new Pose2d(14,50.1,Math.PI/2),-Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(10, 54), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(10, 54.1, Math.PI / 2), -Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(-14, 14, Math.PI * 3 / 4), -Math.PI * 3 / 4)
+                .setTangent(Math.PI /4)
+                .splineToLinearHeading(new Pose2d(0,30, Math.PI / 2),Math.PI/2);
+//                .setTangent(Math.PI / 9)
+//                .splineToSplineHeading(new Pose2d(36, 50, Math.PI / 2), Math.PI / 2)
+//                .splineToLinearHeading(new Pose2d(-14, 14, Math.PI * 3 / 4), -Math.PI * 3 / 4)
+//                .setTangent(Math.PI / 9)
+//                .splineToLinearHeading(new Pose2d(63,63,Math.PI/2),Math.PI/2)
+//                .setTangent(-Math.PI/2)
+//                .splineToSplineHeading(new Pose2d(63,63.1,Math.PI/2),-Math.PI/2)
+//                .splineToLinearHeading(new Pose2d(-14,14,Math.PI*3/4),-Math.PI*3/4);
+//                .splineToConstantHeading(new Vector2d(36,54),Math.PI/2);
+        wheatley.runAction(wheatleyAuto.build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
 //                .addEntity(needleTestsBot)
-                .addEntity(clankerTestsBot)
+                .addEntity(wheatley)
                 .start();
     }
 }

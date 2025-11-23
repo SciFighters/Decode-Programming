@@ -7,6 +7,7 @@ import com.seattlesolvers.solverslib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
+import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
 
@@ -70,6 +71,7 @@ public class DischargeCommands {
     public static class AutomaticAiming extends CommandBase {
         DischargeSubsystem dischargeSubsystem;
         LimelightSubsystem limelightSubsystem;
+        CarouselSubsystem carouselSubsystem;
         MecanumDrive mecanumDrive;
         AutoShooter.TeamColor teamColor;
         //        Supplier<Double> flyWheelPower;
@@ -78,9 +80,12 @@ public class DischargeCommands {
         double wantedPos;
         static final double kp = 0.028;
         public static double launchAngle;
-        public AutomaticAiming(DischargeSubsystem dischargeSubsystem, LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, AutoShooter.TeamColor teamColor) {
+        public static boolean shooting = false;
+
+        public AutomaticAiming(DischargeSubsystem dischargeSubsystem, LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, CarouselSubsystem carouselSubsystem, AutoShooter.TeamColor teamColor) {
             this.dischargeSubsystem = dischargeSubsystem;
             this.limelightSubsystem = limelightSubsystem;
+            this.carouselSubsystem = carouselSubsystem;
             this.mecanumDrive = mecanumDrive;
             this.teamColor = teamColor;
 //            this.flyWheelPower = flyWheelPower;
@@ -91,12 +96,12 @@ public class DischargeCommands {
 
         @Override
         public void execute() {
-            aimTurret();
-            if (AutoShooter.canLaunch(mecanumDrive.localizer.getPose())){
+//            aimTurret();
+            if (AutoShooter.canLaunch(mecanumDrive.localizer.getPose()) || shooting) {
                 double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
                 dischargeSubsystem.setRampDegree(launchVector[0]);
                 dischargeSubsystem.setFlyWheelRPM(launchVector[1]);
-            }else {
+            } else {
                 dischargeSubsystem.setFlyWheelRPM(0);
             }
 
@@ -104,11 +109,12 @@ public class DischargeCommands {
 
         private void aimTurret() {
 
+
             launchAngle =
-                    (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position,mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360) % 360;
+                    (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position, mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360) % 360;
 
             double power = -(launchAngle - dischargeSubsystem.getTurretAngle()) * kp;
-            power += Math.signum(power) * 0.07;
+            power += Math.signum(power) * 0.05;
             power = Range.clip(power, -0.4, 0.4);
             dischargeSubsystem.setTurretPower(power);
 //            com.seattlesolvers.solverslib.geometry.Vector2d pos =

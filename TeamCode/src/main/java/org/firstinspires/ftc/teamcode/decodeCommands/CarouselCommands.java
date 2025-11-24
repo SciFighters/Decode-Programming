@@ -283,10 +283,10 @@ public class CarouselCommands {
                 put(Position.MIDDLE,
                         new SequentialCommandGroup(
                                 new IntakeCommands.SemiTransferState(intakeSubsystem),
-                                new SlideDistance(carouselSubsystem,0.9, transferSpeed),
+                                new SlideDistance(carouselSubsystem,0.8, transferSpeed),
                                 new IntakeCommands.TransferState(intakeSubsystem),
                                 new WaitCommand((far) ? 700: 400),
-                                new SlideDistance(carouselSubsystem, 2 - 0.9, transferSpeed),
+                                new SlideDistance(carouselSubsystem, 2 - 0.8, transferSpeed),
                                 new WaitCommand((far) ? 450: 150),
                                 new SlideDistance(carouselSubsystem,1,transferSpeed)
                         ));

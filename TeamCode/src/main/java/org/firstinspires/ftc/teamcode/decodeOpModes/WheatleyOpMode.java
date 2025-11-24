@@ -73,7 +73,7 @@ public class WheatleyOpMode extends ActionOpMode {
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(),teamColor));
         dischargeSubsystem.setDefaultCommand(new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, teamColor));
         driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem));
-
+        driverBack.whenPressed(new InstantCommand(() -> mecanumDrive.localizer.setPose(new Pose2d(mecanumDrive.localizer.getPose().position, Math.PI))));
         driverX.whenPressed(new SequentialCommandGroup(
                 new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem,mecanumDrive,teamColor,driver::getLeftY,driver::getLeftX),
                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(800)));

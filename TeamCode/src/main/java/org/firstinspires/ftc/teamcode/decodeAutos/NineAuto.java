@@ -56,8 +56,8 @@ public class NineAuto extends ActionOpMode {
                 .splineToSplineHeading(new Pose2d(-23.9, 23.9, Math.PI / 2), Math.PI / 6)
 //                .waitSeconds(1)
                 .setTangent(Math.PI * 3 / 18)
-                .splineToConstantHeading(new Vector2d(-12, 54), Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(-12, 54.1, Math.PI / 2), -Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(-11, 54), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(-11, 54.1, Math.PI / 2), -Math.PI / 2)
                 .setTangent(-Math.PI / 2)
                 .splineToLinearHeading(new Pose2d(-12, 14, Math.PI * 3 / 4), -Math.PI / 2);
 

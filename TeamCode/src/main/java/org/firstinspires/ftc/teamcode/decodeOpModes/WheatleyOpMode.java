@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.decodeCommands.CarouselCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
+import org.firstinspires.ftc.teamcode.decodeCommands.LimelightCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -29,6 +30,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
+import org.opencv.video.KalmanFilter;
 
 @TeleOp
 public class WheatleyOpMode extends ActionOpMode {
@@ -70,56 +72,49 @@ public class WheatleyOpMode extends ActionOpMode {
         system = new GamepadEx(gamepad2);
         initButtons();
 
-        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(),teamColor));
+        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(), teamColor));
         dischargeSubsystem.setDefaultCommand(new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, teamColor));
-        driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem));
+        driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem));
+        driverB.whenPressed(new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, teamColor));
         driverBack.whenPressed(new InstantCommand(() -> mecanumDrive.localizer.setPose(new Pose2d(mecanumDrive.localizer.getPose().position, Math.PI))));
         driverX.whenPressed(new SequentialCommandGroup(
-                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem,mecanumDrive,teamColor,driver::getLeftY,driver::getLeftX),
+                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(800)));
 
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
         driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
-
         limelightSubsystem.startLimelight();
         mecanumDrive.lazyImu.get().resetYaw();
         systemB.whenPressed(() -> carouselSubsystem.artifactsInGoal = (carouselSubsystem.artifactsInGoal + 1) % 3);
+        systemA.whenPressed(() -> carouselSubsystem.resetEncoders());
     }
 
     @Override
     public void run() {
-        mecanumDrive.localizer.update();
+        mecanumDrive.updatePoseEstimate();
         super.run();
-        double launchAngleBlue =
-                (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position, 0), AutoShooter.TeamColor.BLUE) + 360) % 360;
-        double launchAngleRed =
-                (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position, 0), AutoShooter.TeamColor.RED) + 360) % 360;
-//        multipleTelemetry.addData("intakeCurrent", intakeSubsystem.getCurrent());
-        multipleTelemetry.addData("current",carouselSubsystem.getCurrent());
-//        multipleTelemetry.addData("left", CarouselSubsystem.colorIdentifier(carouselSubsystem.leftColorSensor));
-//        multipleTelemetry.addData("right", CarouselSubsystem.colorIdentifier(carouselSubsystem.rightColorSensor));
-//        multipleTelemetry.addData("middle", CarouselSubsystem.colorIdentifier(carouselSubsystem.middleColorSensor));
+
+        multipleTelemetry.addData("llPos",limelightSubsystem.getRobotPosMT2(dischargeSubsystem.getTurretAngle()));
+        multipleTelemetry.addData("current", carouselSubsystem.getCurrent());
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
         multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
-        multipleTelemetry.addData("angle",mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
-        multipleTelemetry.addData("carouselAngle",carouselSubsystem.getAngle());
-        multipleTelemetry.addData("carouselPosition",carouselSubsystem.getPosition());
-//        multipleTelemetry.addData("launchAngleBlue", launchAngleBlue);
-//        multipleTelemetry.addData("launchAngleRed", launchAngleRed);
+        multipleTelemetry.addData("angle", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
+        multipleTelemetry.addData("carouselAngle", carouselSubsystem.getAngle());
+        multipleTelemetry.addData("carouselPosition", carouselSubsystem.getPosition());
+        multipleTelemetry.addData("kalmanPos", LimelightCommands.KalmanFilter.position);
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
-//        multipleTelemetry.addData("rpm normalized", dischargeSubsystem.getRPM() / 4000.0);
-        multipleTelemetry.addData("fkyWheelPower",dischargeSubsystem.flyWheelMotor.motorEx.getPower());
-//        multipleTelemetry.addData("1",1);
-//        multipleTelemetry.addData("-1",-1);
+        multipleTelemetry.addData("fkyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
         multipleTelemetry.update();
     }
 
     @Override
     public void end() {
+        carouselSubsystem.resetEncoders();
         limelightSubsystem.stopLimelight();
-        SavedValues.position = new Pose2d(63,0,Math.PI);
+        SavedValues.position = new Pose2d(63, 0, Math.PI);
         SavedValues.carouselTicks = 0;
+
     }
 
     public void initButtons() {

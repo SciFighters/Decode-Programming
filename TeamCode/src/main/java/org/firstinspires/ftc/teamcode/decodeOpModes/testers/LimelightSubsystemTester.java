@@ -26,11 +26,11 @@ public class LimelightSubsystemTester extends ActionOpMode {
     public void run() {
         mecanumDrive.localizer.update();
         mecanumDrive.setDrivePowers(new PoseVelocity2d(new com.acmerobotics.roadrunner.Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),-gamepad1.right_stick_x));
-        Vector2d llPos = limelightSubsystem.getRobotPos(mecanumDrive.localizer.getPose().heading.toDouble(),0);//todo: why not use internal mecanum drive
+//        Vector2d llPos = limelightSubsystem.getRobotPos(mecanumDrive.localizer.getPose().heading.toDouble(),0);//todo: why not use internal mecanum drive
         multipleTelemetry.addData("pinpointx",mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("pinpointy",mecanumDrive.localizer.getPose().position.y);
-        multipleTelemetry.addData("llPosx",llPos.getX());
-        multipleTelemetry.addData("llPosy",llPos.getY());
+//        multipleTelemetry.addData("llPosx",llPos.getX());
+//        multipleTelemetry.addData("llPosy",llPos.getY());
         multipleTelemetry.update();
         super.run();
     }

@@ -4,18 +4,12 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.seattlesolvers.solverslib.geometry.Vector2d;
 
 public class AutoShooter {
-    private static final double robotWidth = 18, robotLength = 15.5;//inch
+    private static final double robotWidth = 18, robotLength = 18;//inch
     private static final double goalHeight = 40;//inch
     private static final double g = 386.1;//inch/s^2
     private static final Vector2d goalPos = new Vector2d(-66, 66);//red
-    private static final double[][] points ={{38.4,58,2100},{54.8,53.8,2150},{73.5,44,2450}, {88.8,40,2650},{105.5,36,2950},{124.45,34.8,3300},{138.8,34.2,3400},{153.4,34.2,3500}};//distance, angle, rpm
-//            {{42.6, 56, 2300},
-//                    {64.8, 44, 2650},
-//                    {82.4, 40, 2800},
-//                    {101.5, 36, 2950},
-//                    {116.5, 36, 3150},
-//                    {132.5, 36, 3450},
-//                    {148.5, 36, 3650}};//[distance,angle,rpm}
+    private static final double[][] points ={{38.4,58,2100},{54.8,53.8,2250},{73.5,44,2550}, {88.8,40,2750},{105.5,36,2950},{124.45,34.8,3300},{138.8,34.2,3400},{153.4,34.2,3500}};//distance, angle, rpm
+
     //robot corners
     private static final Vector2d[] edges = {new Vector2d(robotWidth / 2, robotLength / 2),
             new Vector2d(-robotWidth / 2, robotLength / 2),
@@ -40,17 +34,13 @@ public class AutoShooter {
     public static double getLaunchAngle(Pose2d robotPose, TeamColor teamColor) {//returns in degrees, 180 is towards motifs
         switch (teamColor) {
             case RED:
-                return Math.toDegrees(Math.atan2(goalPos.getY() - robotPose.position.y, goalPos.getX() - robotPose.position.x /*+ 3.5*/) - robotPose.heading.toDouble());
+                return Math.toDegrees(Math.atan2(goalPos.getY() - robotPose.position.y, goalPos.getX() - robotPose.position.x) - robotPose.heading.toDouble());
             case BLUE:
-                return -Math.toDegrees(Math.atan2(goalPos.getY() + robotPose.position.y, goalPos.getX() - robotPose.position.x /*+ 3.5*/) - robotPose.heading.toDouble());
+                return -Math.toDegrees(Math.atan2(goalPos.getY() + robotPose.position.y, goalPos.getX() - robotPose.position.x) - robotPose.heading.toDouble());
         }
         return 180;
     }
 
-//    public static double getLaunchRampAngle(Pose2d robotPose, TeamColor teamColor) {//degrees
-//        double distance = getGoalDistance(robotPose, teamColor);
-//        return Math.toDegrees(Math.atan((goalHeight + Math.sqrt(Math.pow(distance, 2) + Math.pow(goalHeight, 2))) / distance));
-//    }
 
     public static double[] getLaunchVector(Pose2d robotPose, TeamColor teamColor) {
 //        return Math.sqrt(g * (Math.sqrt(Math.pow(getGoalDistance(robotPose, teamColor), 2) + Math.pow(goalHeight, 2)) + goalHeight));

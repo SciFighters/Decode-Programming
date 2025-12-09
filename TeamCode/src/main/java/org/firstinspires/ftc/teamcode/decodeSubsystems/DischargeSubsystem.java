@@ -10,6 +10,8 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 public class DischargeSubsystem extends SubsystemBase {
 
     private final DcMotorEx turretMotor;
@@ -54,8 +56,9 @@ public class DischargeSubsystem extends SubsystemBase {
         return 360 - (turretMotor.getCurrentPosition() / ticksPerDegree + startAngle);
 //        return 0;
     }
-
-
+    public double getRPS(){
+        return turretMotor.getVelocity(AngleUnit.RADIANS) / 3.96;
+    }
     public void setRampDegree(double rampDegree) {
         double pos = (73 - rampDegree)/(38.87);
 //        double pos = -(34.13 - rampDegree)/(38.87);

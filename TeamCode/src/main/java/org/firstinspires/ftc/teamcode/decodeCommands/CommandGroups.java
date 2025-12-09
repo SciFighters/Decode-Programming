@@ -23,29 +23,13 @@ import java.util.function.Supplier;
 
 public class CommandGroups {
     public static class Shoot extends ParallelRaceGroup {
-        public Shoot(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem, MecanumDrive mecanumDrive, AutoShooter.TeamColor teamColor, Supplier<Double> x, Supplier<Double> y) {
-            boolean far = AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), teamColor) > 110;
-            addCommands(
-                    new MecanumCommands.Drive(mecanumDrive, x, y, () -> {
-                        double launchAngle = ((AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position, 0), teamColor)) % 360) / 180 * Math.PI;
-                        double error = launchAngle - mecanumDrive.localizer.getPose().heading.toDouble();
-                        return -(error * 0.65 + Math.signum(error) * 0.075);
-                    },teamColor),
-                    new SequentialCommandGroup(
-                            new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
-                            new IntakeCommands.TransferState(intakeSubsystem),
-                            new WaitCommand(1000),
-                            new CarouselCommands.SmartDischarge(carouselSubsystem, intakeSubsystem,far),
-                            new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
-                    )
-            );
-        }
-        public Shoot(IntakeSubsystem intakeSubsystem,CarouselSubsystem carouselSubsystem){
+
+        public Shoot(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
             addCommands(new SequentialCommandGroup(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
                     new IntakeCommands.TransferState(intakeSubsystem),
-                    new WaitCommand(1000),
-                    new CarouselCommands.SmartDischarge(carouselSubsystem,intakeSubsystem,false),
+                    new WaitCommand(300),
+                    new CarouselCommands.SmartDischarge(carouselSubsystem, intakeSubsystem, false),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
             ));
         }
@@ -53,20 +37,44 @@ public class CommandGroups {
         @Override
         public void end(boolean interrupted) {
             super.end(interrupted);
-            if(interrupted){
+            if (interrupted) {
                 DischargeCommands.AutomaticAiming.shooting = false;
             }
         }
     }
-    public static class StartIntake extends ParallelCommandGroup{
-        public StartIntake(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem){
+
+    public static class PrepareShooting extends SequentialCommandGroup {
+        public PrepareShooting(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem, MecanumDrive mecanumDrive, AutoShooter.TeamColor teamColor) {
+            boolean far = AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), teamColor) > 120;
+
+            addCommands(
+                    new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
+                    new IntakeCommands.TransferState(intakeSubsystem),
+                    new WaitCommand(300),
+                    new WaitUntilCommand(() -> AutoShooter.canLaunch(mecanumDrive.localizer.getPose())),
+                    new CarouselCommands.SmartDischarge(carouselSubsystem, intakeSubsystem, far),
+                    new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
+
+            );
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            super.end(interrupted);
+            if (interrupted) {
+                DischargeCommands.AutomaticAiming.shooting = false;
+            }
+        }
+    }
+
+    public static class StartIntake extends ParallelCommandGroup {
+        public StartIntake(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
             addCommands(
                     new IntakeCommands.IntakeState(intakeSubsystem),
                     new CarouselCommands.MoveToAngle(carouselSubsystem, 180)
             );
         }
     }
-
 
 
 }

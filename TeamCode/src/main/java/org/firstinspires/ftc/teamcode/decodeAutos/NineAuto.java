@@ -80,21 +80,21 @@ public class NineAuto extends ActionOpMode {
                                 new ActionCommand(wheatleyAutoOne.build(), requirements),
 //                                new WaitCommand(4000),
 
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor, () -> 0.0, () -> 0.0),
+                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
 //                                new WaitCommand(10000),
                                 new ParallelRaceGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 ),
 
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor, () -> 0.0, () -> 0.0),
+                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
 
                                 new ParallelRaceGroup(
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
 
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor, () -> 0.0, () -> 0.0),
+                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
 
                                 new IntakeCommands.ClosedState(intakeSubsystem)
 

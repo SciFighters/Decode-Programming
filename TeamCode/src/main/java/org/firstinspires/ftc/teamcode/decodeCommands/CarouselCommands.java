@@ -7,6 +7,7 @@ import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -282,12 +283,18 @@ public class CarouselCommands {
             super(new HashMap<Object, Command>() {{
                 put(Position.MIDDLE,
                         new SequentialCommandGroup(
+//                                new WaitCommand(1000),
                                 new IntakeCommands.SemiTransferState(intakeSubsystem),
                                 new SlideDistance(carouselSubsystem,0.8, transferSpeed),
+                                new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
                                 new IntakeCommands.TransferState(intakeSubsystem),
-                                new WaitCommand((far) ? 700: 400),
+                                new WaitCommand(150),
+                                new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+//                                new WaitCommand((far) ? 700: 400),
                                 new SlideDistance(carouselSubsystem, 2 - 0.8, transferSpeed),
-                                new WaitCommand((far) ? 450: 150),
+                                new WaitCommand(150),
+                                new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+//                                new WaitCommand((far) ? 450: 150),
                                 new SlideDistance(carouselSubsystem,1,transferSpeed)
                         ));
                 put(Position.LEFT,

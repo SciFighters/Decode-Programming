@@ -20,7 +20,7 @@ public class LimelightSubsystem extends SubsystemBase {
     private final double metersToInch = 39.3700787;
     public TeamColor color;
     public Vector2d initialLimelightPos = new Vector2d(1.5748,0); //TODO:change
-    public Vector2d limelightByTurret = new Vector2d(5.6868, 0);//y: 2.6454415267717
+    public Vector2d limelightByTurret = new Vector2d(-5.6868, 0);//y: 2.6454415267717
     public Pose2d aprilTagPos;
     public MecanumDrive mecanumDrive;
     int pipeline = 1;
@@ -169,7 +169,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
         double robotHeading = mecanumDrive.localizer.getPose().heading.toDouble();
         if (getGoalID()) {
-            double turretFieldAngle = robotHeading * 180 / Math.PI + turretHeading - 180;
+            double turretFieldAngle = robotHeading * 180 / Math.PI + turretHeading;
             if (turretFieldAngle > 180) {
                 turretFieldAngle -= 360;
             } else if (turretFieldAngle < -180) {
@@ -181,6 +181,7 @@ public class LimelightSubsystem extends SubsystemBase {
             Vector2d limelightByTag = new Vector2d(limelight3d.x * metersToInch, limelight3d.y * metersToInch);
             Vector2d result = limelightByTag.minus(limelightPos);
             return new Position(DistanceUnit.INCH, result.getX(), result.getY(), limelight3d.z, 0);
+//            return limelight3d;
         }
         return null;
     }

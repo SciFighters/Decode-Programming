@@ -254,7 +254,11 @@ public class CarouselCommands {
 
         @Override
         public void execute() {
-            carouselSubsystem.setSpinPower(power);
+            if (carouselSubsystem.getCurrent() > 5.3) {
+                carouselSubsystem.setSpinPower(-power);
+            } else {
+                carouselSubsystem.setSpinPower(power);
+            }
         }
 
         @Override
@@ -285,7 +289,7 @@ public class CarouselCommands {
                         new SequentialCommandGroup(
 //                                new WaitCommand(1000),
                                 new IntakeCommands.SemiTransferState(intakeSubsystem),
-                                new SlideDistance(carouselSubsystem,0.8, transferSpeed),
+                                new SlideDistance(carouselSubsystem, 0.8, transferSpeed),
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
                                 new IntakeCommands.TransferState(intakeSubsystem),
                                 new WaitCommand(150),
@@ -295,7 +299,7 @@ public class CarouselCommands {
                                 new WaitCommand(150),
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
 //                                new WaitCommand((far) ? 450: 150),
-                                new SlideDistance(carouselSubsystem,1,transferSpeed)
+                                new SlideDistance(carouselSubsystem, 1, transferSpeed)
                         ));
                 put(Position.LEFT,
                         new SequentialCommandGroup(

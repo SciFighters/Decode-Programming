@@ -95,9 +95,6 @@ public class DischargeCommands {
             this.carouselSubsystem = carouselSubsystem;
             this.mecanumDrive = mecanumDrive;
             this.teamColor = teamColor;
-//            this.flyWheelPower = flyWheelPower;
-//            this.turretPower = turretPower;
-//            this.rampDegree = rampDegree;
             addRequirements(dischargeSubsystem);
         }
 
@@ -106,7 +103,7 @@ public class DischargeCommands {
             mecanumToTurret = new com.seattlesolvers.solverslib.geometry.Vector2d(1.5748,0).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
             currentPos = mecanumDrive.localizer.getPose();
             aimTurret();
-            if (AutoShooter.canLaunch(new Pose2d(new Vector2d(currentPos.position.x + mecanumToTurret.getX(), currentPos.position.y + mecanumToTurret.getY()) ,currentPos.heading.toDouble())) || shooting) {
+            if (AutoShooter.canLaunch(new Pose2d(new Vector2d(LimelightCommands.KalmanFilter.position.getX() + mecanumToTurret.getX(), LimelightCommands.KalmanFilter.position.getY() + mecanumToTurret.getY()) ,currentPos.heading.toDouble())) || shooting) {
                 double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
                 dischargeSubsystem.setRampDegree(launchVector[0]);
                 dischargeSubsystem.setFlyWheelRPM(launchVector[1]);
@@ -122,7 +119,7 @@ public class DischargeCommands {
             double mecanumSpeed = mecanumDrive.localizer.update().angVel;
 
             launchAngle =
-                    (AutoShooter.getLaunchAngle(new Pose2d(new Vector2d(currentPos.position.x + mecanumToTurret.getX(), currentPos.position.y + mecanumToTurret.getY()), mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360) % 360;
+                    (AutoShooter.getLaunchAngle(new Pose2d(new Vector2d(LimelightCommands.KalmanFilter.position.getX() + mecanumToTurret.getX(), LimelightCommands.KalmanFilter.position.getY() + mecanumToTurret.getY()), mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360) % 360;
             double power = 0;
             power = -(launchAngle - dischargeSubsystem.getTurretAngle()) * kp;
             power += mecanumSpeed * kv;

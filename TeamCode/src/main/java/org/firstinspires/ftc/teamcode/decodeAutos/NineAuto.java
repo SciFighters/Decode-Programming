@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
+import org.firstinspires.ftc.teamcode.decodeCommands.LimelightCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -57,7 +58,7 @@ public class NineAuto extends ActionOpMode {
 //                .waitSeconds(1)
                 .setTangent(Math.PI * 3 / 18)
                 .splineToConstantHeading(new Vector2d(-11, 54), Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(-11, 54.1, Math.PI / 2), -Math.PI / 2)
+//                .splineToSplineHeading(new Pose2d(-11, 54.1, Math.PI / 2), -Math.PI / 2)
                 .setTangent(-Math.PI / 2)
                 .splineToLinearHeading(new Pose2d(-12, 14, Math.PI * 3 / 4), -Math.PI / 2);
 
@@ -75,6 +76,7 @@ public class NineAuto extends ActionOpMode {
                 .splineToLinearHeading(new Pose2d(0,30,Math.PI / 2),Math.PI/2);
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
+                        new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle),
                         new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
                         new SequentialCommandGroup(
                                 new ActionCommand(wheatleyAutoOne.build(), requirements),

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.decodeOpModes;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
@@ -14,7 +13,9 @@ import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.seattlesolvers.solverslib.geometry.Vector2d;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.decodeCommands.CarouselCommands;
@@ -83,18 +84,15 @@ public class WheatleyOpMode extends ActionOpMode {
 
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
         driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
-        limelightSubsystem.startLimelight();
         mecanumDrive.lazyImu.get().resetYaw();
         systemB.whenPressed(() -> carouselSubsystem.artifactsInGoal = (carouselSubsystem.artifactsInGoal + 1) % 3);
         systemA.whenPressed(() -> carouselSubsystem.resetEncoders());
+        schedule(new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle, SavedValues.covariances.getX(),SavedValues.covariances.getY()));
     }
 
     @Override
     public void run() {
-        mecanumDrive.updatePoseEstimate();
         super.run();
-
-        multipleTelemetry.addData("llPos",limelightSubsystem.getRobotPosMT2(dischargeSubsystem.getTurretAngle()));
         multipleTelemetry.addData("current", carouselSubsystem.getCurrent());
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
         multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
@@ -104,7 +102,7 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addData("carouselPosition", carouselSubsystem.getPosition());
         multipleTelemetry.addData("kalmanPos", LimelightCommands.KalmanFilter.position);
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
-        multipleTelemetry.addData("fkyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
+        multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
         multipleTelemetry.update();
     }
 
@@ -114,6 +112,7 @@ public class WheatleyOpMode extends ActionOpMode {
         limelightSubsystem.stopLimelight();
         SavedValues.position = new Pose2d(63, 0, Math.PI);
         SavedValues.carouselTicks = 0;
+        SavedValues.covariances = new Vector2d(0,0);
 
     }
 

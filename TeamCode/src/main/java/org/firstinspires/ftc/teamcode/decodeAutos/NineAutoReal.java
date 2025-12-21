@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 
 import java.util.HashSet;
 import java.util.Set;
-@Autonomous(name = "nineAuto")
+@Autonomous(name = "9 red")
 public class NineAutoReal extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;

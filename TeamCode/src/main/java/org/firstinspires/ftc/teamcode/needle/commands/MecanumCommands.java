@@ -28,13 +28,13 @@ public class MecanumCommands {
             this.boost = () -> 1.0;
             addRequirements(mecanumDrive);
         }
-        public Drive(MecanumDrive mecanumDrive, Supplier<Double> x, Supplier<Double> y, Supplier<Double> r, AutoShooter.TeamColor teamColor) {
+        public Drive(MecanumDrive mecanumDrive, Supplier<Double> x, Supplier<Double> y, Supplier<Double> r, Supplier<Double> boost,AutoShooter.TeamColor teamColor) {
 
             this.mecanumDrive = mecanumDrive;
             this.x = x;
             this.y = y;
             this.r = r;
-            this.boost = () ->1.0;
+            this.boost = boost;
             this.teamColor = teamColor;
             addRequirements(mecanumDrive);
         }

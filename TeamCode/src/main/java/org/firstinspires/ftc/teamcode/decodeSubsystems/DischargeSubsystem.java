@@ -39,6 +39,10 @@ public class DischargeSubsystem extends SubsystemBase {
     }
 
     public void setFlyWheelRPM(double rpm) {
+        if(Math.abs(rpm) < 200){
+            flyWheelMotor.set(0);
+            return;
+        }
         double currentRPM = flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60;
         if(currentRPM < rpm){
             flyWheelMotor.set(1);

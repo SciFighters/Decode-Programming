@@ -10,10 +10,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.decodeCommands.CarouselCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.LimelightCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -63,7 +63,7 @@ public class WheatleyOpMode extends ActionOpMode {
         system = new GamepadEx(gamepad2);
         initButtons();
 
-        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(), teamColor));
+        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(), () -> 1 - 0.5 * gamepad1.right_trigger, teamColor));
         dischargeSubsystem.setDefaultCommand(new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, teamColor));
         driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem));
         driverB.whenPressed(new SequentialCommandGroup(
@@ -78,8 +78,11 @@ public class WheatleyOpMode extends ActionOpMode {
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
         driverRightBumper.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
         mecanumDrive.lazyImu.get().resetYaw();
-        systemDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.correction += 2);
-        systemDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.correction -= 2);
+        systemDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);
+        systemDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection -= 2);
+        systemDPadUp.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection += 25);
+        systemDPadDown.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection -= 25);
+//        systemLeftStick.whenPressed(new CarouselCommands.SafeSlide(carouselSubsystem,intakeSubsystem,0.3,0.8));
 //        systemB.whenPressed(() -> carouselSubsystem.artifactsInGoal = (carouselSubsystem.artifactsInGoal + 1) % 3);
 //        systemA.whenPressed(() -> carouselSubsystem.resetEncoders());
 //        schedule(new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle, SavedValues.covariances.getX(),SavedValues.covariances.getY()));
@@ -105,7 +108,7 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
         multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
-        multipleTelemetry.addData("correction",DischargeCommands.AutomaticAiming.correction);
+        multipleTelemetry.addData("correction",DischargeCommands.AutomaticAiming.turretCorrection);
         multipleTelemetry.update();
     }
 

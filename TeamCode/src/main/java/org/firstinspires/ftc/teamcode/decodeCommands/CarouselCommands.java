@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.decodeCommands;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.SelectCommand;
@@ -272,7 +273,7 @@ public class CarouselCommands {
             if (distanceSupplier != null) {
                 distance = Math.min(distanceSupplier.get() + 0.55, -0.03);
             }
-            moveDirection = (int)Math.signum(distance);
+            moveDirection = (int) Math.signum(distance);
             targetPos = (carouselSubsystem.getPosition() + distance * carouselSubsystem.spinConversion);
         }
 
@@ -296,6 +297,67 @@ public class CarouselCommands {
         }
     }
 
+    public static class SafeSlide extends CommandBase {
+        private final CarouselSubsystem carouselSubsystem;
+        private final IntakeSubsystem intakeSubsystem;
+        private double targetPos;
+        double power;
+        double distance;
+        ElapsedTime time;
+        double startTime = -1;
+        boolean exit = false;
+
+        public SafeSlide(CarouselSubsystem carouselSubsystem, IntakeSubsystem intakeSubsystem, double distance, double power) {//distance in thirds
+            this.carouselSubsystem = carouselSubsystem;
+            this.intakeSubsystem = intakeSubsystem;
+            this.power = power;
+            this.distance = distance;
+            time = new ElapsedTime();
+            addRequirements(carouselSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            exit = false;
+            time.reset();
+            targetPos = (carouselSubsystem.getPosition() + distance * carouselSubsystem.spinConversion);
+        }
+
+        @Override
+        public void execute() {
+            if (carouselSubsystem.getCurrent() > 5) {
+                if(exit){
+                    carouselSubsystem.setSpinPower(-power);
+                }
+                if(startTime == -1){
+                    startTime = time.seconds();
+                }
+//                carouselSubsystem.setSpinPower(-power);
+                if(startTime != 0 && time.seconds() - startTime > 0.6){
+                    carouselSubsystem.setSpinPower(-power);
+                    intakeSubsystem.setPower(-0.7);
+                    intakeSubsystem.setPosition(1);
+                    exit = true;
+                }
+            } else {
+                carouselSubsystem.setSpinPower(power);
+                startTime = -1;
+            }
+        }
+
+        @Override
+        public boolean isFinished() {
+            return carouselSubsystem.getPosition()  > targetPos;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            carouselSubsystem.setSpinPower(0);
+//            intakeSubsystem.setPower(1);
+//            intakeSubsystem.setPosition(0);
+        }
+    }
+
     public static class SmartDischarge extends SelectCommand {
         private static final double transferSpeed = 0.7, travelSpeed = 1;
 
@@ -312,6 +374,9 @@ public class CarouselCommands {
                 put(Position.MIDDLE,
                         new SequentialCommandGroup(
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+//                                new CarouselCommands.SafeSlide(carouselSubsystem,intakeSubsystem,0.3,0.8),
+                                new IntakeCommands.TransferState(intakeSubsystem),
+//                                new WaitCommand(300),
                                 new SlideDistance(carouselSubsystem, 0.8, transferSpeed),
 //                                new SlideDistance(carouselSubsystem,0.5,transferSpeed),
 

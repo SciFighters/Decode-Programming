@@ -78,7 +78,7 @@ public class FifteenAutoBlue extends ActionOpMode {
 
         TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-6, -16, -Math.PI / 2))
                 .setTangent(-Math.PI * 3 / 8)
-                .splineToConstantHeading(new Vector2d(0, -44), Math.PI / 2);
+                .splineToConstantHeading(new Vector2d(0, -40), Math.PI / 2);
 
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(

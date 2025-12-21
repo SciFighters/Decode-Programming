@@ -87,7 +87,7 @@ public class DischargeCommands {
         private com.seattlesolvers.solverslib.geometry.Vector2d mecanumToTurret;
         private Pose2d currentPos;
         public static boolean aim = true;
-        public static double correction = 0;
+        public static double turretCorrection = 0, rpmCorrection = 0;
 
         public AutomaticAiming(DischargeSubsystem dischargeSubsystem, LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, CarouselSubsystem carouselSubsystem, AutoShooter.TeamColor teamColor) {
             this.dischargeSubsystem = dischargeSubsystem;
@@ -96,6 +96,13 @@ public class DischargeCommands {
             this.mecanumDrive = mecanumDrive;
             this.teamColor = teamColor;
             addRequirements(dischargeSubsystem);
+
+        }
+
+        @Override
+        public void initialize() {
+            turretCorrection = 0;
+            rpmCorrection = 0;
         }
 
         @Override
@@ -110,7 +117,7 @@ public class DischargeCommands {
                         mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY()), currentPos.heading.toDouble())) || shooting) {
                     double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
                     dischargeSubsystem.setRampDegree(launchVector[0]);
-                    dischargeSubsystem.setFlyWheelRPM(launchVector[1]);
+                    dischargeSubsystem.setFlyWheelRPM(launchVector[1] + rpmCorrection);
                     atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 40;
                 } else {
                     dischargeSubsystem.setFlyWheelRPM(0);
@@ -132,7 +139,7 @@ public class DischargeCommands {
             launchAngle =
                     (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),
                             mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY(),
-                            mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360 + correction) % 360;
+                            mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360 + turretCorrection) % 360;
 
             double power;
 //            if (limelightSubsystem.getTx() != 0 && dischargeSubsystem.getTurretAngle() < 355 && dischargeSubsystem.getTurretAngle() > 5){

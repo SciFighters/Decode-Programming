@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.decodeAutos;
+package org.firstinspires.ftc.teamcode.decodeAutos.old;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -10,7 +10,6 @@ import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.Subsystem;
-import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionCommand;
@@ -18,7 +17,6 @@ import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.LimelightCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -30,7 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 @Disabled
 @Autonomous
-public class NineAuto extends ActionOpMode {
+public class NineAutoOld extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
     CarouselSubsystem carouselSubsystem;

@@ -28,8 +28,8 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import java.util.HashSet;
 import java.util.Set;
 
-@Autonomous
-public class TwelveAuto extends ActionOpMode {
+@Autonomous(name = "12 blue close",group = "blue close")
+public class TwelveAutoBlueClose extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
     CarouselSubsystem carouselSubsystem;
@@ -39,6 +39,7 @@ public class TwelveAuto extends ActionOpMode {
 
     @Override
     public void initialize() {
+        SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
         Set<Subsystem> requirements = new HashSet<>();
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
@@ -71,8 +72,8 @@ public class TwelveAuto extends ActionOpMode {
                 .setTangent(0)
                 .splineToConstantHeading(new Vector2d(36, 48), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-6, 16), -Math.PI * 3 / 4);
-        TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-6, 16, Math.PI / 2), reversed)
-                .splineToConstantHeading(new Vector2d(0, 48), Math.PI / 2);
+        TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-6, -16, -Math.PI / 2))
+                .splineToConstantHeading(new Vector2d(0, -40), -Math.PI / 2);
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
 //                        new LimelightCommands.KalmanFilter(limelightSubsystem, mecanumDrive, dischargeSubsystem::getTurretAngle),

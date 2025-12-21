@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter.TeamColor;
 import java.util.List;
 
 public class LimelightSubsystem extends SubsystemBase {
-    private final double metersToInch = 39.3700787;
+    public final double metersToInch = 39.3700787;
     public TeamColor color;
     public Vector2d initialLimelightPos = new Vector2d(1.5748,0); //TODO:change
     public Vector2d limelightByTurret = new Vector2d(-5.6868, 0);//y: 2.6454415267717

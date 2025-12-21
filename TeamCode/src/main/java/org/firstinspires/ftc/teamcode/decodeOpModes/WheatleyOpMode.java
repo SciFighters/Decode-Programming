@@ -1,24 +1,15 @@
 package org.firstinspires.ftc.teamcode.decodeOpModes;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.qualcomm.robotcore.util.Range;
-import com.seattlesolvers.solverslib.command.Command;
-import com.seattlesolvers.solverslib.command.CommandScheduler;
-import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
-import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.seattlesolvers.solverslib.geometry.Vector2d;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.decodeCommands.CarouselCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
@@ -31,7 +22,6 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
-import org.opencv.video.KalmanFilter;
 
 @TeleOp
 public class WheatleyOpMode extends ActionOpMode {
@@ -60,10 +50,10 @@ public class WheatleyOpMode extends ActionOpMode {
     @Override
     public void initialize() {
         teamColor = SavedValues.teamColor;
+
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
-//        carouselSubsystem.setTicks(SavedValues.carouselTicks);
 
         mecanumDrive = new MecanumDrive(hardwareMap, SavedValues.position);
 
@@ -76,43 +66,56 @@ public class WheatleyOpMode extends ActionOpMode {
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(), teamColor));
         dischargeSubsystem.setDefaultCommand(new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, teamColor));
         driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem));
-        driverB.whenPressed(new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, teamColor));
-        driverBack.whenPressed(new InstantCommand(() -> mecanumDrive.localizer.setPose(new Pose2d(mecanumDrive.localizer.getPose().position, Math.PI))));
+        driverB.whenPressed(new SequentialCommandGroup(
+                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, teamColor),
+                new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem).withTimeout(800)));
+//        driverBack.whenPressed(new InstantCommand(() -> mecanumDrive.localizer.setPose(new Pose2d(mecanumDrive.localizer.getPose().position, Math.PI))));
         driverX.whenPressed(new SequentialCommandGroup(
                 new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(800)));
+        driverDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.aim = !DischargeCommands.AutomaticAiming.aim);
 
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
-        driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
+        driverRightBumper.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
         mecanumDrive.lazyImu.get().resetYaw();
-        systemB.whenPressed(() -> carouselSubsystem.artifactsInGoal = (carouselSubsystem.artifactsInGoal + 1) % 3);
-        systemA.whenPressed(() -> carouselSubsystem.resetEncoders());
-        schedule(new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle, SavedValues.covariances.getX(),SavedValues.covariances.getY()));
+        systemDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.correction += 2);
+        systemDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.correction -= 2);
+//        systemB.whenPressed(() -> carouselSubsystem.artifactsInGoal = (carouselSubsystem.artifactsInGoal + 1) % 3);
+//        systemA.whenPressed(() -> carouselSubsystem.resetEncoders());
+//        schedule(new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle, SavedValues.covariances.getX(),SavedValues.covariances.getY()));
     }
 
     @Override
     public void run() {
+        mecanumDrive.updatePoseEstimate();
+
+        if(gamepad1.start && gamepad1.x){
+            mecanumDrive.localizer.setPose(new Pose2d(mecanumDrive.localizer.getPose().position,0));
+        }
         super.run();
+        multipleTelemetry.addLine("Position");
+        multipleTelemetry.addData("X", mecanumDrive.localizer.getPose().position.x);
+        multipleTelemetry.addData("Y", mecanumDrive.localizer.getPose().position.y);
+        multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
+        multipleTelemetry.addLine("Carousel");
         multipleTelemetry.addData("current", carouselSubsystem.getCurrent());
-        multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
-        multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
-        multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
-        multipleTelemetry.addData("angle", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
         multipleTelemetry.addData("carouselAngle", carouselSubsystem.getAngle());
         multipleTelemetry.addData("carouselPosition", carouselSubsystem.getPosition());
-        multipleTelemetry.addData("kalmanPos", LimelightCommands.KalmanFilter.position);
+        multipleTelemetry.addLine("Discharge");
+        multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
         multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
+        multipleTelemetry.addData("correction",DischargeCommands.AutomaticAiming.correction);
         multipleTelemetry.update();
     }
 
     @Override
     public void end() {
-        carouselSubsystem.resetEncoders();
+//        carouselSubsystem.resetEncoders();
         limelightSubsystem.stopLimelight();
-        SavedValues.position = new Pose2d(63, 0, Math.PI);
-        SavedValues.carouselTicks = 0;
-        SavedValues.covariances = new Vector2d(0,0);
+//        SavedValues.position = new Pose2d(63, 0, Math.PI);
+//        SavedValues.carouselTicks = 0;
+//        SavedValues.covariances = new Vector2d(0,0);
 
     }
 

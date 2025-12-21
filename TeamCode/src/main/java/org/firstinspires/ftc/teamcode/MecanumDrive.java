@@ -30,6 +30,8 @@ import com.acmerobotics.roadrunner.ftc.LynxFirmware;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
+import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
@@ -64,10 +66,9 @@ public final class MecanumDrive extends SubsystemBase {
                 RevHubOrientationOnRobot.LogoFacingDirection.UP;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-
         // drive model parameters
-        public double inPerTick = 0.00197805717;
-        public double lateralInPerTick =  0.0013678570914981494;
+        public double inPerTick = 0.00197416797; //0.001978956 , 0.00197416797
+        public double lateralInPerTick =  0.0015432081508325105;//0.0013678570914981494, 0.0015432081508325105
         public double trackWidthTicks = 6479.276782546479;
 
         // feedforward parameters (in tick units)
@@ -108,6 +109,10 @@ public final class MecanumDrive extends SubsystemBase {
             ));
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
+
+    Servo leftPTO, rightPTO;
+
+    private final double leftPTOPos = 0.85, rightPTOPos = 0, leftDrivePos = 0, rightDrivePos = 1;
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
@@ -225,7 +230,8 @@ public final class MecanumDrive extends SubsystemBase {
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-
+        leftPTO = hardwareMap.get(Servo.class, "leftPTO");
+        rightPTO = hardwareMap.get(Servo.class, "rightPTO");
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -269,34 +275,34 @@ public final class MecanumDrive extends SubsystemBase {
         rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
     }
 
-    public double[] getRawValues(){
+    public double[] getRawValues() {
         if (localizer instanceof PinpointLocalizer)
-            return ((PinpointLocalizer)localizer).getRawValues();
+            return ((PinpointLocalizer) localizer).getRawValues();
         return null;
     }
 
-    public void resetPosAndIMU(){
-        if(localizer instanceof PinpointLocalizer){
-            ((PinpointLocalizer)localizer).resetPosAndIMU();
+    public void resetPosAndIMU() {
+        if (localizer instanceof PinpointLocalizer) {
+            ((PinpointLocalizer) localizer).resetPosAndIMU();
         }
     }
 
-    public void resetAngle(){
-        if(localizer instanceof PinpointLocalizer){
-            ((PinpointLocalizer)localizer).setPose(new Pose2d(new Vector2d(localizer.getPose().position.x,localizer.getPose().position.y), new Rotation2d(0,0)));
+    public void resetAngle() {
+        if (localizer instanceof PinpointLocalizer) {
+            ((PinpointLocalizer) localizer).setPose(new Pose2d(new Vector2d(localizer.getPose().position.x, localizer.getPose().position.y), new Rotation2d(0, 0)));
         }
     }
 
-    public GoBildaPinpointDriver.DeviceStatus getStatus(){
-        if(localizer instanceof PinpointLocalizer){
-            return ((PinpointLocalizer)localizer).getStatus();
+    public GoBildaPinpointDriver.DeviceStatus getStatus() {
+        if (localizer instanceof PinpointLocalizer) {
+            return ((PinpointLocalizer) localizer).getStatus();
         }
         return null;
     }
 
-    public double getFreq(){
-        if(localizer instanceof PinpointLocalizer){
-            return ((PinpointLocalizer)localizer).getFreq();
+    public double getFreq() {
+        if (localizer instanceof PinpointLocalizer) {
+            return ((PinpointLocalizer) localizer).getFreq();
         }
         return 0;
     }
@@ -488,14 +494,14 @@ public final class MecanumDrive extends SubsystemBase {
     public PoseVelocity2d updatePoseEstimate() {
         PoseVelocity2d vel = localizer.update();
         poseHistory.add(localizer.getPose());
-        
+
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
 
         estimatedPoseWriter.write(new PoseMessage(localizer.getPose()));
-        
-        
+
+
         return vel;
     }
 
@@ -531,10 +537,11 @@ public final class MecanumDrive extends SubsystemBase {
                 defaultVelConstraint, defaultAccelConstraint
         );
     }
+
     public TrajectoryActionBuilder actionBuilder(Pose2d beginPose, boolean reversed) {
-        PoseMap poseMap =  p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.inverse());//the heading.inverse() might be wrong
-        if(reversed){
-            localizer.setPose(new Pose2d(localizer.getPose().position.x, -localizer.getPose().position.y,-localizer.getPose().heading.toDouble()));
+        PoseMap poseMap = p -> new Pose2dDual<>(p.position.x, p.position.y.unaryMinus(), p.heading.inverse());//the heading.inverse() might be wrong
+        if (reversed) {
+            localizer.setPose(new Pose2d(localizer.getPose().position.x, -localizer.getPose().position.y, -localizer.getPose().heading.toDouble()));
             return new TrajectoryActionBuilder(
                     TurnAction::new,
                     FollowTrajectoryAction::new,
@@ -551,5 +558,15 @@ public final class MecanumDrive extends SubsystemBase {
             );
         }
         return actionBuilder(beginPose);
+    }
+
+    public void driveMode() {
+        leftPTO.setPosition(leftDrivePos);
+        rightPTO.setPosition(rightDrivePos);
+    }
+
+    public void PTOMode() {
+        leftPTO.setPosition(leftPTOPos);
+        rightPTO.setPosition(rightPTOPos);
     }
 }

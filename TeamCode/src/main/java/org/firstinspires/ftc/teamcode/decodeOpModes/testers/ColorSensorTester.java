@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 
-@TeleOp
+@TeleOp(group = "tests")
 public class ColorSensorTester extends ActionOpMode {
     ColorSensor left, right, middle;
 

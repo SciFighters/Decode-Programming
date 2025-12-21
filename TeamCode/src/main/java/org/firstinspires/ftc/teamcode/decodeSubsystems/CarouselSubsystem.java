@@ -8,6 +8,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.jetbrains.annotations.Nullable;
 
 public class CarouselSubsystem extends SubsystemBase {
     private final DcMotorEx carouselMotor;
@@ -17,7 +18,7 @@ public class CarouselSubsystem extends SubsystemBase {
     // calculation for a third of a spin knowing the amount of ticks per revolution
     public ColorSensor leftColorSensor, rightColorSensor, middleColorSensor;
     public final double transferSpeed = 0.3, travelSpeed = 0.6;
-    public int artifactsInGoal = 0;
+
     public int startingTicks = 0;
 
     public CarouselSubsystem(HardwareMap hm) {
@@ -30,7 +31,8 @@ public class CarouselSubsystem extends SubsystemBase {
         rightColorSensor = hm.get(ColorSensor.class, "rightColorSensor");
         middleColorSensor = hm.get(ColorSensor.class, "middleColorSensor");
     }
-    public void resetEncoders(){
+
+    public void resetEncoders() {
         carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -42,7 +44,8 @@ public class CarouselSubsystem extends SubsystemBase {
     public int getPosition() {
         return carouselMotor.getCurrentPosition() + startingTicks;
     }
-    public void setTicks(int ticks){
+
+    public void setTicks(int ticks) {
         startingTicks = ticks;
     }
 
@@ -66,23 +69,23 @@ public class CarouselSubsystem extends SubsystemBase {
                 colorIdentifier(rightColorSensor) != SensorColors.Unknown &&
                 colorIdentifier(middleColorSensor) != SensorColors.Unknown);
     }
-    public int getGreenPlacement(){//0 is first one
-        if(colorIdentifier(leftColorSensor) == SensorColors.Green){
-            return artifactsInGoal % 3;
+
+    public int getGreenPlacement() {//0 is first one
+        if (colorIdentifier(rightColorSensor) == SensorColors.Green) {
+            return 0;
         } else if (colorIdentifier(middleColorSensor) == SensorColors.Green) {
-            return (1 + artifactsInGoal) % 3;
-        }  else if (colorIdentifier(rightColorSensor) == SensorColors.Green) {
-            return (2 + artifactsInGoal) % 3;
+            return 1;
+        } else if (colorIdentifier(leftColorSensor) == SensorColors.Green) {
+            return 2;
         }
         return -1;
     }
 
     public static SensorColors colorIdentifier(ColorSensor colorSensor) {
-        int red = colorSensor.red();
         int green = colorSensor.green();
         int blue = colorSensor.blue();
 
-        if (green + blue > 200 * 2) {
+        if (green + blue > 220) {
             if (green > blue) {
                 return SensorColors.Green;
             }

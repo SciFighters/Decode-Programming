@@ -13,12 +13,12 @@ public class ServoTester extends ActionOpMode {
     Servo servo1, servo2;
     GamepadEx gamepad;
     GamepadButton A, B, Y, X;
-    double pos = 0;
+    double pos = 0.5;
 
     @Override
     public void initialize() {
-        servo1 = hardwareMap.servo.get("rightIntake");
-        servo2 = hardwareMap.servo.get("leftIntake");
+//        servo1 = hardwareMap.servo.get("leftPTO");
+        servo2 = hardwareMap.servo.get("leftPTO");
         gamepad = new GamepadEx(gamepad1);
         A = new GamepadButton(gamepad, GamepadKeys.Button.A);
         Y = new GamepadButton(gamepad, GamepadKeys.Button.Y);
@@ -34,8 +34,8 @@ public class ServoTester extends ActionOpMode {
     @Override
     public void run() {
         super.run();
-        servo1.setPosition(pos);
-        servo2.setPosition(1 - pos);
+//        servo1.setPosition(pos);
+        servo2.setPosition(pos);
         multipleTelemetry.addData("pos", pos);
         multipleTelemetry.update();
     }

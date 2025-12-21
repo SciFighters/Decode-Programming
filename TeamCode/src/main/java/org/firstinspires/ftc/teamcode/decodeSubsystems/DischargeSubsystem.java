@@ -23,27 +23,37 @@ public class DischargeSubsystem extends SubsystemBase {
     double integral;
 
     public DischargeSubsystem(HardwareMap hm) {
-        flyWheelMotor = new MotorEx(hm,"flyWheelMotor", Motor.GoBILDA.BARE);
+        flyWheelMotor = new MotorEx(hm, "flyWheelMotor", Motor.GoBILDA.BARE);
         turretMotor = hm.get(DcMotorEx.class, "turretMotor");
-        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rampServo = hm.get(Servo.class, "rampServo");
         startAngle = 180;
         integral = 0;
+    }
+    public void resetTurret(){
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setFlyWheelPower(double flyWheelPower) {
         flyWheelMotor.set(flyWheelPower);
     }
-    public void setFlyWheelRPM(double rpm){
+
+    public void setFlyWheelRPM(double rpm) {
         double currentRPM = flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60;
-        integral += (rpm - currentRPM) * kI;
-        integral = Range.clip(integral,-0.1,0.1);
-        flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm + kP * (rpm - flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60) + integral);
+        if(currentRPM < rpm){
+            flyWheelMotor.set(1);
+        }else{
+            flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.035);
+        }
+//        integral += (rpm - currentRPM) * kI;
+//        integral = Range.clip(integral, -0.1, 0.1);
+//        flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm + kP * (rpm - flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60) + integral);
     }
-    public double getRPM(){
+
+    public double getRPM() {
         return flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60;
     }
+
     public void setTurretPower(double turretPower) {
         turretMotor.setPower(turretPower);
     }
@@ -52,15 +62,18 @@ public class DischargeSubsystem extends SubsystemBase {
         return turretMotor.getCurrentPosition();
 //        return 0;
     }
-    public double getTurretAngle(){
+
+    public double getTurretAngle() {
         return 360 - (turretMotor.getCurrentPosition() / ticksPerDegree + startAngle);
 //        return 0;
     }
-    public double getRPS(){
+
+    public double getRPS() {
         return turretMotor.getVelocity(AngleUnit.RADIANS) / 3.96;
     }
+
     public void setRampDegree(double rampDegree) {
-        double pos = (73 - rampDegree)/(38.87);
+        double pos = (73 - rampDegree) / (38.87);
 //        double pos = -(34.13 - rampDegree)/(38.87);
         rampServo.setPosition(pos);
     }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.decodeAutos;
+package org.firstinspires.ftc.teamcode.decodeAutos.old;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -6,10 +6,12 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+@Disabled
 @Autonomous(name = "15 far")
 public class fifteenAuto extends LinearOpMode {
     FtcDashboard dashboard = FtcDashboard.getInstance();

@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.decodeCommands;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Twist2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -88,6 +86,8 @@ public class DischargeCommands {
         public static double kv = 0.12, ks = 0.055;
         private com.seattlesolvers.solverslib.geometry.Vector2d mecanumToTurret;
         private Pose2d currentPos;
+        public static boolean aim = true;
+        public static double correction = 0;
 
         public AutomaticAiming(DischargeSubsystem dischargeSubsystem, LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, CarouselSubsystem carouselSubsystem, AutoShooter.TeamColor teamColor) {
             this.dischargeSubsystem = dischargeSubsystem;
@@ -100,44 +100,50 @@ public class DischargeCommands {
 
         @Override
         public void execute() {
-            mecanumToTurret = new com.seattlesolvers.solverslib.geometry.Vector2d(1.5748,0).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
-            currentPos = mecanumDrive.localizer.getPose();
-            aimTurret();
-            if (AutoShooter.canLaunch(new Pose2d(new Vector2d(LimelightCommands.KalmanFilter.position.getX() + mecanumToTurret.getX(), LimelightCommands.KalmanFilter.position.getY() + mecanumToTurret.getY()) ,currentPos.heading.toDouble())) || shooting) {
-                double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
-                dischargeSubsystem.setRampDegree(launchVector[0]);
-                dischargeSubsystem.setFlyWheelRPM(launchVector[1]);
-                atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 150;
-            } else {
-                dischargeSubsystem.setFlyWheelRPM(0);
-                atSpeed = false;
+            if(aim){
+                mecanumToTurret = new com.seattlesolvers.solverslib.geometry.Vector2d(1.5748, 0).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
+                currentPos = mecanumDrive.localizer.getPose();
+
+                aimTurret();
+
+                if (AutoShooter.canLaunch(new Pose2d(new Vector2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),
+                        mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY()), currentPos.heading.toDouble())) || shooting) {
+                    double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
+                    dischargeSubsystem.setRampDegree(launchVector[0]);
+                    dischargeSubsystem.setFlyWheelRPM(launchVector[1]);
+                    atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 40;
+                } else {
+                    dischargeSubsystem.setFlyWheelRPM(0);
+                    atSpeed = false;
+                }
+            }
+            else {
+                dischargeSubsystem.setRampDegree(40);
+                dischargeSubsystem.setFlyWheelRPM(2600);
+                atSpeed = true;
             }
 
         }
 
         private void aimTurret() {
+//            double pixelError = limelightSubsystem.getTx();
             double mecanumSpeed = mecanumDrive.localizer.update().angVel;
 
             launchAngle =
-                    (AutoShooter.getLaunchAngle(new Pose2d(new Vector2d(LimelightCommands.KalmanFilter.position.getX() + mecanumToTurret.getX(), LimelightCommands.KalmanFilter.position.getY() + mecanumToTurret.getY()), mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360) % 360;
-            double power = 0;
+                    (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),
+                            mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY(),
+                            mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360 + correction) % 360;
+
+            double power;
+//            if (limelightSubsystem.getTx() != 0 && dischargeSubsystem.getTurretAngle() < 355 && dischargeSubsystem.getTurretAngle() > 5){
+//                power = limelightSubsystem.getTx() * kp;
+//            } else{
             power = -(launchAngle - dischargeSubsystem.getTurretAngle()) * kp;
+//            }
             power += mecanumSpeed * kv;
             power += Math.signum(power) * ks;
-            power = Range.clip(power, -0.75, 0.75);
             dischargeSubsystem.setTurretPower(power);
-//            com.seattlesolvers.solverslib.geometry.Vector2d pos =
-//                    limelightSubsystem.getRobotPos(mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI, dischargeSubsystem.getTurretAngle());
-//            double launchAngle =
-//                    AutoShooter.getLaunchAngle(new Pose2d(pos.getX(), pos.getY(), mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw() / 180 * Math.PI), AutoShooter.TeamColor.RED);
-//            if (pos.getX() < 1000) {
-//                double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle()) * 0.028;
-//                power += Math.signum(power) * 0.04;
-//                power = Range.clip(power,-0.4,0.4);
-//                dischargeSubsystem.setTurretPower(power);
-//            } else {
-//                dischargeSubsystem.setTurretPower(0);
-//            }
+
 
         }
     }

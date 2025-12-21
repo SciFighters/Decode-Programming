@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 
 public class IntakeCommands {
 
+
     public static class IntakeState extends CommandBase {
         IntakeSubsystem intakeSubsystem;
 
@@ -46,6 +47,7 @@ public class IntakeCommands {
             return true;
         }
     }
+
     public static class SemiTransferState extends CommandBase {
         IntakeSubsystem intakeSubsystem;
 
@@ -87,6 +89,7 @@ public class IntakeCommands {
         }
 
     }
+
     public static class OutTakeState extends CommandBase {
         IntakeSubsystem intakeSubsystem;
 
@@ -109,5 +112,51 @@ public class IntakeCommands {
 
     }
 
+    public static class PreSortingState extends CommandBase {
+        IntakeSubsystem intakeSubsystem;
+
+        public PreSortingState(IntakeSubsystem intakeSubsystem) {
+            this.intakeSubsystem = intakeSubsystem;
+            addRequirements(intakeSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            intakeSubsystem.setPower(0);
+            intakeSubsystem.setPosition(0);
+        }
+
+
+        @Override
+        public boolean isFinished() {
+            return true;
+        }
+    }
+
+    public static class SortingState extends CommandBase {
+        IntakeSubsystem intakeSubsystem;
+
+        public SortingState(IntakeSubsystem intakeSubsystem) {
+            this.intakeSubsystem = intakeSubsystem;
+            addRequirements(intakeSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            intakeSubsystem.setPower(1);
+            intakeSubsystem.setPosition(0.6);
+        }
+
+        @Override
+        public void execute() {
+            super.execute();
+            if (intakeSubsystem.getCurrent() > 4.5) {
+                intakeSubsystem.setPower(-1);
+            } else {
+                intakeSubsystem.setPower(1);
+            }
+        }
+
+    }
 
 }

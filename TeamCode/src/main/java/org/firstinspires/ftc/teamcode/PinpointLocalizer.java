@@ -17,8 +17,8 @@ import java.util.Objects;
 @Config
 public final class PinpointLocalizer implements Localizer {
     public static class Params {
-        public double parYTicks = 2716.3819195794263; // y position of the parallel encoder (in tick units)
-        public double perpXTicks = -2113.441366868997; // x position of the perpendicular encoder (in tick units)
+        public double parYTicks = 2596.21501215 ; // y position of the parallel encoder (in tick units)   X   2596.21501215
+        public double perpXTicks = -1962.57939424; // x position of the perpendicular encoder (in tick units)  Y -2113.441366868997, -1962.57939424
 
     }
 
@@ -49,8 +49,8 @@ public final class PinpointLocalizer implements Localizer {
         driver.setEncoderDirections(initialParDirection, initialPerpDirection);
 
         driver.resetPosAndIMU();
-        driver.recalibrateIMU();
-
+//        driver.recalibrateIMU();
+//        driver.setYawScalar(driver.getYawScalar() * 360.682 / 360);
         txWorldPinpoint = initialPose;
     }
 
@@ -63,6 +63,7 @@ public final class PinpointLocalizer implements Localizer {
     public Pose2d getPose() {
         return txWorldPinpoint.times(txPinpointRobot);
     }
+
 
     @Override
     public PoseVelocity2d update() {

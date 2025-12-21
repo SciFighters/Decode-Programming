@@ -74,13 +74,23 @@ public class CarouselCommands {
         double targetAngle;
         double currentAngle;
         double kp = 0.03;
-        int tolerance = 1;
+        int tolerance = 3;
+        private final boolean end;
 
         public MoveToAngle(CarouselSubsystem carouselSubsystem, double angle) {
             this.carouselSubsystem = carouselSubsystem;
             this.targetAngle = angle;
+            end = false;
             addRequirements(carouselSubsystem);
         }
+
+        public MoveToAngle(CarouselSubsystem carouselSubsystem, double angle, boolean end) {
+            this.carouselSubsystem = carouselSubsystem;
+            this.targetAngle = angle;
+            this.end = end;
+            addRequirements(carouselSubsystem);
+        }
+
 
         @Override
         public void execute() {
@@ -92,8 +102,7 @@ public class CarouselCommands {
 
         @Override
         public boolean isFinished() {
-            return false;
-//            return Math.abs(currentAngle - targetAngle) < tolerance;
+            return end && Math.abs(currentAngle - targetAngle) < tolerance;
         }
 
 
@@ -188,8 +197,8 @@ public class CarouselCommands {
         private int steps = 0;
         private double targetPos;
         double currentPos;
-        int tolerance = 50;
-        double kp = 1;
+        int tolerance = 5;
+        double kp = 0.01;
 
         public SortByMotif(Motif motif, CarouselSubsystem carouselSubsystem) {
             this.carouselSubsystem = carouselSubsystem;
@@ -199,18 +208,20 @@ public class CarouselCommands {
 
         @Override
         public void initialize() {
+            int placement = 1;//carouselSubsystem.getGreenPlacement()
+
             switch (motif) {
                 case PGP:
-                    steps = (carouselSubsystem.getGreenPlacement() - 1) % 3;
+                    steps = (carouselSubsystem.getGreenPlacement() + 2) % 3;
                     break;
                 case GPP:
                     steps = carouselSubsystem.getGreenPlacement() % 3;
                     break;
-                case PPG: // for PPG case
+                case PPG:
                     steps = (carouselSubsystem.getGreenPlacement() + 1) % 3;
                     break;
             }
-            targetPos = (carouselSubsystem.getPosition() + steps * carouselSubsystem.spinConversion);
+            targetPos = (placement == -1) ? carouselSubsystem.getPosition() : (carouselSubsystem.getPosition() + steps * carouselSubsystem.spinConversion);
         }
 
 
@@ -236,25 +247,38 @@ public class CarouselCommands {
     public static class SlideDistance extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
         private double targetPos;
-        double currentPos;
+        int moveDirection;
         double power;
         double distance;
+        Supplier<Double> distanceSupplier;
 
         public SlideDistance(CarouselSubsystem carouselSubsystem, double distance, double power) {//distance in thirds
             this.carouselSubsystem = carouselSubsystem;
             this.power = power;
             this.distance = distance;
+            distanceSupplier = null;
+            addRequirements(carouselSubsystem);
+        }
+
+        public SlideDistance(CarouselSubsystem carouselSubsystem, Supplier<Double> distanceSupplier, double power) {//distance in thirds
+            this.carouselSubsystem = carouselSubsystem;
+            this.power = power;
+            this.distanceSupplier = distanceSupplier;
             addRequirements(carouselSubsystem);
         }
 
         @Override
         public void initialize() {
+            if (distanceSupplier != null) {
+                distance = Math.min(distanceSupplier.get() + 0.55, -0.03);
+            }
+            moveDirection = (int)Math.signum(distance);
             targetPos = (carouselSubsystem.getPosition() + distance * carouselSubsystem.spinConversion);
         }
 
         @Override
         public void execute() {
-            if (carouselSubsystem.getCurrent() > 5.3) {
+            if (carouselSubsystem.getCurrent() > 6) {
                 carouselSubsystem.setSpinPower(-power);
             } else {
                 carouselSubsystem.setSpinPower(power);
@@ -263,7 +287,7 @@ public class CarouselCommands {
 
         @Override
         public boolean isFinished() {
-            return carouselSubsystem.getPosition() > targetPos;
+            return carouselSubsystem.getPosition() * moveDirection > targetPos * moveDirection;
         }
 
         @Override
@@ -282,24 +306,24 @@ public class CarouselCommands {
             NONE
         }
 
-        public SmartDischarge(CarouselSubsystem carouselSubsystem, IntakeSubsystem intakeSubsystem, boolean far) {
+        public SmartDischarge(CarouselSubsystem carouselSubsystem, IntakeSubsystem intakeSubsystem) {
 
             super(new HashMap<Object, Command>() {{
                 put(Position.MIDDLE,
                         new SequentialCommandGroup(
-//                                new WaitCommand(1000),
-                                new IntakeCommands.SemiTransferState(intakeSubsystem),
+                                new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
                                 new SlideDistance(carouselSubsystem, 0.8, transferSpeed),
-                                new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-                                new IntakeCommands.TransferState(intakeSubsystem),
+//                                new SlideDistance(carouselSubsystem,0.5,transferSpeed),
+
+                                new SlideDistance(carouselSubsystem, 0.4, travelSpeed),
                                 new WaitCommand(150),
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-//                                new WaitCommand((far) ? 700: 400),
-                                new SlideDistance(carouselSubsystem, 2 - 0.8, transferSpeed),
-                                new WaitCommand(150),
+                                new SlideDistance(carouselSubsystem, 1.6 - 0.8, transferSpeed),
+
+                                new SlideDistance(carouselSubsystem, 0.6, travelSpeed),
+                                new WaitCommand(50),
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-//                                new WaitCommand((far) ? 450: 150),
-                                new SlideDistance(carouselSubsystem, 1, transferSpeed)
+                                new SlideDistance(carouselSubsystem, 0.4, transferSpeed)
                         ));
                 put(Position.LEFT,
                         new SequentialCommandGroup(

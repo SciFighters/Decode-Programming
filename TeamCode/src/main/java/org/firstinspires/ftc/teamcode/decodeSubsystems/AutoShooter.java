@@ -8,7 +8,7 @@ public class AutoShooter {
     private static final double goalHeight = 40;//inch
     private static final double g = 386.1;//inch/s^2
     private static final Vector2d goalPos = new Vector2d(-66, 66);//red
-    private static final double[][] points ={{38.4,58,2100},{54.8,53.8,2250},{73.5,44,2550}, {88.8,40,2750},{105.5,36,2950},{124.45,34.8,3300},{138.8,34.2,3400},{153.4,34.2,3500}};//distance, angle, rpm
+    private static final double[][] points ={{38.4,58,2100},{54.8,53.8,2250},{73.5,44,2550}, {88.8,40,2750},{105.5,36,2950},{124.45,34.8,3260},{138.8,34.2,3360},{153.4,34.2,3460}};//distance, angle, rpm
 
     //robot corners
     private static final Vector2d[] edges = {new Vector2d(robotWidth / 2, robotLength / 2),
@@ -36,7 +36,7 @@ public class AutoShooter {
             case RED:
                 return Math.toDegrees(Math.atan2(goalPos.getY() - robotPose.position.y, goalPos.getX() - robotPose.position.x) - robotPose.heading.toDouble());
             case BLUE:
-                return -Math.toDegrees(Math.atan2(goalPos.getY() + robotPose.position.y, goalPos.getX() - robotPose.position.x) - robotPose.heading.toDouble());
+                return -Math.toDegrees(Math.atan2(goalPos.getY() + robotPose.position.y, goalPos.getX() - robotPose.position.x) + robotPose.heading.toDouble());
         }
         return 180;
     }

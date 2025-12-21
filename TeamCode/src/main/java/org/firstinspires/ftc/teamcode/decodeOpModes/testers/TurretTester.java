@@ -19,6 +19,7 @@ public class TurretTester extends ActionOpMode {
     @Override
     public void initialize() {
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
+        dischargeSubsystem.resetTurret();
         gamepad = new GamepadEx(gamepad1);
         A = new GamepadButton(gamepad, GamepadKeys.Button.A);
         B = new GamepadButton(gamepad, GamepadKeys.Button.B);

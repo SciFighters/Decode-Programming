@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
@@ -27,7 +28,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 
 import java.util.HashSet;
 import java.util.Set;
-
+@Disabled
 @Autonomous
 public class NineAuto extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
@@ -42,6 +43,7 @@ public class NineAuto extends ActionOpMode {
         Set<Subsystem> requirements = new HashSet<>();
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
+        dischargeSubsystem.resetTurret();
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
         carouselSubsystem.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-47.2, 47.7, Math.PI));
@@ -76,7 +78,7 @@ public class NineAuto extends ActionOpMode {
                 .splineToLinearHeading(new Pose2d(0,30,Math.PI / 2),Math.PI/2);
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
-                        new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle),
+//                        new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle),
                         new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
                         new SequentialCommandGroup(
                                 new ActionCommand(wheatleyAutoOne.build(), requirements),

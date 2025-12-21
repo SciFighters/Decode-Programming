@@ -23,24 +23,7 @@ public class CarouselTest extends ActionOpMode {
         gamepadEx = new GamepadEx(gamepad1);
 
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
-
-        // Create commands
-        CarouselCommands.MoveToPos moveToPos = new CarouselCommands.MoveToPos(carouselSubsystem, 1000);
-        CarouselCommands.ThirdOfSpin thirdOfSpin = new CarouselCommands.ThirdOfSpin(carouselSubsystem);
-        CarouselCommands.SortByMotif sortByMotif = new CarouselCommands.SortByMotif(Motif.GPP, carouselSubsystem);
-        CarouselCommands.Discharge discharge = new CarouselCommands.Discharge(carouselSubsystem);
-
-        // sequential command group
-        SequentialCommandGroup fullSequence = new SequentialCommandGroup(
-                moveToPos, new WaitCommand(2000),
-                thirdOfSpin, new WaitCommand(2000),
-                sortByMotif, new WaitCommand(2000),
-                discharge
-        );
-        A = gamepadEx.getGamepadButton(GamepadKeys.Button.A);
-        B = gamepadEx.getGamepadButton(GamepadKeys.Button.B);
-//        A.whenPressed(new CarouselCommands.SmartDischarge(carouselSubsystem));
-        B.whenPressed(new CarouselCommands.SortByMotif(Motif.PGP,carouselSubsystem));
+        carouselSubsystem.resetEncoders();
     }
 
     @Override

@@ -11,14 +11,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final DcMotorEx motor;
-
     private final Servo intakeServo1, intakeServo2;
-    private final double openedPos = 0.7, closedPos = 0.3;
 
+    public static boolean reversed = false;
     public IntakeSubsystem(HardwareMap hm) {
         motor = hm.get(DcMotorEx.class, "intakeMotor");
         intakeServo1 = hm.get(Servo.class, "rightIntake");
         intakeServo2 = hm.get(Servo.class, "leftIntake");
+        reversed = false;
     }
 
     public void setPower(double power) {

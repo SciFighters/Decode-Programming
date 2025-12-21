@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.decodeAutos;
+package org.firstinspires.ftc.teamcode.decodeAutos.old;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.Subsystem;
 
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
 
 import java.util.HashSet;
 import java.util.Set;
-
+@Disabled
 @Autonomous
 public class AutoTest extends AllianceDetectionOpMode {
     final Pose2d startPose = new Pose2d(0,24, -Math.PI);

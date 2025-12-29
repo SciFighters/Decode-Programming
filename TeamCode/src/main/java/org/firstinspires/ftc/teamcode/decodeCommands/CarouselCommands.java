@@ -5,15 +5,18 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandBase;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
+import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
+import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -371,7 +374,7 @@ public class CarouselCommands {
         public SmartDischarge(CarouselSubsystem carouselSubsystem, IntakeSubsystem intakeSubsystem) {
 
             super(new HashMap<Object, Command>() {{
-                put(Position.MIDDLE,
+                put(Position.NONE,
                         new SequentialCommandGroup(
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
 //                                new CarouselCommands.SafeSlide(carouselSubsystem,intakeSubsystem,0.3,0.8),
@@ -402,7 +405,30 @@ public class CarouselCommands {
                                 new SlideDistance(carouselSubsystem, 1, travelSpeed),
                                 new SlideDistance(carouselSubsystem, 2, transferSpeed)
                         ));
-                put(Position.NONE, new SlideDistance(carouselSubsystem, 6, transferSpeed));
+                put(Position.MIDDLE,new ConditionalCommand( new SequentialCommandGroup(
+                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+
+                        new SlideDistance(carouselSubsystem, 2, 0.95),
+                        new SlideDistance(carouselSubsystem, 1, 0.65)),
+
+                        new SequentialCommandGroup(
+                                new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+//                                new CarouselCommands.SafeSlide(carouselSubsystem,intakeSubsystem,0.3,0.8),
+                                new IntakeCommands.TransferState(intakeSubsystem),
+//                                new WaitCommand(300),
+                                new SlideDistance(carouselSubsystem, 0.8, transferSpeed),
+//                                new SlideDistance(carouselSubsystem,0.5,transferSpeed),
+
+                                new SlideDistance(carouselSubsystem, 0.4, travelSpeed),
+                                new WaitCommand(150),
+                                new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+                                new SlideDistance(carouselSubsystem, 1.6 - 0.8, transferSpeed),
+
+                                new SlideDistance(carouselSubsystem, 0.6, travelSpeed),
+                                new WaitCommand(50),
+                                new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+                                new SlideDistance(carouselSubsystem, 0.4, transferSpeed)
+                    ),() -> AutoShooter.getGoalDistance(SavedValues.position,SavedValues.teamColor) <80));
             }}, () -> getPosition(carouselSubsystem));
         }
 

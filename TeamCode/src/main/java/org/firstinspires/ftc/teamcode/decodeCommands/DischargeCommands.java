@@ -118,7 +118,7 @@ public class DischargeCommands {
                     double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
                     dischargeSubsystem.setRampDegree(launchVector[0]);
                     dischargeSubsystem.setFlyWheelRPM(launchVector[1] + rpmCorrection);
-                    atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 40;
+                    atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 35;
                 } else {
                     dischargeSubsystem.setFlyWheelRPM(0);
                     atSpeed = false;

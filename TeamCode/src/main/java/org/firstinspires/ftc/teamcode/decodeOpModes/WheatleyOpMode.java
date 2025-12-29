@@ -110,6 +110,7 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
         multipleTelemetry.addData("correction",DischargeCommands.AutomaticAiming.turretCorrection);
         multipleTelemetry.update();
+        SavedValues.position = mecanumDrive.localizer.getPose();
     }
 
     @Override

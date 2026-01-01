@@ -20,7 +20,7 @@ public class LimelightCommands {
         Vector2d pinpointPos;
         double positionCovarianceX = 0, positionCovarianceY = 0;
         final double pinpointKDistance = 0.002;
-        public static double Kv = 0.02, Kd = 0.15, Kp = 0.04, Kf = 0.48, Kz = 3;//for limelight covariance
+        public static double Kv = 0.02, Kd = 0.15, Kp = 0.04, Kf = 0.5, Kz = 3;//for limelight covariance, kf = 0.48
         public static double kalmanGainX, kalmanGainY;
         ElapsedTime time;
         double lastTime = 0;
@@ -61,10 +61,10 @@ public class LimelightCommands {
             com.acmerobotics.roadrunner.Vector2d mecanumDrivePos = mecanumDrive.localizer.getPose().position;
             Vector2d pinpointDelta = new Vector2d(mecanumDrivePos.x - pinpointPos.getX(), mecanumDrivePos.y - pinpointPos.getY());
             pinpointPos = new Vector2d(mecanumDrivePos.x, mecanumDrivePos.y);
-            Position limelightPos3d = limelightSubsystem.getRobotPosMT2(turretAngle.get());
+            Position limelightPos3d = limelightSubsystem.getRobotPos(turretAngle.get());
             Vector2d pixelError = limelightSubsystem.getPixelError();
             double distance = AutoShooter.getGoalDistance(new Pose2d(position.getX(),position.getY(),0),limelightSubsystem.color);
-            if(limelightPos3d == null || pixelError == null || distance > 140){
+            if(limelightPos3d == null || pixelError == null || distance > 115){
                 double pinpointCovarianceX = Math.abs(pinpointDelta.getX() * pinpointKDistance);
                 double pinpointCovarianceY = Math.abs(pinpointDelta.getY() * pinpointKDistance);
                 positionCovarianceX += pinpointCovarianceX;

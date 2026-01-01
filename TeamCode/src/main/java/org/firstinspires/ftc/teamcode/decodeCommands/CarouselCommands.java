@@ -383,12 +383,12 @@ public class CarouselCommands {
                                 new SlideDistance(carouselSubsystem, 0.8, transferSpeed),
 //                                new SlideDistance(carouselSubsystem,0.5,transferSpeed),
 
-                                new SlideDistance(carouselSubsystem, 0.4, travelSpeed),
+                                new SlideDistance(carouselSubsystem, 0.3, travelSpeed),
                                 new WaitCommand(150),
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-                                new SlideDistance(carouselSubsystem, 1.6 - 0.8, transferSpeed),
+                                new SlideDistance(carouselSubsystem, 0.6, transferSpeed),
 
-                                new SlideDistance(carouselSubsystem, 0.6, travelSpeed),
+                                new SlideDistance(carouselSubsystem, 0.3, travelSpeed),
                                 new WaitCommand(50),
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
                                 new SlideDistance(carouselSubsystem, 0.4, transferSpeed)
@@ -419,16 +419,16 @@ public class CarouselCommands {
                                 new SlideDistance(carouselSubsystem, 0.8, transferSpeed),
 //                                new SlideDistance(carouselSubsystem,0.5,transferSpeed),
 
-                                new SlideDistance(carouselSubsystem, 0.4, travelSpeed),
-                                new WaitCommand(150),
+                                new SlideDistance(carouselSubsystem, 0.15, travelSpeed),
+                                new WaitCommand(100),
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-                                new SlideDistance(carouselSubsystem, 1.6 - 0.8, transferSpeed),
+                                new SlideDistance(carouselSubsystem, 0.8, transferSpeed),
 
-                                new SlideDistance(carouselSubsystem, 0.6, travelSpeed),
+//                                new SlideDistance(carouselSubsystem, 0.5, travelSpeed),
                                 new WaitCommand(50),
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-                                new SlideDistance(carouselSubsystem, 0.4, transferSpeed)
-                    ),() -> AutoShooter.getGoalDistance(SavedValues.position,SavedValues.teamColor) <80));
+                                new SlideDistance(carouselSubsystem, 1.2, transferSpeed)
+                    ),() -> AutoShooter.getGoalDistance(SavedValues.position,SavedValues.teamColor) < 80));
             }}, () -> getPosition(carouselSubsystem));
         }
 

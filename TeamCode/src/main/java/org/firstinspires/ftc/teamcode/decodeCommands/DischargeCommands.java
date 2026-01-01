@@ -85,7 +85,6 @@ public class DischargeCommands {
         public static boolean atSpeed = false;
         public static double kv = 0.12, ks = 0.055;
         private com.seattlesolvers.solverslib.geometry.Vector2d mecanumToTurret;
-        private Pose2d currentPos;
         public static boolean aim = true;
         public static double turretCorrection = 0, rpmCorrection = 0;
 
@@ -109,16 +108,17 @@ public class DischargeCommands {
         public void execute() {
             if(aim){
                 mecanumToTurret = new com.seattlesolvers.solverslib.geometry.Vector2d(1.5748, 0).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
-                currentPos = mecanumDrive.localizer.getPose();
+                Pose2d currentPos = mecanumDrive.localizer.getPose();
 
                 aimTurret();
-
+                        /*new Pose2d(new Vector2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),
+                        mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY()), currentPos.heading.toDouble())*/
                 if (AutoShooter.canLaunch(new Pose2d(new Vector2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),
                         mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY()), currentPos.heading.toDouble())) || shooting) {
                     double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
                     dischargeSubsystem.setRampDegree(launchVector[0]);
                     dischargeSubsystem.setFlyWheelRPM(launchVector[1] + rpmCorrection);
-                    atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 35;
+                    atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 70;
                 } else {
                     dischargeSubsystem.setFlyWheelRPM(0);
                     atSpeed = false;
@@ -136,6 +136,10 @@ public class DischargeCommands {
 //            double pixelError = limelightSubsystem.getTx();
             double mecanumSpeed = mecanumDrive.localizer.update().angVel;
 
+//            launchAngle =
+//                    (AutoShooter.getLaunchAngle(new Pose2d(LimelightCommands.KalmanFilter.position.getX() + mecanumToTurret.getX(),
+//                            LimelightCommands.KalmanFilter.position.getY() + mecanumToTurret.getY(),
+//                            mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360 + turretCorrection) % 360;
             launchAngle =
                     (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),
                             mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY(),

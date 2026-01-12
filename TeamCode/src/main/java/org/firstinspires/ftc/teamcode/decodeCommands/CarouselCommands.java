@@ -409,7 +409,7 @@ public class CarouselCommands {
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
 
                         new SlideDistance(carouselSubsystem, 2, 0.95),
-                        new SlideDistance(carouselSubsystem, 1, 0.65)),
+                        new SlideDistance(carouselSubsystem, 1.2, 0.65)),
 
                         new SequentialCommandGroup(
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
@@ -422,12 +422,12 @@ public class CarouselCommands {
                                 new SlideDistance(carouselSubsystem, 0.15, travelSpeed),
                                 new WaitCommand(100),
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-                                new SlideDistance(carouselSubsystem, 0.8, transferSpeed),
+                                new SlideDistance(carouselSubsystem, 0.6, transferSpeed),
 
 //                                new SlideDistance(carouselSubsystem, 0.5, travelSpeed),
                                 new WaitCommand(50),
                                 new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-                                new SlideDistance(carouselSubsystem, 1.2, transferSpeed)
+                                new SlideDistance(carouselSubsystem, 1.2, 0.5)
                     ),() -> AutoShooter.getGoalDistance(SavedValues.position,SavedValues.teamColor) < 80));
             }}, () -> getPosition(carouselSubsystem));
         }

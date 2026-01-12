@@ -19,7 +19,7 @@ public class DischargeSubsystem extends SubsystemBase {
     private final Servo rampServo;
     private final double kS = 0.0866319, kV = 0.000168344, kP = 0.000833333, kI = 0.000005;
     private final double ticksPerDegree = 383.6 * 3.96 / 360.0;
-    final double startAngle;
+    private final double startAngle;
     double integral;
 
     public DischargeSubsystem(HardwareMap hm) {

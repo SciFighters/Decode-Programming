@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.decodeSubsystems;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
@@ -18,7 +19,7 @@ public class CarouselSubsystem extends SubsystemBase {
     // calculation for a third of a spin knowing the amount of ticks per revolution
     public ColorSensor leftColorSensor, rightColorSensor, middleColorSensor;
     public final double transferSpeed = 0.3, travelSpeed = 0.6;
-
+    DistanceSensor left, right;
     public int startingTicks = 0;
 
     public CarouselSubsystem(HardwareMap hm) {
@@ -30,6 +31,9 @@ public class CarouselSubsystem extends SubsystemBase {
         leftColorSensor = hm.get(ColorSensor.class, "leftColorSensor");
         rightColorSensor = hm.get(ColorSensor.class, "rightColorSensor");
         middleColorSensor = hm.get(ColorSensor.class, "middleColorSensor");
+
+        left = hm.get(DistanceSensor.class,"leftDistance");
+        left = hm.get(DistanceSensor.class,"rigghtDistance");
     }
 
     public void resetEncoders() {

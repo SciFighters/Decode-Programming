@@ -28,12 +28,12 @@ public class CarouselSubsystem extends SubsystemBase {
 //        carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftColorSensor = hm.get(ColorSensor.class, "leftColorSensor");
-        rightColorSensor = hm.get(ColorSensor.class, "rightColorSensor");
-        middleColorSensor = hm.get(ColorSensor.class, "middleColorSensor");
+//        leftColorSensor = hm.get(ColorSensor.class, "leftColorSensor");
+//        rightColorSensor = hm.get(ColorSensor.class, "rightColorSensor");
+//        middleColorSensor = hm.get(ColorSensor.class, "middleColorSensor");
 
         left = hm.get(DistanceSensor.class,"leftDistance");
-        left = hm.get(DistanceSensor.class,"rigghtDistance");
+        left = hm.get(DistanceSensor.class,"rightDistance");
     }
 
     public void resetEncoders() {

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.decodeSubsystems;
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -8,16 +9,20 @@ import com.qualcomm.robotcore.robocol.Command;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final DcMotorEx motor;
     private final Servo intakeServo1, intakeServo2;
+    private final Rev2mDistanceSensor leftDistance, rightDistance;
 
     public static boolean reversed = false;
     public IntakeSubsystem(HardwareMap hm) {
         motor = hm.get(DcMotorEx.class, "intakeMotor");
         intakeServo1 = hm.get(Servo.class, "rightIntake");
         intakeServo2 = hm.get(Servo.class, "leftIntake");
+        leftDistance = hm.get(Rev2mDistanceSensor.class,"leftDistance");
+        rightDistance = hm.get(Rev2mDistanceSensor.class,"rightDistance");
         reversed = false;
     }
 
@@ -32,6 +37,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public double getCurrent(){
         return motor.getCurrent(CurrentUnit.AMPS);
     }
-
+    public double getLeftDistance(){ return leftDistance.getDistance(DistanceUnit.CM);}
+    public double getRightDistance(){ return rightDistance.getDistance(DistanceUnit.CM);}
 
 }

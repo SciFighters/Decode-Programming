@@ -75,6 +75,7 @@ public class WheatleyOpMode extends ActionOpMode {
                 new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(800)));
         driverDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.aim = !DischargeCommands.AutomaticAiming.aim);
+        driverLeftBumper.whenPressed(() -> IntakeCommands.IntakeState.resetCount = !IntakeCommands.IntakeState.resetCount);
 
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
         driverRightBumper.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));

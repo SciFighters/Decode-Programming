@@ -48,6 +48,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
     Button driverBack, systemBack;
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
     double wantedRPM = 1000, wantedDegree = 50;
+    public static boolean atSpeed;
 
     @Override
     public void initialize() {
@@ -55,6 +56,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
+        carouselSubsystem.resetEncoders();
 
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(63, 0), Math.PI));
 
@@ -65,16 +67,18 @@ public class AutomaticShootingTuner extends ActionOpMode {
         initButtons();
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX()));
         driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem));
+        driverB.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
+        driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
         driverX.whenPressed(new CommandGroups.Shoot(intakeSubsystem,carouselSubsystem));
-        systemDPadUp.whenPressed(() -> wantedRPM += 50);
-        systemDPadDown.whenPressed(() -> wantedRPM -= 50);
+        systemDPadUp.whenPressed(() -> wantedRPM += 100);
+        systemDPadDown.whenPressed(() -> wantedRPM -= 100);
         systemA.whenPressed(() -> wantedDegree += 2);
         systemY.whenPressed(() -> wantedDegree -= 2);
         systemX.whenPressed(() -> wantedDegree += 0.2);
         systemB.whenPressed(() -> wantedDegree -= 0.2);
 
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
-        driverDPadDown.whenPressed(new DischargeCommands.setState(dischargeSubsystem, 0, 54));
+        driverDPadDown.whenPressed(new DischargeCommands.setState(dischargeSubsystem, 0, 54).withTimeout(10000));
         driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
 
 //        limelightSubsystem.startLimelight();
@@ -82,10 +86,12 @@ public class AutomaticShootingTuner extends ActionOpMode {
 
     @Override
     public void run() {
+        atSpeed = Math.abs(dischargeSubsystem.getRPM() - wantedRPM) < 300;
+
         mecanumDrive.localizer.update();
         double launchAngle =
                 (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position,mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), AutoShooter.TeamColor.RED) + 360) % 360;
-//        double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle()) * kp;
+//        double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle());
 //        power += Math.signum(power) * 0.03;
 //        power = Range.clip(power, -0.4, 0.4);
 //        dischargeSubsystem.setTurretPower(power);
@@ -99,6 +105,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
         multipleTelemetry.addData("rampDegree", wantedDegree);
         multipleTelemetry.addData("wantedRPM", wantedRPM);
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
+        multipleTelemetry.addData("power", dischargeSubsystem.getFlyWheelPower());
         multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.addData("distance", AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), AutoShooter.TeamColor.RED));

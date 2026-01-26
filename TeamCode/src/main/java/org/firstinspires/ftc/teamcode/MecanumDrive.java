@@ -77,9 +77,9 @@ public final class MecanumDrive extends SubsystemBase {
         public double kA = 0.00009;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;
+        public double maxWheelVel = 55;
         public double minProfileAccel = -30;
-        public double maxProfileAccel = 50;
+        public double maxProfileAccel = 55;
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
@@ -112,7 +112,7 @@ public final class MecanumDrive extends SubsystemBase {
 
     Servo leftPTO, rightPTO;
 
-    private final double leftPTOPos = 0.85, rightPTOPos = 0, leftDrivePos = 0, rightDrivePos = 1;
+    private final double leftPTOPos = 0.31, rightPTOPos = 1, leftDrivePos = 1, rightDrivePos = 0.1;
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 

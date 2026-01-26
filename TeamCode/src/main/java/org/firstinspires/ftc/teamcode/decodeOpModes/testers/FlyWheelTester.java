@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -21,13 +22,14 @@ public class FlyWheelTester extends ActionOpMode {
 //    Servo servo;
     double power = 0.00;
     double kS = 0.09, kV = 0.0002, kP = 0.000833333, kI = 0.001;
-    public static double wantedRpm = 2000;
+    public static double wantedRpm = 3100;
     double wantedAngle = 45;
     DischargeSubsystem dischargeSubsystem;
+    DcMotor m2;
 
     @Override
     public void initialize() {
-
+//        m2 = hardwareMap.dcMotor.get("turretMotor");
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         gamepad = new GamepadEx(gamepad1);
         A = new GamepadButton(gamepad, GamepadKeys.Button.A);
@@ -60,7 +62,8 @@ public class FlyWheelTester extends ActionOpMode {
 
     @Override
     public void run() {
-        dischargeSubsystem.setRampDegree(wantedAngle);
+//        m2.setPower(power);
+//        dischargeSubsystem.setRampDegree(wantedAngle);
 //        dischargeSubsystem.setFlyWheelRPM(wantedRpm);
         dischargeSubsystem.setFlyWheelPower(power);
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());

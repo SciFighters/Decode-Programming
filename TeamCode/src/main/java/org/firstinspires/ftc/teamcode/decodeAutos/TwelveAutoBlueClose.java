@@ -52,23 +52,23 @@ public class TwelveAutoBlueClose extends ActionOpMode {
         requirements.add(mecanumDrive);
         TrajectoryActionBuilder wheatleyAutoOne = mecanumDrive.actionBuilder(mecanumDrive.localizer.getPose(), reversed)
                 .setTangent(-Math.PI / 4)
-                .splineToConstantHeading(new Vector2d(-24, 24), -Math.PI / 4);
+                .splineToConstantHeading(new Vector2d(-22, 24), -Math.PI / 4);
 
-        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(-24, 24, 0), reversed)
+        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(-22, 24, 0), reversed)
                 .setTangent(0)
-                .splineToLinearHeading(new Pose2d(13, 44, Math.PI/2), Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(13, 44.1, Math.PI / 2), Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(14, 44, Math.PI/2), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(14, 44.1, Math.PI / 2), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(5, 54), Math.PI / 2);
-        TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(6, 54, Math.PI / 2)), reversed)
+        TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(5, 54, Math.PI / 2)), reversed)
                 .setTangent(-Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-12, 22), -Math.PI);
+                .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI);
 
-        TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(-12, 22, Math.PI / 2), reversed)
+        TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 2)
-                .splineTo(new Vector2d(-12, 52), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-12, 22), -Math.PI / 2);
+                .splineTo(new Vector2d(-13, 52), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI / 2);
 
-        TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-12, 22, Math.PI / 2), reversed)
+        TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(0)
                 .splineToConstantHeading(new Vector2d(36, 48), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-6, 16), -Math.PI * 3 / 4);

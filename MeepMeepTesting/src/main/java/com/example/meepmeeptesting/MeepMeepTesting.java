@@ -22,18 +22,18 @@ public class MeepMeepTesting {
 
         TrajectoryActionBuilder wheatleyAuto12 = wheatley.getDrive().actionBuilder(new Pose2d(-41.2, 54.3, 0))
                 .setTangent(-Math.PI / 4)
-                .splineToConstantHeading(new Vector2d(-24, 24), -Math.PI / 4)
+                .splineToConstantHeading(new Vector2d(-22, 24), -Math.PI / 4)
 
                 .setTangent(0)
-                .splineToLinearHeading(new Pose2d(13, 44, Math.PI / 2), Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(13, 44.1, Math.PI / 2), Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(14, 44, Math.PI / 2), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(14, 44.1, Math.PI / 2), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(5, 54), Math.PI / 2)
                 .setTangent(-Math.PI / 2)//p2
-                .splineToConstantHeading(new Vector2d(-12, 22), -Math.PI)
+                .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI)
 
                 .setTangent(Math.PI / 2)
-                .splineTo(new Vector2d(-12, 52), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-12, 22), -Math.PI / 2)
+                .splineTo(new Vector2d(-13, 52), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI / 2)
 
                 .setTangent(0)
                 .splineToConstantHeading(new Vector2d(36, 48), Math.PI / 2)
@@ -61,13 +61,13 @@ public class MeepMeepTesting {
 
         TrajectoryActionBuilder wheatleyAuto15 = wheatley.getDrive().actionBuilder(new Pose2d(61.5, 22, Math.PI / 2))
                 .splineToConstantHeading(new Vector2d(61.4, 58), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(60.5, 24), -Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(59, 23), -Math.PI / 2)
 
                 .setTangent(Math.PI)
-                .splineToSplineHeading(new Pose2d(20, 30, Math.PI * 11 / 18), Math.PI * 3 / 4)
-                .splineToConstantHeading(new Vector2d(10, 46), Math.PI * 5 / 8)
-                .splineToSplineHeading(new Pose2d(9.9,46.1,Math.PI * 11 / 18), Math.PI * 5 / 8)
-                .splineToLinearHeading(new Pose2d(3, 52,Math.PI/2), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(15, 30), Math.PI * 3 / 4)
+                .splineToConstantHeading(new Vector2d(12, 46), Math.PI * 5 / 8)
+                .splineToConstantHeading(new Vector2d(11.9,46.1), Math.PI * 5 / 8)
+                .splineToConstantHeading(new Vector2d(3, 54), Math.PI / 2)
                 .setTangent(-Math.PI / 2)//p2
                 .splineToConstantHeading(new Vector2d(-12, 22), Math.PI)
 
@@ -76,9 +76,10 @@ public class MeepMeepTesting {
                 .splineToConstantHeading(new Vector2d(-12, 22), -Math.PI / 2)
 
                 .setTangent(0)
-                .splineToConstantHeading(new Vector2d(36, 46), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(36, 46.1), -Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-6, 16), -Math.PI * 3 / 4)
+                .splineToConstantHeading(new Vector2d(30,28),Math.PI/4)
+                .splineToConstantHeading(new Vector2d(36, 52), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(36, 52.1), -Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(-8, 16), -Math.PI * 3 / 4)
 
                 .setTangent(Math.PI * 3 / 8)
                 .splineToConstantHeading(new Vector2d(0, 48), Math.PI / 2);

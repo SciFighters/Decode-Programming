@@ -7,6 +7,8 @@ import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.WaitUntilCommand;
+import com.seattlesolvers.solverslib.hardware.motors.Motor;
+import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
@@ -24,7 +26,8 @@ public class CommandGroups {
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
                     new IntakeCommands.TransferState(intakeSubsystem),
                     new WaitCommand(100),
-                    new CarouselCommands.SmartDischarge(carouselSubsystem, intakeSubsystem),
+                    new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
+                    new CarouselCommands.Discharge(carouselSubsystem, intakeSubsystem),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
             ));
         }
@@ -44,10 +47,11 @@ public class CommandGroups {
             addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
                     new IntakeCommands.TransferState(intakeSubsystem),
-                    new WaitCommand(150),
+                    new WaitCommand(100),
 //                    new WaitCommand(300),
                     new WaitUntilCommand(() -> AutoShooter.canLaunch(mecanumDrive.localizer.getPose())),
-                    new CarouselCommands.SmartDischarge(carouselSubsystem, intakeSubsystem),
+                    new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
+                    new CarouselCommands.Discharge(carouselSubsystem, intakeSubsystem),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
 
             );
@@ -69,11 +73,20 @@ public class CommandGroups {
                     new CarouselCommands.MoveToAngle(carouselSubsystem, 180)
             );
         }
+    }public static class StartOuttake extends ParallelCommandGroup {
+        public StartOuttake(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
+            addCommands(
+                    new IntakeCommands.OutTakeState(intakeSubsystem),
+                    new CarouselCommands.MoveToAngle(carouselSubsystem, 190)
+            );
+        }
     }
+
 
     public static class PowerTakeOff extends CommandBase {
         MecanumDrive mecanumDrive;
         Supplier<Double> power;
+        double rStart, lStart;
 
         public PowerTakeOff(MecanumDrive mecanumDrive, Supplier<Double> power) {
             this.mecanumDrive = mecanumDrive;
@@ -83,21 +96,36 @@ public class CommandGroups {
 
         @Override
         public void initialize() {
+            rStart = mecanumDrive.rightFront.getCurrentPosition();
+            lStart = mecanumDrive.leftFront.getCurrentPosition();
             mecanumDrive.PTOMode();
-            mecanumDrive.leftFront.setPower(0.1);
-            mecanumDrive.rightFront.setPower(0.1);
-            mecanumDrive.rightBack.setPower(-0.1);
-            mecanumDrive.leftBack.setPower(-0.1);
+            mecanumDrive.leftFront.setPower(-0.1);
+            mecanumDrive.rightFront.setPower(-0.1);
+            mecanumDrive.rightBack.setPower(0.1);
+            mecanumDrive.leftBack.setPower(0.1);
         }
 
         @Override
         public void execute() {
             double power = this.power.get() - 0.01;
             power += Math.signum(power) * 0.1;
-            mecanumDrive.leftFront.setPower(power);
-            mecanumDrive.rightFront.setPower(power);
-            mecanumDrive.rightBack.setPower(-power);
-            mecanumDrive.leftBack.setPower(-power);
+
+            if (mecanumDrive.rightFront.getCurrentPosition() - rStart > 537.6 / 4 +  mecanumDrive.leftFront.getCurrentPosition() - lStart){
+                mecanumDrive.rightFront.setPower(-0.1);
+                mecanumDrive.rightBack.setPower(0.1);
+            }else{
+                mecanumDrive.rightFront.setPower(-power);
+                mecanumDrive.rightBack.setPower(power);
+            }
+            if (mecanumDrive.leftFront.getCurrentPosition() - lStart > 537.6 / 4 +  mecanumDrive.rightFront.getCurrentPosition() - rStart){
+                mecanumDrive.leftFront.setPower(-0.1);
+                mecanumDrive.leftBack.setPower(0.1);
+            }else{
+                mecanumDrive.leftFront.setPower(-power);
+                mecanumDrive.leftBack.setPower(power);
+
+            }
+
         }
     }
 
@@ -124,8 +152,7 @@ public class CommandGroups {
                     new IntakeCommands.SortingState(intakeSubsystem),
                     new SequentialCommandGroup(
                             new CarouselCommands.SlideDistance(carouselSubsystem, -0.625, -0.8),
-                            new WaitCommand(100),
-                            new CarouselCommands.SlideDistance(carouselSubsystem, steps, -1)
+                            new WaitCommand(100)
                     )
             );
         }

@@ -35,47 +35,50 @@ public class IntakeCommands {
             intakeSubsystem.setPosition(1);
         }
 
-        @Override
-        public void execute() {
-            i++;
-            if(count < 3){
-                intakeSubsystem.setPower(1);
-                intakeSubsystem.setPosition(1);
-                fourthStart = time.seconds();
-                fullStart = fourthStart;
-            } else if (count == 3) {
-                fourthStart = time.seconds();
-                if(fourthStart - fullStart > -1){
-                    intakeSubsystem.setPower(0.5);
-                    intakeSubsystem.setPosition(0.5);
-                }
-            }else {
-                intakeSubsystem.setPower(-0.5);
-                intakeSubsystem.setPosition(1);
-                if(time.seconds() - fourthStart > 0.55){
-                    count = 3;
-                    intakeSubsystem.setPower(0.5);
-                }
-            }
-            lastTime = currentTime;
-            currentTime = time.seconds();
-            if (true) {
-                double lastLeft = leftDistance;
-                double lastRight = rightDistance;
-                leftDistance = intakeSubsystem.getLeftDistance();
-                rightDistance = intakeSubsystem.getRightDistance();
-                if (leftDistance < 5 && lastLeft > 5) {
-                    count += 1;
-                }
-                if (rightDistance < 5 && lastRight > 5) {
-                    count += 1;
-                }
-
-            }
-            if(resetCount){
-                count = 0;
-            }
-        }
+//        @Override
+//        public void execute() {
+//
+//            i++;
+//            if(count < 3){
+//                intakeSubsystem.setPower(1);
+//                intakeSubsystem.setPosition(1);
+//                fourthStart = time.seconds();
+//                fullStart = fourthStart;
+//            } else if (count >= 3) {
+////                fourthStart = time.seconds();
+////                if (fourthStart - fullStart > -1) {
+////                    intakeSubsystem.setPower(0.5);
+////                    intakeSubsystem.setPosition(0.5);
+////                }
+//                intakeSubsystem.setPower(0);
+//            }
+////            }else {
+////                intakeSubsystem.setPower(-0.5);
+////                intakeSubsystem.setPosition(1);
+////                if(time.seconds() - fourthStart > 0.55){
+////                    count = 3;
+////                    intakeSubsystem.setPower(0.5);
+////                }
+////            }
+//            lastTime = currentTime;
+//            currentTime = time.seconds();
+//            if (true) {
+//                double lastLeft = leftDistance;
+//                double lastRight = rightDistance;
+//                leftDistance = intakeSubsystem.getLeftDistance();
+//                rightDistance = intakeSubsystem.getRightDistance();
+//                if (leftDistance < 5 && lastLeft > 5) {
+//                    count += 1;
+//                }
+//                if (rightDistance < 5 && lastRight > 5) {
+//                    count += 1;
+//                }
+//
+//            }
+//            if(resetCount){
+//                count = 0;
+//            }
+//        }
 //
 //        @Override
 //        public boolean isFinished() {

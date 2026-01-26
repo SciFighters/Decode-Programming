@@ -8,7 +8,7 @@ public class AutoShooter {
     private static final double goalHeight = 40;//inch
     private static final double g = 386.1;//inch/s^2
     private static final Vector2d goalPos = new Vector2d(-66, 66);//red, 58
-    private static final double[][] points ={{26,64,2000},{38.4,58,2100},{54.8,53.8,2250},{73.5,44,2550}, {88.8,40,2750},{106,36,2950},{125.45,34.8,3240},{140.8,34.2,3340},{155.4,34.2,3440}};//distance, angle, rpm
+    private static final double[][] points ={{38.6,62,2550},{54.4,53,2850},{72,47,3100},{87.5,41.6,3400}, {101.5,41.6,3650},{126,35,4120},{140,34,4300},{151,32.4,4600}};//distance, angle, rpm
 
     //robot corners
     private static final Vector2d[] edges = {new Vector2d(robotWidth / 2, robotLength / 2),

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.decodeCommands;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -79,13 +80,15 @@ public class DischargeCommands {
 //        Supplier<Double> turretPower;
 //        Supplier<Double> rampDegree;
         double wantedPos;
-        static final double kp = 0.02;
+        static final double kp = 0.018;
         public static double launchAngle;
         public static boolean shooting = false;
-        public static boolean atSpeed = false;
-        public static double kv = 0.12, ks = 0.055;
+        public static boolean atSpeed = false;//+- 200rpm
+        public static boolean atCloseSpeed = false;//+- 70rpm
+        public static double kv = 0.12, ks = 0.05;
         private com.seattlesolvers.solverslib.geometry.Vector2d mecanumToTurret;
         public static boolean aim = true;
+        public static boolean inRange = true;
         public static double turretCorrection = 0, rpmCorrection = 0;
 
         public AutomaticAiming(DischargeSubsystem dischargeSubsystem, LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, CarouselSubsystem carouselSubsystem, AutoShooter.TeamColor teamColor) {
@@ -113,20 +116,23 @@ public class DischargeCommands {
                 aimTurret();
                         /*new Pose2d(new Vector2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),
                         mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY()), currentPos.heading.toDouble())*/
+                double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
+                dischargeSubsystem.setRampDegree(launchVector[0]);
                 if (AutoShooter.canLaunch(new Pose2d(new Vector2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),
                         mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY()), currentPos.heading.toDouble())) || shooting) {
-                    double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
-                    dischargeSubsystem.setRampDegree(launchVector[0]);
+//                    double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
                     dischargeSubsystem.setFlyWheelRPM(launchVector[1] + rpmCorrection);
-                    atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 70;
+                    atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 200;
+                    atCloseSpeed =  Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 70;
                 } else {
                     dischargeSubsystem.setFlyWheelRPM(0);
                     atSpeed = false;
                 }
             }
             else {
-                dischargeSubsystem.setRampDegree(40);
-                dischargeSubsystem.setFlyWheelRPM(2600);
+                inRange = true;
+                dischargeSubsystem.setRampDegree(41);
+                dischargeSubsystem.setFlyWheelRPM(3000);
                 atSpeed = true;
             }
 
@@ -144,6 +150,8 @@ public class DischargeCommands {
                     (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),
                             mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY(),
                             mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360 + turretCorrection) % 360;
+            inRange = launchAngle > 24 && launchAngle < 332;
+            launchAngle = Range.clip(launchAngle,24,332);
 
             double power;
 //            if (limelightSubsystem.getTx() != 0 && dischargeSubsystem.getTurretAngle() < 355 && dischargeSubsystem.getTurretAngle() > 5){

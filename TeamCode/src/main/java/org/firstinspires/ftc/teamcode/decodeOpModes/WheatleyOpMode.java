@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.decodeOpModes;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
@@ -47,9 +48,12 @@ public class WheatleyOpMode extends ActionOpMode {
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
     Motif motif = Motif.GPP;
     AutoShooter.TeamColor teamColor;
+    ElapsedTime time;
+    boolean endGame = false;
 
     @Override
     public void initialize() {
+        time = new ElapsedTime();
         teamColor = SavedValues.teamColor;
 
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
@@ -77,17 +81,29 @@ public class WheatleyOpMode extends ActionOpMode {
         driverDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.aim = !DischargeCommands.AutomaticAiming.aim);
         driverLeftBumper.whenPressed(() -> IntakeCommands.IntakeState.resetCount = !IntakeCommands.IntakeState.resetCount);
 
-        driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
+        driverY.whenPressed(new CommandGroups.StartOuttake(intakeSubsystem,carouselSubsystem));
         driverRightBumper.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
         mecanumDrive.lazyImu.get().resetYaw();
         systemDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);
         systemDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection -= 2);
         systemDPadUp.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection += 25);
         systemDPadDown.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection -= 25);
+
+//        driverDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);
+//        driverDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection -= 2);
+//        driverDPadUp.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection += 25);
+//        driverDPadDown.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection -= 25);
+
+        systemA.whenPressed(() -> gamepad1.rumble(500));
 //        systemLeftStick.whenPressed(new CarouselCommands.SafeSlide(carouselSubsystem,intakeSubsystem,0.3,0.8));
 //        systemB.whenPressed(() -> carouselSubsystem.artifactsInGoal = (carouselSubsystem.artifactsInGoal + 1) % 3);
 //        systemA.whenPressed(() -> carouselSubsystem.resetEncoders());
 //        schedule(new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle, SavedValues.covariances.getX(),SavedValues.covariances.getY()));
+    }
+
+    @Override
+    public void initialize_loop() {
+        time.reset();
     }
 
     @Override
@@ -96,6 +112,12 @@ public class WheatleyOpMode extends ActionOpMode {
 
         if(gamepad1.start && gamepad1.x){
             mecanumDrive.localizer.setPose(new Pose2d(mecanumDrive.localizer.getPose().position,0));
+        }
+        if(!DischargeCommands.AutomaticAiming.inRange && AutoShooter.canLaunch(mecanumDrive.localizer.getPose())){
+            gamepad1.rumble(100);
+        }
+        if(!endGame && time.seconds() > 90){
+            gamepad2.rumble(1000);
         }
         super.run();
         multipleTelemetry.addLine("Position");

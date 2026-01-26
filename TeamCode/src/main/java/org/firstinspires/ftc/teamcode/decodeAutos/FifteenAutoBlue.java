@@ -52,16 +52,16 @@ public class FifteenAutoBlue extends ActionOpMode {
         requirements.add(mecanumDrive);
         TrajectoryActionBuilder wheatleyAutoOne = mecanumDrive.actionBuilder(mecanumDrive.localizer.getPose(), reversed)
                 .splineToConstantHeading(new Vector2d(61.4, 58), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(60.5, 24), -Math.PI / 2);
+                .splineToConstantHeading(new Vector2d(59, 23), -Math.PI / 2);
 
-        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(60.5, 24, Math.PI / 2), reversed)
+        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(59, 23, Math.PI / 2), reversed)
                 .setTangent(Math.PI)
-                .splineToSplineHeading(new Pose2d(20, 30, Math.PI * 11 / 18), Math.PI * 3 / 4)
-                .splineToConstantHeading(new Vector2d(10, 46), Math.PI * 5 / 8)
-                .splineToSplineHeading(new Pose2d(9.9,46.1,Math.PI * 11 / 18), Math.PI * 5 / 8)
-                .splineToLinearHeading(new Pose2d(3, 52,Math.PI/2), Math.PI / 2);
+                .splineToConstantHeading(new Vector2d(15, 30), Math.PI * 3 / 4)
+                .splineToConstantHeading(new Vector2d(12, 46), Math.PI * 5 / 8)
+                .splineToConstantHeading(new Vector2d(11.9,46.1), Math.PI * 5 / 8)
+                .splineToConstantHeading(new Vector2d(3, 54), Math.PI / 2);
 
-        TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(4, 54, Math.PI / 2)), reversed)
+        TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(3, 54, Math.PI / 2)), reversed)
                 .setTangent(-Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-12, 22), Math.PI);
 
@@ -72,11 +72,12 @@ public class FifteenAutoBlue extends ActionOpMode {
 
         TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-12, 22, Math.PI / 2), reversed)
                 .setTangent(0)
-                .splineToConstantHeading(new Vector2d(36, 48), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(36,48.1),-Math.PI/2)
-                .splineToConstantHeading(new Vector2d(-6, 16), -Math.PI * 3 / 4);
+                .splineToConstantHeading(new Vector2d(30,28),Math.PI/4)
+                .splineToConstantHeading(new Vector2d(36, 52), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(36, 52.1), -Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(-8, 16), -Math.PI * 3 / 4);
 
-        TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-6, -16, -Math.PI / 2))
+        TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-8, -16, -Math.PI / 2))
                 .setTangent(-Math.PI * 3 / 8)
                 .splineToConstantHeading(new Vector2d(0, -40), Math.PI / 2);
 
@@ -98,9 +99,9 @@ public class FifteenAutoBlue extends ActionOpMode {
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 ),
-                                new WaitCommand(400),
+                                new WaitCommand(100),
                                 new IntakeCommands.ClosedState(intakeSubsystem),
-                                new WaitCommand(800),
+                                new WaitCommand(1500),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
                                         new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor)

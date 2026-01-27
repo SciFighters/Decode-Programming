@@ -19,15 +19,23 @@ public class ColorSensorTester extends ActionOpMode {
 
     @Override
     public void run() {
+        multipleTelemetry.addLine("left");
+
         multipleTelemetry.addData("left", CarouselSubsystem.colorIdentifier(left));
-        multipleTelemetry.addData("right", CarouselSubsystem.colorIdentifier(right));
-        multipleTelemetry.addData("middle", CarouselSubsystem.colorIdentifier(middle));
         multipleTelemetry.addData("leftRed",left.red());
         multipleTelemetry.addData("leftBlue",left.blue());
         multipleTelemetry.addData("leftGreen",left.green());
+
+        multipleTelemetry.addLine("right");
+
+        multipleTelemetry.addData("right", CarouselSubsystem.colorIdentifier(right));
         multipleTelemetry.addData("rightRed",right.red());
         multipleTelemetry.addData("rightBlue",right.blue());
         multipleTelemetry.addData("rightGreen",right.green());
+
+        multipleTelemetry.addLine("middle");
+
+        multipleTelemetry.addData("middle", CarouselSubsystem.colorIdentifier(middle));
         multipleTelemetry.addData("middleRed",middle.red());
         multipleTelemetry.addData("middleBlue",middle.blue());
         multipleTelemetry.addData("middleGreen",middle.green());

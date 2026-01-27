@@ -16,7 +16,7 @@ public abstract class AllianceDetectionOpMode extends ActionOpMode {
 
     @Override
     public void initialize_loop() {
-        motif = (limelightSubsystem.getMotif() != null) ? limelightSubsystem.getMotif() : motif;
+//        motif = (limelightSubsystem.getMotif() != null) ? limelightSubsystem.getMotif() : motif;
         TeamColor teamColor1 = limelightSubsystem.getTeamColor();
         if (teamColor1 != null) {
             teamColor = teamColor1;

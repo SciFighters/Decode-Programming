@@ -91,20 +91,20 @@ public class LimelightSubsystem extends SubsystemBase {
         aprilTagPos = teamColor == TeamColor.RED ? new Pose2d(-58, 56, Rotation2d.fromDegrees(-54)) : new Pose2d(-58, -56, Rotation2d.fromDegrees(54));
     }
 
-    public Motif getMotif() {
+    public int getMotif() {
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducialResult : results) {
             int id = fiducialResult.getFiducialId();
             switch (id) {
                 case 21:
-                    return Motif.GPP;
+                    return 0;
                 case 22:
-                    return Motif.PGP;
+                    return 1;
                 case 23:
-                    return Motif.PPG;
+                    return 2;
             }
         }
-        return null;
+        return -1;
     }
 
     public boolean getGoalID() {

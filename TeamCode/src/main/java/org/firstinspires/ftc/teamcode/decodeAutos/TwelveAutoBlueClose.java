@@ -36,9 +36,10 @@ public class TwelveAutoBlueClose extends ActionOpMode {
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
-
+    double turretStartAngle = 310;
     @Override
     public void initialize() {
+        SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
         Set<Subsystem> requirements = new HashSet<>();
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
@@ -119,6 +120,14 @@ public class TwelveAutoBlueClose extends ActionOpMode {
                 )
         );
 
+    }
+
+    @Override
+    public void initialize_loop() {
+        int current = limelightSubsystem.getMotif();
+        SavedValues.startMotif = (current != -1)? current : SavedValues.startMotif;
+        double power = -(turretStartAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
+        dischargeSubsystem.setTurretPower(power);
     }
 
     @Override

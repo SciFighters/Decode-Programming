@@ -73,7 +73,9 @@ public class CommandGroups {
                     new CarouselCommands.MoveToAngle(carouselSubsystem, 180)
             );
         }
-    }public static class StartOuttake extends ParallelCommandGroup {
+    }
+
+    public static class StartOuttake extends ParallelCommandGroup {
         public StartOuttake(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
             addCommands(
                     new IntakeCommands.OutTakeState(intakeSubsystem),
@@ -110,17 +112,17 @@ public class CommandGroups {
             double power = this.power.get() - 0.01;
             power += Math.signum(power) * 0.1;
 
-            if (mecanumDrive.rightFront.getCurrentPosition() - rStart > 537.6 / 4 +  mecanumDrive.leftFront.getCurrentPosition() - lStart){
+            if (mecanumDrive.rightFront.getCurrentPosition() - rStart > 537.6 / 4 + mecanumDrive.leftFront.getCurrentPosition() - lStart) {
                 mecanumDrive.rightFront.setPower(-0.1);
                 mecanumDrive.rightBack.setPower(0.1);
-            }else{
+            } else {
                 mecanumDrive.rightFront.setPower(-power);
                 mecanumDrive.rightBack.setPower(power);
             }
-            if (mecanumDrive.leftFront.getCurrentPosition() - lStart > 537.6 / 4 +  mecanumDrive.rightFront.getCurrentPosition() - rStart){
+            if (mecanumDrive.leftFront.getCurrentPosition() - lStart > 537.6 / 4 + mecanumDrive.rightFront.getCurrentPosition() - rStart) {
                 mecanumDrive.leftFront.setPower(-0.1);
                 mecanumDrive.leftBack.setPower(0.1);
-            }else{
+            } else {
                 mecanumDrive.leftFront.setPower(-power);
                 mecanumDrive.leftBack.setPower(power);
 
@@ -129,31 +131,18 @@ public class CommandGroups {
         }
     }
 
-    public static class Sort extends ParallelRaceGroup {
-        public Sort(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem, Motif motif) {
-            Supplier<Double> steps = () ->{
-                int placement = carouselSubsystem.getGreenPlacement();
-                if (placement == -1){
-                    return 0.0;
-                }
-                switch (motif) {
-                    case PGP:
-                        return -(carouselSubsystem.getGreenPlacement() + 2.0) % 3;
-                    case GPP:
-                        return -(carouselSubsystem.getGreenPlacement() + 1.0) % 3.0;
-                    case PPG:
-                        return -carouselSubsystem.getGreenPlacement() % 3.0;
-                }
-                return 0.0;
-            };
-
-
+    public static class SortedShooting extends SequentialCommandGroup {
+        public SortedShooting(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem, MecanumDrive mecanumDrive) {
             addCommands(
+                    new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
                     new IntakeCommands.SortingState(intakeSubsystem),
-                    new SequentialCommandGroup(
-                            new CarouselCommands.SlideDistance(carouselSubsystem, -0.625, -0.8),
-                            new WaitCommand(100)
-                    )
+                    new CarouselCommands.SlideDistance(carouselSubsystem, -0.6, 0.6),
+                    new WaitCommand(200),
+                    new WaitUntilCommand(() -> AutoShooter.canLaunch(mecanumDrive.localizer.getPose())),
+                    new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
+                    new CarouselCommands.SmartDischarge(carouselSubsystem, intakeSubsystem),
+                    new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
+
             );
         }
     }

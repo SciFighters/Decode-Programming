@@ -134,6 +134,7 @@ public class DischargeCommands {
                 dischargeSubsystem.setRampDegree(41);
                 dischargeSubsystem.setFlyWheelRPM(3000);
                 atSpeed = true;
+                atCloseSpeed = true;
             }
 
         }

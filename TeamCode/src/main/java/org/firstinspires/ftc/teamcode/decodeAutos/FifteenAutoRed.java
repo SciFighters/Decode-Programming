@@ -37,9 +37,10 @@ public class FifteenAutoRed extends ActionOpMode {
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
-
+    double turretStartAngle = 270;
     @Override
     public void initialize() {
+        SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.RED;
         Set<Subsystem> requirements = new HashSet<>();
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
@@ -105,7 +106,9 @@ public class FifteenAutoRed extends ActionOpMode {
                                 new WaitCommand(800),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
-                                        new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor)
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(300),
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor))
                                 ),
 
                                 new ParallelCommandGroup(
@@ -133,7 +136,13 @@ public class FifteenAutoRed extends ActionOpMode {
         );
 
     }
-
+    @Override
+    public void initialize_loop() {
+        int current = limelightSubsystem.getMotif();
+        SavedValues.startMotif = (current != -1)? current : SavedValues.startMotif;
+        double power = -(turretStartAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
+        dischargeSubsystem.setTurretPower(power);
+    }
     @Override
     public void run() {
         mecanumDrive.updatePoseEstimate();

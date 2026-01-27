@@ -51,8 +51,10 @@ public class WheatleyOpMode extends ActionOpMode {
     ElapsedTime time;
     boolean endGame = false;
 
+
     @Override
     public void initialize() {
+        SavedValues.currentCount = 0;
         time = new ElapsedTime();
         teamColor = SavedValues.teamColor;
 
@@ -82,12 +84,19 @@ public class WheatleyOpMode extends ActionOpMode {
         driverLeftBumper.whenPressed(() -> IntakeCommands.IntakeState.resetCount = !IntakeCommands.IntakeState.resetCount);
 
         driverY.whenPressed(new CommandGroups.StartOuttake(intakeSubsystem,carouselSubsystem));
+        driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem,carouselSubsystem,mecanumDrive));
         driverRightBumper.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
         mecanumDrive.lazyImu.get().resetYaw();
         systemDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);
         systemDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection -= 2);
         systemDPadUp.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection += 25);
         systemDPadDown.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection -= 25);
+        systemA.whenPressed(()-> SavedValues.currentCount = (SavedValues.currentCount + 1) % 3);
+        systemY.whenPressed(() -> SavedValues.currentCount = (SavedValues.currentCount + 2) % 3);
+        systemB.whenPressed(() -> SavedValues.currentCount = 0);
+        systemA.whenReleased(() -> gamepad2.rumble(100));
+        systemY.whenReleased(() -> gamepad2.rumble(100));
+        systemB.whenReleased(() -> gamepad2.rumble(100));
 
 //        driverDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);
 //        driverDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection -= 2);

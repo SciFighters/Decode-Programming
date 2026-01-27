@@ -4,6 +4,8 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
@@ -35,9 +37,12 @@ public class TwelveAutoRedClose extends ActionOpMode {
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
-
+    double turretStartAngle = 50;
+    ElapsedTime time;
     @Override
     public void initialize() {
+        time = new ElapsedTime();
+        SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.RED;
         Set<Subsystem> requirements = new HashSet<>();
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
@@ -91,20 +96,20 @@ public class TwelveAutoRedClose extends ActionOpMode {
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
-                                        new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor)
+                                        new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                 ),
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1400),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor)
+                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor)
+                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),
@@ -117,6 +122,25 @@ public class TwelveAutoRedClose extends ActionOpMode {
                         )
                 )
         );
+        time.reset();
+    }
+
+    @Override
+    public void initialize_loop() {
+        limelightSubsystem.startLimelight();
+        if(time.seconds() > 2){
+            int current = limelightSubsystem.getMotif();
+            SavedValues.startMotif = (current != -1)? current : SavedValues.startMotif;
+            double power = -(turretStartAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
+            if(Math.abs(turretStartAngle - dischargeSubsystem.getTurretAngle()) < 5){
+                power = 0;
+            }
+            power = Range.clip(power,-0.3,0.3);
+            dischargeSubsystem.setTurretPower(power);
+            multipleTelemetry.addData("used",SavedValues.startMotif);
+            multipleTelemetry.addData("current",current);
+            multipleTelemetry.update();
+        }
 
     }
 

@@ -369,7 +369,7 @@ public class CarouselCommands {
             }}, () -> getSequence(carouselSubsystem));
         }
         private static Sequence getSequence(CarouselSubsystem carouselSubsystem){
-            int wanted = (SavedValues.currentCount + SavedValues.startMotif) % 3;
+            int wanted = (3 -SavedValues.currentCount % 3 + SavedValues.startMotif) % 3;
             int current = carouselSubsystem.getGreenPlacement();//todo: check if returns correctly
             if ((current == 1 && wanted == 0) || current == -1){
                 return Sequence.NONE;

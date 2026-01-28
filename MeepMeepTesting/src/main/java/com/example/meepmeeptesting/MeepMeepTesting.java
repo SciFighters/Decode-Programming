@@ -27,7 +27,7 @@ public class MeepMeepTesting {
                 .setTangent(0)
                 .splineToLinearHeading(new Pose2d(14, 44, Math.PI / 2), Math.PI / 2)
                 .splineToSplineHeading(new Pose2d(14, 44.1, Math.PI / 2), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(5, 54), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(5, 55), Math.PI / 2)
                 .setTangent(-Math.PI / 2)//p2
                 .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI)
 
@@ -36,8 +36,9 @@ public class MeepMeepTesting {
                 .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI / 2)
 
                 .setTangent(0)
+                .splineToConstantHeading(new Vector2d(30,30),Math.PI /18 * 6.5)
                 .splineToConstantHeading(new Vector2d(36, 48), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-6, 16), -Math.PI * 3 / 4)
+                .splineToConstantHeading(new Vector2d(-8, 14), -Math.PI * 3 / 4)
 
                 .splineToConstantHeading(new Vector2d(0, 48), Math.PI / 2);
 
@@ -65,9 +66,10 @@ public class MeepMeepTesting {
 
                 .setTangent(Math.PI)
                 .splineToConstantHeading(new Vector2d(15, 30), Math.PI * 3 / 4)
-                .splineToConstantHeading(new Vector2d(12, 46), Math.PI * 5 / 8)
-                .splineToConstantHeading(new Vector2d(11.9,46.1), Math.PI * 5 / 8)
-                .splineToConstantHeading(new Vector2d(3, 54), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(11, 41), Math.PI * 5 / 8, new TranslationalVelConstraint(20.0))
+                .splineToConstantHeading(new Vector2d(10.9,41.1), Math.PI * 5 / 8)
+                .splineToConstantHeading(new Vector2d(2, 53), Math.PI / 2 )
+
                 .setTangent(-Math.PI / 2)//p2
                 .splineToConstantHeading(new Vector2d(-12, 22), Math.PI)
 
@@ -79,12 +81,13 @@ public class MeepMeepTesting {
                 .splineToConstantHeading(new Vector2d(30,28),Math.PI/4)
                 .splineToConstantHeading(new Vector2d(36, 52), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(36, 52.1), -Math.PI / 2)
+
                 .splineToConstantHeading(new Vector2d(-8, 16), -Math.PI * 3 / 4)
 
                 .setTangent(Math.PI * 3 / 8)
                 .splineToConstantHeading(new Vector2d(0, 48), Math.PI / 2);
 
-        wheatley.runAction(wheatleyAuto15.build());
+        wheatley.runAction(wheatleyAuto12.build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)
                 .setDarkMode(true)

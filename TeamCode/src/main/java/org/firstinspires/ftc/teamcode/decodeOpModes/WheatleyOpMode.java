@@ -11,11 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.decodeCommands.CarouselCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.LimelightCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -74,7 +72,7 @@ public class WheatleyOpMode extends ActionOpMode {
         dischargeSubsystem.setDefaultCommand(new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, teamColor));
         driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem));
         driverB.whenPressed(new SequentialCommandGroup(
-                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, teamColor),
+                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive),
                 new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem).withTimeout(800)));
 //        driverBack.whenPressed(new InstantCommand(() -> mecanumDrive.localizer.setPose(new Pose2d(mecanumDrive.localizer.getPose().position, Math.PI))));
         driverX.whenPressed(new SequentialCommandGroup(
@@ -84,15 +82,16 @@ public class WheatleyOpMode extends ActionOpMode {
         driverLeftBumper.whenPressed(() -> IntakeCommands.IntakeState.resetCount = !IntakeCommands.IntakeState.resetCount);
 
         driverY.whenPressed(new CommandGroups.StartOuttake(intakeSubsystem,carouselSubsystem));
-        driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem,carouselSubsystem,mecanumDrive));
+        driverLeftBumper.whenPressed(new SequentialCommandGroup(new CommandGroups.SortedShooting(intakeSubsystem,carouselSubsystem,mecanumDrive),
+                new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem).withTimeout(800)));
         driverRightBumper.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
         mecanumDrive.lazyImu.get().resetYaw();
         systemDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);
         systemDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection -= 2);
         systemDPadUp.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection += 25);
         systemDPadDown.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection -= 25);
-        systemA.whenPressed(()-> SavedValues.currentCount = (SavedValues.currentCount + 1) % 3);
-        systemY.whenPressed(() -> SavedValues.currentCount = (SavedValues.currentCount + 2) % 3);
+        systemA.whenPressed(()-> SavedValues.currentCount = (SavedValues.currentCount + 1) % 9);
+        systemY.whenPressed(() -> SavedValues.currentCount = Math.max((SavedValues.currentCount -1) % 9,0));
         systemB.whenPressed(() -> SavedValues.currentCount = 0);
         systemA.whenReleased(() -> gamepad2.rumble(100));
         systemY.whenReleased(() -> gamepad2.rumble(100));
@@ -103,7 +102,6 @@ public class WheatleyOpMode extends ActionOpMode {
 //        driverDPadUp.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection += 25);
 //        driverDPadDown.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection -= 25);
 
-        systemA.whenPressed(() -> gamepad1.rumble(500));
 //        systemLeftStick.whenPressed(new CarouselCommands.SafeSlide(carouselSubsystem,intakeSubsystem,0.3,0.8));
 //        systemB.whenPressed(() -> carouselSubsystem.artifactsInGoal = (carouselSubsystem.artifactsInGoal + 1) % 3);
 //        systemA.whenPressed(() -> carouselSubsystem.resetEncoders());
@@ -127,8 +125,14 @@ public class WheatleyOpMode extends ActionOpMode {
         }
         if(!endGame && time.seconds() > 90){
             gamepad2.rumble(1000);
+            endGame = true;
+        }
+        if(10.5 > time.seconds() && time.seconds()  > 9.5){
+            gamepad1.rumble(100);
         }
         super.run();
+        multipleTelemetry.addData("COUNT",SavedValues.currentCount);
+        multipleTelemetry.addLine("----------------------------");
         multipleTelemetry.addLine("Position");
         multipleTelemetry.addData("X", mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("Y", mecanumDrive.localizer.getPose().position.y);

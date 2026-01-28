@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.decodeAutos;
+package org.firstinspires.ftc.teamcode.decodeAutos.close12;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
@@ -17,7 +19,6 @@ import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
 import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.LimelightCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -29,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Autonomous(name = "12 blue close",group = "blue close")
-public class TwelveAutoBlueClose extends ActionOpMode {
+public class BlueClose12 extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
     CarouselSubsystem carouselSubsystem;
@@ -37,8 +38,10 @@ public class TwelveAutoBlueClose extends ActionOpMode {
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
     double turretStartAngle = 310;
+    ElapsedTime time;
     @Override
     public void initialize() {
+        time = new ElapsedTime();
         SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
         Set<Subsystem> requirements = new HashSet<>();
@@ -71,8 +74,10 @@ public class TwelveAutoBlueClose extends ActionOpMode {
 
         TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(0)
+                .splineToConstantHeading(new Vector2d(30,30),Math.PI /18 * 6.5)
+
                 .splineToConstantHeading(new Vector2d(36, 48), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-6, 16), -Math.PI * 3 / 4);
+                .splineToConstantHeading(new Vector2d(-8, 14), -Math.PI * 3 / 4);
         TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-6, -16, -Math.PI / 2))
                 .splineToConstantHeading(new Vector2d(0, -40), -Math.PI / 2);
         CommandScheduler.getInstance().schedule(
@@ -84,7 +89,7 @@ public class TwelveAutoBlueClose extends ActionOpMode {
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(1500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor)
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         )
                                 ),
                                 new ParallelRaceGroup(
@@ -93,20 +98,20 @@ public class TwelveAutoBlueClose extends ActionOpMode {
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
-                                        new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor)
+                                        new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                 ),
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1400),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor)
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, SavedValues.teamColor)
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),
@@ -119,17 +124,27 @@ public class TwelveAutoBlueClose extends ActionOpMode {
                         )
                 )
         );
+        time.reset();
 
     }
-
     @Override
     public void initialize_loop() {
-        int current = limelightSubsystem.getMotif();
-        SavedValues.startMotif = (current != -1)? current : SavedValues.startMotif;
-        double power = -(turretStartAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
-        dischargeSubsystem.setTurretPower(power);
-    }
+        limelightSubsystem.startLimelight();
+        if(time.seconds() > 1){
+            int current = limelightSubsystem.getMotif();
+            SavedValues.startMotif = (current != -1)? current : SavedValues.startMotif;
+            double power = -(turretStartAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
+            if(Math.abs(turretStartAngle - dischargeSubsystem.getTurretAngle()) < 5){
+                power = 0;
+            }
+            power = Range.clip(power,-0.3,0.3);
+            dischargeSubsystem.setTurretPower(power);
+            multipleTelemetry.addData("used",SavedValues.startMotif);
+            multipleTelemetry.addData("current",current);
+            multipleTelemetry.update();
+        }
 
+    }
     @Override
     public void run() {
         mecanumDrive.updatePoseEstimate();

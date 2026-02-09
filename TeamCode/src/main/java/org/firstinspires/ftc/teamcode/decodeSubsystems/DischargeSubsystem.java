@@ -17,9 +17,10 @@ public class DischargeSubsystem extends SubsystemBase {
     private final DcMotorEx turretMotor;
     public final MotorEx flyWheelMotor;
     private final Servo rampServo;
-    private final double kS = 0.096561046, kV = 0.00016767951, kP = 0.000833333, kI = 0.000005;
+    private final double kS = 0.09443522456, kV = 0.00014451002, kP = 0.000833333, kI = 0.000005;
     private final double ticksPerDegree = 383.6 * (198.0/49.0) / 360.0;
     private final double startAngle;
+    private final double gearRatio = 35.0/35; // 34:30
     double integral;
 
     public DischargeSubsystem(HardwareMap hm) {
@@ -30,9 +31,8 @@ public class DischargeSubsystem extends SubsystemBase {
         startAngle = 180;
         integral = 0;
     }
-    public void resetTurret(){
-        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    public void resetTurret(){//swapped encoders
+        flyWheelMotor.stopAndResetEncoder();
     }
 
     public void setFlyWheelPower(double flyWheelPower) {
@@ -46,19 +46,20 @@ public class DischargeSubsystem extends SubsystemBase {
 //            turretMotor.setPower(0);
             return;
         }
-        double currentRPM = -flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60;
+        rpm *= gearRatio;
+        double currentRPM = getRPM();
         if(currentRPM < rpm){
             flyWheelMotor.set(-1);
-//            turretMotor.setPower(1);
+//            turretMotor.setPower(-1);
         }else{
             flyWheelMotor.set(-kS * Math.signum(rpm) - kV * rpm + 0.04);
-//            turretMotor.setPower(kS * Math.signum(rpm) + kV * rpm - 0.03);
+//            turretMotor.setPower(-kS * Math.signum(rpm) - kV * rpm + 0.04);
         }
 
     }
 
-    public double getRPM() {
-        return -flyWheelMotor.getCorrectedVelocity() / flyWheelMotor.getCPR() * 60;
+    public double getRPM() {//swapped encoders
+        return -turretMotor.getVelocity() / flyWheelMotor.getCPR() * 60 * gearRatio;
     }
     public double getFlyWheelPower(){
         return flyWheelMotor.get();
@@ -73,13 +74,13 @@ public class DischargeSubsystem extends SubsystemBase {
         turretMotor.setPower(turretPower);
     }
 
-    public double getTurretPosition() {
-        return turretMotor.getCurrentPosition();
+    public double getTurretPosition() {//swapped encoders
+        return flyWheelMotor.getCurrentPosition();
 //        return 0;
     }
 
-    public double getTurretAngle() {
-        return 360 - (turretMotor.getCurrentPosition() / ticksPerDegree + startAngle);
+    public double getTurretAngle() {//swapped encoders
+        return (flyWheelMotor.getCurrentPosition() / ticksPerDegree + startAngle);
 //        return 0;
     }
 

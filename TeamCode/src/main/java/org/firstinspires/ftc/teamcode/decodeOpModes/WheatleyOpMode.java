@@ -127,7 +127,7 @@ public class WheatleyOpMode extends ActionOpMode {
             gamepad2.rumble(1000);
             endGame = true;
         }
-        if(10.5 > time.seconds() && time.seconds()  > 9.5){
+        if(110.5 > time.seconds() && time.seconds()  > 109.5){
             gamepad1.rumble(100);
         }
         super.run();

@@ -399,7 +399,7 @@ public class CarouselCommands {
         public Discharge(CarouselSubsystem carouselSubsystem, IntakeSubsystem intakeSubsystem) {
             super(new HashMap<Object, Command>(){{
                 put(Sequence.CLOSE, new SequentialCommandGroup(
-                            new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
+                            new WaitUntilCommand(() -> AutomaticShootingTuner.atSpeed),
 
                             new SlideDistance(carouselSubsystem, 3.2, 1)
                             /*new SlideDistance(carouselSubsystem, 1.2, 0.65)*/));
@@ -410,17 +410,17 @@ public class CarouselCommands {
                         new WaitCommand(80),
                         new SlideDistance(carouselSubsystem, 1.2, 0.65)));
                 put(Sequence.FAR, new SequentialCommandGroup(
-                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+                        new WaitUntilCommand(() -> AutomaticShootingTuner.atSpeed),
                         new IntakeCommands.TransferState(intakeSubsystem),
                         new SlideDistance(carouselSubsystem, 0.8 - carouselSubsystem.getCarouselDistance(), transferSpeed),
 
                         new SlideDistance(carouselSubsystem, 0.12, transferSpeed),
                         new WaitCommand(100),
-                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+                        new WaitUntilCommand(() -> AutomaticShootingTuner.atSpeed),
                         new SlideDistance(carouselSubsystem, 0.6, transferSpeed),
 
                         new WaitCommand(50),
-                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+                        new WaitUntilCommand(() -> AutomaticShootingTuner.atSpeed),
                         new SlideDistance(carouselSubsystem, 1.2, 0.5)));
 
 
@@ -431,7 +431,7 @@ public class CarouselCommands {
                 } else if (distance < 105) {
                     return Sequence.MIDDLE;
                 }
-                return Sequence.FAR;
+                return Sequence.CLOSE;
             });
         }
     }

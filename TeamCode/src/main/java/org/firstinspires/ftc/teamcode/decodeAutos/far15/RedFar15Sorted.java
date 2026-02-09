@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import java.util.HashSet;
 import java.util.Set;
 
-@Autonomous(name = "15 red far")
+@Autonomous(name = "15 red far sorted")
 public class RedFar15Sorted extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;

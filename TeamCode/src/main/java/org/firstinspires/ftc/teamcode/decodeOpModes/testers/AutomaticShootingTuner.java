@@ -113,6 +113,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.addData("distance", AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), AutoShooter.TeamColor.RED));
         multipleTelemetry.addData("anglee", launchAngle);
+        multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
         multipleTelemetry.update();
     }
     private void aimTurret(){
@@ -131,7 +132,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
         power = -(launchAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
 //            }
 //        power += mecanumSpeed * 0.12;
-        power += Math.signum(power) * 0.05;
+        power += Math.signum(power) * 0.04;
         dischargeSubsystem.setTurretPower(power);
     }
 

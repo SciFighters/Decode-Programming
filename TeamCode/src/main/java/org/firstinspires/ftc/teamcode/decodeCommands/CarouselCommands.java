@@ -399,7 +399,7 @@ public class CarouselCommands {
         public Discharge(CarouselSubsystem carouselSubsystem, IntakeSubsystem intakeSubsystem) {
             super(new HashMap<Object, Command>(){{
                 put(Sequence.CLOSE, new SequentialCommandGroup(
-                            new WaitUntilCommand(() -> AutomaticShootingTuner.atSpeed),
+                            new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
 
                             new SlideDistance(carouselSubsystem, 3.2, 1)
                             /*new SlideDistance(carouselSubsystem, 1.2, 0.65)*/));
@@ -429,7 +429,7 @@ public class CarouselCommands {
                 if(distance < 75){
                     return Sequence.CLOSE;
                 } else if (distance < 105) {
-                    return Sequence.MIDDLE;
+                    return Sequence.CLOSE;
                 }
                 return Sequence.CLOSE;
             });

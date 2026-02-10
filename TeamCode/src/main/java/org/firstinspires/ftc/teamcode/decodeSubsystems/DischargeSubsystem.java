@@ -57,6 +57,10 @@ public class DischargeSubsystem extends SubsystemBase {
         }
 
     }
+    public void stayRPM(double rpm){
+        rpm *= gearRatio;
+        flyWheelMotor.set(-kS * Math.signum(rpm) - kV * rpm + 0.04);
+    }
 
     public double getRPM() {//swapped encoders
         return -turretMotor.getVelocity() / flyWheelMotor.getCPR() * 60 * gearRatio;

@@ -125,7 +125,7 @@ public class DischargeCommands {
                     atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 200;
                     atCloseSpeed =  Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 70;
                 } else {
-                    dischargeSubsystem.setFlyWheelRPM(0);
+                    dischargeSubsystem.stayRPM(launchVector[1] + rpmCorrection);
                     atSpeed = false;
                 }
             }

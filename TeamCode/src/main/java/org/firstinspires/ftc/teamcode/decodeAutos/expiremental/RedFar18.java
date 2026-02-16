@@ -30,8 +30,8 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import java.util.HashSet;
 import java.util.Set;
 
-@Autonomous(name = "15 red far sorted")
-public class RedFar15Sorted extends ActionOpMode {
+@Autonomous(name = "18 red far")
+public class RedFar18 extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
     CarouselSubsystem carouselSubsystem;
@@ -63,13 +63,22 @@ public class RedFar15Sorted extends ActionOpMode {
         TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(59, 23, Math.PI / 2), reversed)
                 .setTangent(Math.PI)
                 .splineToConstantHeading(new Vector2d(9, 26), Math.PI * 3 / 4)
-                .splineToConstantHeading(new Vector2d(6, 38), Math.PI * 5 / 8, new TranslationalVelConstraint(20.0))
+                .splineToConstantHeading(new Vector2d(6, 38), Math.PI * 5 / 8/*, new TranslationalVelConstraint(20.0)*/)
                 .splineToConstantHeading(new Vector2d(5.9, 38.1), Math.PI * 5 / 8)
                 .splineToConstantHeading(new Vector2d(2, 53), Math.PI / 2);
 
         TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(2, 53, Math.PI / 2)), reversed)
                 .setTangent(-Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-14, 20), Math.PI);
+
+        TrajectoryActionBuilder midAutoP1 = mecanumDrive.actionBuilder(new Pose2d(-14, 20, Math.PI / 2), reversed)
+                .setTangent(Math.PI/5)
+                .splineToConstantHeading(new Vector2d(4,30),Math.PI/3)
+                .splineToSplineHeading(new Pose2d(14.5, 62.5,Math.PI*7/8),Math.PI/2);
+
+        TrajectoryActionBuilder midAutoP2 = mecanumDrive.actionBuilder(new Pose2d(14, 61, Math.PI * 2 / 3), reversed)
+                .setTangent(-Math.PI/2)
+                .splineToLinearHeading(new Pose2d(-14, 20,Math.PI/2),-Math.PI * 3 / 4);
 
         TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(-14, 20, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 2)
@@ -112,20 +121,35 @@ public class RedFar15Sorted extends ActionOpMode {
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(300),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
+
+
+                                new ParallelRaceGroup(
+                                        new ActionCommand(midAutoP1.build(), requirements),
+                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                ),
+                                new WaitCommand(700),
+
+                                new ParallelCommandGroup(
+                                        new ActionCommand(midAutoP2.build(), requirements),
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(300),
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                ),
+
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1300),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3500),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),
@@ -166,6 +190,7 @@ public class RedFar15Sorted extends ActionOpMode {
         super.run();
         multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
+        multipleTelemetry.addData("power",dischargeSubsystem.getFlyWheelPower());
         multipleTelemetry.update();
         SavedValues.position = mecanumDrive.localizer.getPose();
         SavedValues.turretAngle = dischargeSubsystem.getTurretAngle();

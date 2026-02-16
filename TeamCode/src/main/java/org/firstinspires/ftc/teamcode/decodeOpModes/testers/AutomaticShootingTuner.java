@@ -114,6 +114,8 @@ public class AutomaticShootingTuner extends ActionOpMode {
         multipleTelemetry.addData("distance", AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), AutoShooter.TeamColor.RED));
         multipleTelemetry.addData("anglee", launchAngle);
         multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
+        multipleTelemetry.addData("velX", mecanumDrive.localizer.update().linearVel.x);
+        multipleTelemetry.addData("velY", mecanumDrive.localizer.update().linearVel.y);
         multipleTelemetry.update();
     }
     private void aimTurret(){

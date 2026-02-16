@@ -62,16 +62,16 @@ public class RedFar15 extends ActionOpMode {
 
         TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(59, 23, Math.PI / 2), reversed)
                 .setTangent(Math.PI)
-                .splineToConstantHeading(new Vector2d(15, 30), Math.PI * 3 / 4)
-                .splineToConstantHeading(new Vector2d(11, 41), Math.PI * 5 / 8, new TranslationalVelConstraint(20.0))
-                .splineToConstantHeading(new Vector2d(10.9, 41.1), Math.PI * 5 / 8)
+                .splineToConstantHeading(new Vector2d(9, 26), Math.PI * 3 / 4)
+                .splineToConstantHeading(new Vector2d(6, 38), Math.PI * 5 / 8, new TranslationalVelConstraint(20.0))
+                .splineToConstantHeading(new Vector2d(5.9, 38.1), Math.PI * 5 / 8)
                 .splineToConstantHeading(new Vector2d(2, 53), Math.PI / 2);
 
         TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(2, 53, Math.PI / 2)), reversed)
                 .setTangent(-Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-12, 22), Math.PI);
+                .splineToConstantHeading(new Vector2d(-14, 20), Math.PI);
 
-        TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(-12, 22, Math.PI / 2), reversed)
+        TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(-14, 20, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-12, 46), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-12, 22), -Math.PI / 2);

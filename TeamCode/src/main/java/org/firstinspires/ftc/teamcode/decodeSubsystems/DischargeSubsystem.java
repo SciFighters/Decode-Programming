@@ -22,6 +22,7 @@ public class DischargeSubsystem extends SubsystemBase {
     private final double startAngle;
     private final double gearRatio = 35.0/35; // 34:30
     double integral;
+    public static boolean shooting = false;
 
     public DischargeSubsystem(HardwareMap hm) {
         flyWheelMotor = new MotorEx(hm, "flyWheelMotor", Motor.GoBILDA.BARE);
@@ -30,6 +31,7 @@ public class DischargeSubsystem extends SubsystemBase {
         rampServo = hm.get(Servo.class, "rampServo");
         startAngle = 180;
         integral = 0;
+        shooting = false;
     }
     public void resetTurret(){//swapped encoders
         flyWheelMotor.stopAndResetEncoder();
@@ -48,18 +50,18 @@ public class DischargeSubsystem extends SubsystemBase {
         }
         rpm *= gearRatio;
         double currentRPM = getRPM();
-        if(currentRPM < rpm){
-            flyWheelMotor.set(-1);
+        if(currentRPM < rpm || shooting){
+            flyWheelMotor.set(1);
 //            turretMotor.setPower(-1);
         }else{
-            flyWheelMotor.set(-kS * Math.signum(rpm) - kV * rpm + 0.04);
+            flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.02);
 //            turretMotor.setPower(-kS * Math.signum(rpm) - kV * rpm + 0.04);
         }
 
     }
     public void stayRPM(double rpm){
         rpm *= gearRatio;
-        flyWheelMotor.set(-kS * Math.signum(rpm) - kV * rpm + 0.04);
+        flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.02);
     }
 
     public double getRPM() {//swapped encoders
@@ -70,9 +72,9 @@ public class DischargeSubsystem extends SubsystemBase {
     }
 
     public void setTurretPower(double turretPower) {
-        if(getTurretAngle() > 332){
+        if(getTurretAngle() > 350){
             turretPower = Math.max(turretPower,0);
-        } else if (getTurretAngle() < 24) {
+        } else if (getTurretAngle() < 10) {
             turretPower = Math.min(turretPower,0);
         }
         turretMotor.setPower(turretPower);

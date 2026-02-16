@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -399,9 +400,11 @@ public class CarouselCommands {
         public Discharge(CarouselSubsystem carouselSubsystem, IntakeSubsystem intakeSubsystem) {
             super(new HashMap<Object, Command>(){{
                 put(Sequence.CLOSE, new SequentialCommandGroup(
+                        new InstantCommand(() -> DischargeSubsystem.shooting = false),
                             new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-
+//                            new InstantCommand(() -> DischargeSubsystem.shooting = true),
                             new SlideDistance(carouselSubsystem, 3.2, 1)
+//                            new InstantCommand(() -> DischargeSubsystem.shooting = false)
                             /*new SlideDistance(carouselSubsystem, 1.2, 0.65)*/));
                 put(Sequence.MIDDLE,new SequentialCommandGroup(
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
@@ -410,28 +413,19 @@ public class CarouselCommands {
                         new WaitCommand(80),
                         new SlideDistance(carouselSubsystem, 1.2, 0.65)));
                 put(Sequence.FAR, new SequentialCommandGroup(
-                        new WaitUntilCommand(() -> AutomaticShootingTuner.atSpeed),
-                        new IntakeCommands.TransferState(intakeSubsystem),
-                        new SlideDistance(carouselSubsystem, 0.8 - carouselSubsystem.getCarouselDistance(), transferSpeed),
-
-                        new SlideDistance(carouselSubsystem, 0.12, transferSpeed),
-                        new WaitCommand(100),
-                        new WaitUntilCommand(() -> AutomaticShootingTuner.atSpeed),
-                        new SlideDistance(carouselSubsystem, 0.6, transferSpeed),
-
-                        new WaitCommand(50),
-                        new WaitUntilCommand(() -> AutomaticShootingTuner.atSpeed),
-                        new SlideDistance(carouselSubsystem, 1.2, 0.5)));
+                        new InstantCommand(() -> DischargeSubsystem.shooting = false),
+                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+                        new InstantCommand(() -> DischargeSubsystem.shooting = true),
+                        new SlideDistance(carouselSubsystem, 3.2, 1),
+                        new InstantCommand(() -> DischargeSubsystem.shooting = false)));
 
 
                     }},() -> {
                 double distance = AutoShooter.getGoalDistance(SavedValues.position, SavedValues.teamColor);
-                if(distance < 75){
-                    return Sequence.CLOSE;
-                } else if (distance < 105) {
+                if(distance < 115){
                     return Sequence.CLOSE;
                 }
-                return Sequence.CLOSE;
+                return Sequence.FAR;
             });
         }
     }

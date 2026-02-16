@@ -22,7 +22,7 @@ public class CommandGroups {
             addCommands(new SequentialCommandGroup(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
                     new IntakeCommands.TransferState(intakeSubsystem),
-                    new WaitCommand(100),
+//                    new WaitCommand(100),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
                     new CarouselCommands.Discharge(carouselSubsystem, intakeSubsystem),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
@@ -44,7 +44,7 @@ public class CommandGroups {
             addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
                     new IntakeCommands.TransferState(intakeSubsystem),
-                    new WaitCommand(100),
+//                    new WaitCommand(100),
 //                    new WaitCommand(300),
                     new WaitUntilCommand(() -> AutoShooter.canLaunch(mecanumDrive.localizer.getPose())),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),

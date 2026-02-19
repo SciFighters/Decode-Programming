@@ -115,7 +115,7 @@ public class DischargeCommands {
                 Vector2d movement = mecanumDrive.localizer.update().linearVel;
                 mecanumToTurret = new com.seattlesolvers.solverslib.geometry.Vector2d(1.5748, 0).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
                 Pose2d currentPos = mecanumDrive.localizer.getPose();
-                double time = AutoShooter.getTime(currentPos) * 1.4;
+                double time = AutoShooter.getTime(mecanumDrive.localizer.getPose());
                 movementEffect = new com.seattlesolvers.solverslib.geometry.Vector2d(movement.x * time,movement.y * time).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
                 aimTurret();
                         /*new Pose2d(new Vector2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),

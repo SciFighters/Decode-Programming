@@ -97,6 +97,6 @@ public class DischargeSubsystem extends SubsystemBase {
     public void setRampDegree(double rampDegree) {
         double pos = (62.5 - rampDegree) / (42.12);
 //        double pos = -(34.13 - rampDegree)/(38.87);
-        rampServo.setPosition(Math.min(pos * 0.85, 0.85));
+        rampServo.setPosition(Math.min(pos * 0.8, 0.8) - 0.1);
     }
 }

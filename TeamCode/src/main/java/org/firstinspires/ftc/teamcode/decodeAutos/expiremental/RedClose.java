@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.decodeAutos.far15;
+package org.firstinspires.ftc.teamcode.decodeAutos.expiremental;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -30,15 +30,15 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import java.util.HashSet;
 import java.util.Set;
 
-@Autonomous(name = "18 red far")
-public class RedFar18 extends ActionOpMode {
+@Autonomous(name = "18 red close", group = "red close")
+public class RedClose extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
     CarouselSubsystem carouselSubsystem;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
-    double turretStartAngle = 270;
+    double turretStartAngle = 50;
     ElapsedTime time;
 
     @Override
@@ -52,107 +52,115 @@ public class RedFar18 extends ActionOpMode {
         dischargeSubsystem.resetTurret();
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
         carouselSubsystem.resetEncoders();
-        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(61.5, 22, Math.PI / 2));
+        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-41.2, 54.3, 0));
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
         boolean reversed = SavedValues.teamColor == AutoShooter.TeamColor.BLUE;
         requirements.add(mecanumDrive);
         TrajectoryActionBuilder wheatleyAutoOne = mecanumDrive.actionBuilder(mecanumDrive.localizer.getPose(), reversed)
-                .splineToConstantHeading(new Vector2d(61.4, 58), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(59, 23), -Math.PI / 2);
+                .setTangent(-Math.PI / 4)
+                .splineToConstantHeading(new Vector2d(-18, 18), -Math.PI / 4);
 
-        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(59, 23, Math.PI / 2), reversed)
-                .setTangent(Math.PI)
-                .splineToConstantHeading(new Vector2d(9, 26), Math.PI * 3 / 4)
-                .splineToConstantHeading(new Vector2d(6, 38), Math.PI * 5 / 8/*, new TranslationalVelConstraint(20.0)*/)
-                .splineToConstantHeading(new Vector2d(5.9, 38.1), Math.PI * 5 / 8)
-                .splineToConstantHeading(new Vector2d(2, 53), Math.PI / 2);
-
-        TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(2, 53, Math.PI / 2)), reversed)
-                .setTangent(-Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-14, 20), Math.PI);
-
-        TrajectoryActionBuilder midAutoP1 = mecanumDrive.actionBuilder(new Pose2d(-14, 20, Math.PI / 2), reversed)
-                .setTangent(Math.PI/5)
-                .splineToConstantHeading(new Vector2d(4,30),Math.PI/3)
-                .splineToSplineHeading(new Pose2d(14.5, 62.5,Math.PI*7/8),Math.PI/2);
-
-        TrajectoryActionBuilder midAutoP2 = mecanumDrive.actionBuilder(new Pose2d(14, 61, Math.PI * 2 / 3), reversed)
-                .setTangent(-Math.PI/2)
-                .splineToLinearHeading(new Pose2d(-14, 20,Math.PI/2),-Math.PI * 3 / 4);
-
-        TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(-14, 20, Math.PI / 2), reversed)
-                .setTangent(Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-12, 46), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-12, 22), -Math.PI / 2);
-
-        TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-12, 22, Math.PI / 2), reversed)
+        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(-18, 18, 0), reversed)
                 .setTangent(0)
-                .splineToConstantHeading(new Vector2d(30, 28), Math.PI / 4)
-                .splineToConstantHeading(new Vector2d(36, 52), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(36, 52.1), -Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-8, 16), -Math.PI * 3 / 4);
+                .splineToLinearHeading(new Pose2d(14, 44,Math.PI/2), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(14, 44.1, Math.PI / 2), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(2, 53), Math.PI *5/ 8);
+        TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(3, 54, Math.PI / 2)), reversed)
+                .setTangent(-Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(-6, 14), -Math.PI * 3 / 4);
 
-        TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-8, 16, Math.PI / 2), reversed)
-                .setTangent(Math.PI * 3 / 8)
+        TrajectoryActionBuilder midOneP1 = mecanumDrive.actionBuilder(new Pose2d(-6, 14, Math.PI / 2), reversed)
+                .setTangent(Math.PI / 5)
+                .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
+                .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 11 / 16), Math.PI / 2);//15.5, 60
+        TrajectoryActionBuilder midTwoP1 = mecanumDrive.actionBuilder(new Pose2d(-6, 14, Math.PI / 2), reversed)
+                .setTangent(Math.PI / 5)
+                .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
+                .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 11 / 16), Math.PI / 2);
+
+        TrajectoryActionBuilder midOneP2 = mecanumDrive.actionBuilder(new Pose2d(14, 60, Math.PI * 5 / 8), reversed)
+                .setTangent(-Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(-6, 14, Math.PI / 2), -Math.PI * 3 / 4);
+        TrajectoryActionBuilder midTwoP2 = mecanumDrive.actionBuilder(new Pose2d(14, 60, Math.PI * 5 / 8), reversed)
+                .setTangent(-Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(-13, 20, Math.PI / 2), -Math.PI * 3 / 4);
+
+        TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
+                .setTangent(Math.PI / 2)
+                .splineTo(new Vector2d(-13, 46), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI / 2);
+
+
+        TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-6, 16, Math.PI / 2), reversed)
                 .splineToConstantHeading(new Vector2d(0, 40), Math.PI / 2);
-
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
 //                        new LimelightCommands.KalmanFilter(limelightSubsystem, mecanumDrive, dischargeSubsystem::getTurretAngle),
                         new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
                         new SequentialCommandGroup(
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1850),
+//                                                new InstantCommand(() -> DischargeSubsystem.shooting = true),
+//                                                new WaitCommand(600),
+//                                                new InstantCommand(() -> DischargeSubsystem.shooting = false),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         )
-
                                 ),
                                 new ParallelRaceGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 ),
-                                new WaitCommand(100),
-                                new IntakeCommands.ClosedState(intakeSubsystem),
-                                new WaitCommand(800),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
-                                        new SequentialCommandGroup(
-                                                new WaitCommand(300),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                        new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                 ),
-
-
+//                                new WaitCommand(500),
                                 new ParallelRaceGroup(
-                                        new ActionCommand(midAutoP1.build(), requirements),
+                                        new ActionCommand(midOneP1.build(), requirements),
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 ),
-                                new WaitCommand(700),
+                                new WaitCommand(650),
 
                                 new ParallelCommandGroup(
-                                        new ActionCommand(midAutoP2.build(), requirements),
+                                        new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new WaitCommand(300),
+                                                new WaitCommand(200),
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                ),
+                                new ParallelRaceGroup(
+                                        new ActionCommand(midOneP1.build(), requirements),
+                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                ),
+                                new WaitCommand(650),
+
+                                new ParallelCommandGroup(
+                                        new ActionCommand(midOneP2.build(), requirements),
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(200),
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                ),
+                                new ParallelRaceGroup(
+                                        new ActionCommand(midTwoP1.build(), requirements),
+                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                ),
+                                new WaitCommand(650),
+
+                                new ParallelCommandGroup(
+                                        new ActionCommand(midTwoP2.build(), requirements),
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(200),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
 
-
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1300),
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1400),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
-                                new ParallelCommandGroup(
-                                        new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
-                                        ),
-                                        new ActionCommand(wheatleyAutoFour.build(), requirements)
-                                ),
+
                                 new ParallelCommandGroup(
                                         new ActionCommand(prepareGate.build(), requirements),
                                         new IntakeCommands.ClosedState(intakeSubsystem)
@@ -163,7 +171,6 @@ public class RedFar18 extends ActionOpMode {
                 )
         );
         time.reset();
-
     }
 
     @Override
@@ -182,22 +189,12 @@ public class RedFar18 extends ActionOpMode {
             multipleTelemetry.addData("current", current);
             multipleTelemetry.update();
         }
+
     }
 
     @Override
     public void run() {
-        mecanumDrive.updatePoseEstimate();
         super.run();
-        multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
-        multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
-        multipleTelemetry.addData("power",dischargeSubsystem.getFlyWheelPower());
-        multipleTelemetry.update();
-        SavedValues.position = mecanumDrive.localizer.getPose();
-        SavedValues.turretAngle = dischargeSubsystem.getTurretAngle();
-    }
-
-    @Override
-    public void end() {
         SavedValues.position = mecanumDrive.localizer.getPose();
     }
 }

@@ -9,6 +9,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,13 +27,14 @@ public class TouchSensorTester extends ActionOpMode {
 
     ElapsedTime time;
     double lastTime, currentTime;
-    RevTouchSensor touchSensor;
+    boolean last = false;
+    DigitalChannel touchSensor;
     int i = 0;
 
 
     @Override
     public void initialize() {
-        touchSensor = hardwareMap.get(RevTouchSensor.class,"touchSensor");
+        touchSensor = hardwareMap.get(DigitalChannel.class,"touchSensor");
         time = new ElapsedTime();
         currentTime = time.seconds();
         lastTime = currentTime;
@@ -40,12 +42,17 @@ public class TouchSensorTester extends ActionOpMode {
 
     @Override
     public void run() {
-        multipleTelemetry.addData("pressed",true);
+        boolean current = !touchSensor.getState();
+        if(current && !last){
+          i += 1;
+        }
+        multipleTelemetry.addData("pressed",touchSensor.getState());
         currentTime = time.seconds();
         multipleTelemetry.addData("frameRate",1/(currentTime - lastTime));
+        multipleTelemetry.addData("count",i);
         multipleTelemetry.update();
         lastTime = currentTime;
-
+        last = current;
     }
 }
 

@@ -91,27 +91,26 @@ public class MeepMeepTesting {
                 .splineToConstantHeading(new Vector2d(-22, 24), -Math.PI / 4)
 
                 .setTangent(0)
-                .splineTo(new Vector2d(14, 44), Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(14, 44.1, Math.PI / 2), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(5, 55), Math.PI / 2)
-                .setTangent(-Math.PI / 2)//p2
-                .splineToConstantHeading(new Vector2d(-6, 14), -Math.PI*3/4)
+                .splineToLinearHeading(new Pose2d(14, 40,Math.PI/2), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(14, 40.1, Math.PI / 2), Math.PI / 2)
+//                .splineToConstantHeading(new Vector2d(14, 48), Math.PI *5/ 8)
+                .splineToConstantHeading(new Vector2d(-8,12),-Math.PI*3/4)
 
-                .setTangent(Math.PI/5)
-                .splineToConstantHeading(new Vector2d(4,30),Math.PI/3)
-                .splineToSplineHeading(new Pose2d(16.8 , 68,Math.PI*5/8),Math.PI/2)
-                .setTangent(-Math.PI / 2)//p2
-                .splineToConstantHeading(new Vector2d(-6, 14), -Math.PI * 5 / 8)
-
-                .setTangent(Math.PI/5)
-                .splineToConstantHeading(new Vector2d(4,30),Math.PI/3)
-                .splineToConstantHeading(new Vector2d(16.8 , 68),Math.PI/2)
+                .setTangent(Math.PI / 5)
+                .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
+                .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 11 / 16), Math.PI / 2)
                 .setTangent(-Math.PI / 2)//p2
                 .splineToConstantHeading(new Vector2d(-6, 14), -Math.PI * 5 / 8)
 
-                .setTangent(Math.PI/5)
-                .splineToConstantHeading(new Vector2d(4,30),Math.PI/3)
-                .splineToSplineHeading(new Pose2d(16.8 , 68,Math.PI*5/8),Math.PI/2)
+                .setTangent(Math.PI / 5)
+                .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
+                .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 11 / 16), Math.PI / 2)
+                .setTangent(-Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(-8, 12, Math.PI / 2), -Math.PI * 3 / 4)
+
+                .setTangent(Math.PI / 5)
+                .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
+                .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 11 / 16), Math.PI / 2)
                 .setTangent(-Math.PI/2)//p2
                 .splineToLinearHeading(new Pose2d(-13, 20,Math.PI/2),-Math.PI * 3 / 4)
 

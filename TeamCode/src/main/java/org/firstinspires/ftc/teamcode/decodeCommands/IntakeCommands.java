@@ -14,9 +14,8 @@ public class IntakeCommands {
         ElapsedTime time;
         double lastTime, currentTime, lastIn;
         int i = 0;
-        int count;
-        double leftDistance = 0, rightDistance = 0;
-        double fourthStart = 0, fullStart = 0;
+        public static int count;
+        boolean lastLeft = false, lastRight = false;
         public static boolean resetCount;
 
         public IntakeState(IntakeSubsystem intakeSubsystem) {
@@ -35,7 +34,27 @@ public class IntakeCommands {
             intakeSubsystem.setPosition(1);
         }
 
-//        @Override
+        @Override
+        public void execute() {
+            if(count < 3){
+                intakeSubsystem.setPower(1);
+                intakeSubsystem.setPosition(1);
+                boolean currentLeft = !intakeSubsystem.leftSwitch.getState();
+                boolean currentRight = !intakeSubsystem.rightSwitch.getState();
+                if(currentLeft && !lastLeft){
+                    count +=1;
+                }
+                if(currentRight && !lastRight){
+                    count +=1;
+                }
+                lastLeft = currentLeft;
+                lastRight = currentRight;
+            }
+            else {
+                intakeSubsystem.setPower(0);
+            }
+        }
+        //        @Override
 //        public void execute() {
 //
 //            i++;

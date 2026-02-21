@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.decodeSubsystems;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robocol.Command;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class IntakeSubsystem extends SubsystemBase {
     private final DcMotorEx motor;
     private final Servo intakeServo1, intakeServo2;
+    public final DigitalChannel leftSwitch, rightSwitch;
 
     public static boolean reversed = false;
 
@@ -21,7 +23,8 @@ public class IntakeSubsystem extends SubsystemBase {
         motor = hm.get(DcMotorEx.class, "intakeMotor");
         intakeServo1 = hm.get(Servo.class, "rightIntake");
         intakeServo2 = hm.get(Servo.class, "leftIntake");
-
+        leftSwitch = hm.get(DigitalChannel.class,"leftSwitch");
+        rightSwitch = hm.get(DigitalChannel.class,"rightSwitch");
         reversed = false;
     }
 

@@ -88,8 +88,8 @@ public class WheatleyOpMode extends ActionOpMode {
         mecanumDrive.lazyImu.get().resetYaw();
         systemDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);
         systemDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection -= 2);
-        systemDPadUp.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection += 25);
-        systemDPadDown.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection -= 25);
+        systemDPadUp.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection += 50);
+        systemDPadDown.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection -= 50);
         systemA.whenPressed(()-> SavedValues.currentCount = (SavedValues.currentCount + 1) % 9);
         systemY.whenPressed(() -> SavedValues.currentCount = Math.max((SavedValues.currentCount -1) % 9,0));
         systemB.whenPressed(() -> SavedValues.currentCount = 0);
@@ -146,6 +146,7 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
         multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
         multipleTelemetry.addData("correction",DischargeCommands.AutomaticAiming.turretCorrection);
+        multipleTelemetry.addData("count(carousel)", IntakeCommands.IntakeState.count);
         multipleTelemetry.update();
         SavedValues.position = mecanumDrive.localizer.getPose();
     }

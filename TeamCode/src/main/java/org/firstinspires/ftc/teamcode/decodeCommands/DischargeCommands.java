@@ -127,8 +127,8 @@ public class DischargeCommands {
                         mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY()), currentPos.heading.toDouble())) || shooting) {
 //                    double[] launchVector = AutoShooter.getLaunchVector(mecanumDrive.localizer.getPose(), teamColor);
                     dischargeSubsystem.setFlyWheelRPM(launchVector[1] + rpmCorrection);
-                    atSpeed = Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 200;
-                    atCloseSpeed =  Math.abs(dischargeSubsystem.getRPM() - launchVector[1]) < 70;
+                    atSpeed = Math.abs(dischargeSubsystem.getRPM() - (launchVector[1] + rpmCorrection)) < 200;
+                    atCloseSpeed =  Math.abs(dischargeSubsystem.getRPM() - (launchVector[1] + rpmCorrection)) < 70;
                 } else {
                     dischargeSubsystem.stayRPM(launchVector[1] + rpmCorrection);
                     atSpeed = false;

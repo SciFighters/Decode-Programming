@@ -49,7 +49,6 @@ public class AutoShooter {
 
 
     public static double[] getLaunchVector(Pose2d robotPose, TeamColor teamColor) {
-//        return Math.sqrt(g * (Math.sqrt(Math.pow(getGoalDistance(robotPose, teamColor), 2) + Math.pow(goalHeight, 2)) + goalHeight));
         double distance = getGoalDistance(robotPose, teamColor);
         double[] min = {0, 0, 0};
         double[] max = {200, 0, 0};

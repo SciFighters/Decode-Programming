@@ -10,10 +10,12 @@ import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.Subsystem;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionCommand;
@@ -73,15 +75,15 @@ public class RedClose extends ActionOpMode {
 
         TrajectoryActionBuilder midOneP1 = mecanumDrive.actionBuilder(new Pose2d(-8, 12, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 5)
-                .splineToConstantHeading(new Vector2d(7, 30), Math.PI / 3)
-                .splineToSplineHeading(new Pose2d(17, 62.5, Math.PI * 11 / 16), Math.PI / 2);//15.5, 60
+                .splineToConstantHeading(new Vector2d(6, 30), Math.PI / 3)
+                .splineToSplineHeading(new Pose2d(16, 62.5, Math.PI * 11 / 16), Math.PI / 2);//15.5, 60
         TrajectoryActionBuilder midTwoP1 = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 5)
                 .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
                 .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 11 / 16), Math.PI / 2);
-        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(13,62.5,Math.PI * 11 / 16), reversed)
-                .setTangent(Math.PI * 11 / 16)
-                .lineToY(63.5);
+        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(16,62.5,Math.PI * 11 / 16), reversed)
+                .setTangent(Math.PI * 3.2/4)
+                .lineToY(64.5);
 
         TrajectoryActionBuilder midOneP2 = mecanumDrive.actionBuilder(new Pose2d(14, 60, Math.PI * 5 / 8), reversed)
                 .setTangent(-Math.PI / 2)
@@ -120,18 +122,17 @@ public class RedClose extends ActionOpMode {
 
                                         )
                                 ),
-//                                new ParallelCommandGroup(
-//                                        new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
-//                                        new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
-//                                ),
-//                                new WaitCommand(500),
+
                                 new ParallelRaceGroup(
-                                        new ActionCommand(midOneP1.build(), requirements),
+                                        new SequentialCommandGroup(
+                                                new ActionCommand(midOneP1.build(), requirements),
+                                                new ParallelDeadlineGroup(
+                                                        new WaitUntilCommand(() -> IntakeSubsystem.count >= 3).withTimeout(650),
+                                                        new ActionCommand(pressGate.build(),requirements)
+                                                )
+                                        ),
+
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
-                                ),
-                                new ParallelCommandGroup(
-                                        new ActionCommand(pressGate.build(),requirements).withTimeout(450),
-                                        new WaitCommand(450)
                                 ),
 
 
@@ -139,41 +140,47 @@ public class RedClose extends ActionOpMode {
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
+                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
 
 
                                 new ParallelRaceGroup(
-                                        new ActionCommand(midOneP1.build(), requirements),
+                                        new SequentialCommandGroup(
+                                                new ActionCommand(midOneP1.build(), requirements),
+                                                new ParallelDeadlineGroup(
+                                                        new WaitUntilCommand(() -> IntakeSubsystem.count >= 3).withTimeout(650),
+                                                        new ActionCommand(pressGate.build(),requirements)
+                                                )
+                                        ),
+
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 ),
-                                new ParallelCommandGroup(
-                                        new ActionCommand(pressGate.build(),requirements).withTimeout(650),
-                                        new WaitCommand(650)
-                                ),
+
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
+                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
                                 new ParallelRaceGroup(
-                                        new ActionCommand(midOneP1.build(), requirements),
+                                        new SequentialCommandGroup(
+                                                new ActionCommand(midOneP1.build(), requirements),
+                                                new ParallelDeadlineGroup(
+                                                        new WaitUntilCommand(() -> IntakeSubsystem.count >= 3).withTimeout(650),
+                                                        new ActionCommand(pressGate.build(),requirements)
+                                                )
+                                        ),
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
-                                ),
-                                new ParallelCommandGroup(
-                                        new ActionCommand(pressGate.build(),requirements).withTimeout(650),
-                                        new WaitCommand(650)
                                 ),
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(midTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
+                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
                                 new ParallelCommandGroup(

@@ -14,10 +14,9 @@ public class IntakeCommands {
     public static class IntakeState extends CommandBase {
         IntakeSubsystem intakeSubsystem;
         ElapsedTime time;
-        double lastTime, currentTime, lastIn;
-        int i = 0;
+        double  currentTime;
+
         public static int count;
-        boolean lastLeft = false, lastRight = false;
         public static boolean resetCount;
 
         public IntakeState(IntakeSubsystem intakeSubsystem) {
@@ -29,91 +28,22 @@ public class IntakeCommands {
         @Override
         public void initialize() {
             time.reset();
-            intakeSubsystem.count = 0;
+            IntakeSubsystem.count = 0;
             resetCount = false;
             currentTime = time.seconds();
             intakeSubsystem.setPower(1);
             intakeSubsystem.setPosition(1);
         }
 
-        @Override
-        public void execute() {
-//            if(count < 3){
-//                intakeSubsystem.setPower(1);
-//                intakeSubsystem.setPosition(1);
-//                boolean currentLeft = !intakeSubsystem.leftSwitch.getState();
-//                boolean currentRight = !intakeSubsystem.rightSwitch.getState();
-//                if(currentLeft && !lastLeft){
-//                    count +=1;
-//                }
-//                if(currentRight && !lastRight){
-//                    count +=1;
-//                }
-//                lastLeft = currentLeft;
-//                lastRight = currentRight;
-//            }
-//            else {
-//                intakeSubsystem.setPower(0);
-//            }
-        }
+
 
         @Override
         public boolean isFinished() {
-            return intakeSubsystem.count >= 3;
+            return IntakeSubsystem.count >= 60;
         }
-        //        @Override
-//        public void execute() {
-//
-//            i++;
-//            if(count < 3){
-//                intakeSubsystem.setPower(1);
-//                intakeSubsystem.setPosition(1);
-//                fourthStart = time.seconds();
-//                fullStart = fourthStart;
-//            } else if (count >= 3) {
-////                fourthStart = time.seconds();
-////                if (fourthStart - fullStart > -1) {
-////                    intakeSubsystem.setPower(0.5);
-////                    intakeSubsystem.setPosition(0.5);
-////                }
-//                intakeSubsystem.setPower(0);
-//            }
-////            }else {
-////                intakeSubsystem.setPower(-0.5);
-////                intakeSubsystem.setPosition(1);
-////                if(time.seconds() - fourthStart > 0.55){
-////                    count = 3;
-////                    intakeSubsystem.setPower(0.5);
-////                }
-////            }
-//            lastTime = currentTime;
-//            currentTime = time.seconds();
-//            if (true) {
-//                double lastLeft = leftDistance;
-//                double lastRight = rightDistance;
-//                leftDistance = intakeSubsystem.getLeftDistance();
-//                rightDistance = intakeSubsystem.getRightDistance();
-//                if (leftDistance < 5 && lastLeft > 5) {
-//                    count += 1;
-//                }
-//                if (rightDistance < 5 && lastRight > 5) {
-//                    count += 1;
-//                }
-//
-//            }
-//            if(resetCount){
-//                count = 0;
-//            }
-//        }
-//
-//        @Override
-//        public boolean isFinished() {
-//            return true;
-//        }
 
         @Override
         public void end(boolean interrupted) {
-            intakeSubsystem.count = 0;
             intakeSubsystem.setPower(0);
         }
     }

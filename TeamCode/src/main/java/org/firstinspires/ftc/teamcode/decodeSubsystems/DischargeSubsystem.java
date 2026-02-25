@@ -34,7 +34,8 @@ public class DischargeSubsystem extends SubsystemBase {
         shooting = false;
     }
     public void resetTurret(){//swapped encoders
-        flyWheelMotor.stopAndResetEncoder();
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setFlyWheelPower(double flyWheelPower) {
@@ -65,28 +66,28 @@ public class DischargeSubsystem extends SubsystemBase {
     }
 
     public double getRPM() {//swapped encoders
-        return -turretMotor.getVelocity() / flyWheelMotor.getCPR() * 60 * gearRatio;
+        return -flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60 * gearRatio;
     }
     public double getFlyWheelPower(){
         return flyWheelMotor.get();
     }
 
     public void setTurretPower(double turretPower) {
-        if(getTurretAngle() > 350){
+        if(getTurretAngle() > 340){
             turretPower = Math.max(turretPower,0);
-        } else if (getTurretAngle() < 10) {
+        } else if (getTurretAngle() < 20) {
             turretPower = Math.min(turretPower,0);
         }
         turretMotor.setPower(turretPower);
     }
 
     public double getTurretPosition() {//swapped encoders
-        return flyWheelMotor.getCurrentPosition();
+        return turretMotor.getCurrentPosition();
 //        return 0;
     }
 
     public double getTurretAngle() {//swapped encoders
-        return (flyWheelMotor.getCurrentPosition() / ticksPerDegree + startAngle);
+        return 360 - (turretMotor.getCurrentPosition() / ticksPerDegree + startAngle);
 //        return 0;
     }
 

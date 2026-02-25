@@ -156,8 +156,8 @@ public class DischargeCommands {
                     (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX() + movementEffect.getX(),
                             mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY() + movementEffect.getY(),
                             mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), teamColor) + 360 + turretCorrection) % 360;
-            inRange = launchAngle > 12 && launchAngle < 348;
-            launchAngle = Range.clip(launchAngle,12,348);
+            inRange = launchAngle > 20 && launchAngle < 340;
+            launchAngle = Range.clip(launchAngle,20,340);
 
             double power;
 //            if (limelightSubsystem.getTx() != 0 && dischargeSubsystem.getTurretAngle() < 355 && dischargeSubsystem.getTurretAngle() > 5){

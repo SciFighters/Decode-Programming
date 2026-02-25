@@ -17,8 +17,8 @@ public class ServoTester extends ActionOpMode {
 
     @Override
     public void initialize() {
-//        servo1 = hardwareMap.servo.get("rightPTO");
-        servo1 = hardwareMap.get(Servo.class, "leftPTO");;
+        servo1 = hardwareMap.servo.get("rightPTO");
+//        servo1 = hardwareMap.get(Servo.class, "leftPTO");;
         gamepad = new GamepadEx(gamepad1);
         A = new GamepadButton(gamepad, GamepadKeys.Button.A);
         Y = new GamepadButton(gamepad, GamepadKeys.Button.Y);

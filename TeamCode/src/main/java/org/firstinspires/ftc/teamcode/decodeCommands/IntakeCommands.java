@@ -6,6 +6,8 @@ import com.seattlesolvers.solverslib.command.CommandBase;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class IntakeCommands {
 
 
@@ -27,7 +29,7 @@ public class IntakeCommands {
         @Override
         public void initialize() {
             time.reset();
-            count = 0;
+            intakeSubsystem.count = 0;
             resetCount = false;
             currentTime = time.seconds();
             intakeSubsystem.setPower(1);
@@ -36,23 +38,28 @@ public class IntakeCommands {
 
         @Override
         public void execute() {
-            if(count < 3){
-                intakeSubsystem.setPower(1);
-                intakeSubsystem.setPosition(1);
-                boolean currentLeft = !intakeSubsystem.leftSwitch.getState();
-                boolean currentRight = !intakeSubsystem.rightSwitch.getState();
-                if(currentLeft && !lastLeft){
-                    count +=1;
-                }
-                if(currentRight && !lastRight){
-                    count +=1;
-                }
-                lastLeft = currentLeft;
-                lastRight = currentRight;
-            }
-            else {
-                intakeSubsystem.setPower(0);
-            }
+//            if(count < 3){
+//                intakeSubsystem.setPower(1);
+//                intakeSubsystem.setPosition(1);
+//                boolean currentLeft = !intakeSubsystem.leftSwitch.getState();
+//                boolean currentRight = !intakeSubsystem.rightSwitch.getState();
+//                if(currentLeft && !lastLeft){
+//                    count +=1;
+//                }
+//                if(currentRight && !lastRight){
+//                    count +=1;
+//                }
+//                lastLeft = currentLeft;
+//                lastRight = currentRight;
+//            }
+//            else {
+//                intakeSubsystem.setPower(0);
+//            }
+        }
+
+        @Override
+        public boolean isFinished() {
+            return intakeSubsystem.count >= 3;
         }
         //        @Override
 //        public void execute() {
@@ -103,6 +110,12 @@ public class IntakeCommands {
 //        public boolean isFinished() {
 //            return true;
 //        }
+
+        @Override
+        public void end(boolean interrupted) {
+            intakeSubsystem.count = 0;
+            intakeSubsystem.setPower(0);
+        }
     }
 
     public static class TransferState extends CommandBase {

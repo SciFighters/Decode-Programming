@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.decodeOpModes;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.button.Button;
@@ -22,6 +23,8 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
+
+import java.util.List;
 
 @TeleOp
 public class WheatleyOpMode extends ActionOpMode {
@@ -52,6 +55,11 @@ public class WheatleyOpMode extends ActionOpMode {
 
     @Override
     public void initialize() {
+//        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+//
+//        for (LynxModule hub : allHubs) {
+//            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+//        }
         SavedValues.currentCount = 0;
         time = new ElapsedTime();
         teamColor = SavedValues.teamColor;
@@ -146,7 +154,8 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
         multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
         multipleTelemetry.addData("correction",DischargeCommands.AutomaticAiming.turretCorrection);
-        multipleTelemetry.addData("count(carousel)", IntakeCommands.IntakeState.count);
+        multipleTelemetry.addData("count(carousel)", /*IntakeCommands.IntakeState.count*/ intakeSubsystem.count);
+        multipleTelemetry.addData("state independent count", /*IntakeCommands.IntakeState.count*/ intakeSubsystem.count_2);
         multipleTelemetry.update();
         SavedValues.position = mecanumDrive.localizer.getPose();
     }

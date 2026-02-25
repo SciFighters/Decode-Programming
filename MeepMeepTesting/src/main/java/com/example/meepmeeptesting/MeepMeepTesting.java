@@ -116,11 +116,45 @@ public class MeepMeepTesting {
 
                 .setTangent(Math.PI / 2)
                 .splineTo(new Vector2d(-13, 52), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI / 2);
+        TrajectoryActionBuilder wheatleyAuto18Full = wheatley.getDrive().actionBuilder(new Pose2d(-41.2, 54.3, 0))
+                .setTangent(-Math.PI / 4)
+                .splineToConstantHeading(new Vector2d(-22, 24), -Math.PI / 4)
+
+                .setTangent(0)
+                .splineToLinearHeading(new Pose2d(14, 40,Math.PI/2), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(14, 40.1, Math.PI / 2), Math.PI / 2)
+//                .splineToConstantHeading(new Vector2d(14, 48), Math.PI *5/ 8)
+                .splineToConstantHeading(new Vector2d(-8,12),-Math.PI*3/4)
+
+
+
+                .setTangent(Math.PI / 5)
+                .splineToConstantHeading(new Vector2d(6, 30), Math.PI / 3)
+                .splineToSplineHeading(new Pose2d(16, 62.5, Math.PI * 11 / 16), Math.PI / 2)
+                .setTangent(-Math.PI / 2)//p2
+                .splineToLinearHeading(new Pose2d(-8, 12, Math.PI / 2), -Math.PI * 3 / 4)
+
+                .setTangent(Math.PI / 5)
+                .splineToConstantHeading(new Vector2d(6, 30), Math.PI / 3)
+                .splineToSplineHeading(new Pose2d(16, 62.5, Math.PI * 11 / 16), Math.PI / 2)
+                .setTangent(-Math.PI/2)//p2
+                .splineToLinearHeading(new Pose2d(-13, 20,Math.PI/2),-Math.PI * 3 / 4)
+
+                .setTangent(Math.PI / 2)
+                .splineTo(new Vector2d(-13, 52), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI / 2)
 
-                ;
+                .setTangent(0)
+                .splineToConstantHeading(new Vector2d(30, 28), Math.PI / 4)
+                .splineToConstantHeading(new Vector2d(36, 52), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(36, 52.1), -Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(-8, 16), -Math.PI * 3 / 4)
 
-        wheatley.runAction(wheatleyAuto18.build());
+                .setTangent(0)
+                .splineToConstantHeading(new Vector2d(0, 40), -Math.PI / 2);
+
+        wheatley.runAction(wheatleyAuto18Full.build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)
                 .setDarkMode(true)

@@ -12,12 +12,16 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class IntakeSubsystem extends SubsystemBase {
     private final DcMotorEx motor;
     private final Servo intakeServo1, intakeServo2;
     public final DigitalChannel leftSwitch, rightSwitch;
 
     public static boolean reversed = false;
+    private final AtomicBoolean pressed = new AtomicBoolean(false);
+    public static int count = 0, count_2 = 0;
 
     public IntakeSubsystem(HardwareMap hm) {
         motor = hm.get(DcMotorEx.class, "intakeMotor");
@@ -25,12 +29,43 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeServo2 = hm.get(Servo.class, "leftIntake");
         leftSwitch = hm.get(DigitalChannel.class,"leftSwitch");
         rightSwitch = hm.get(DigitalChannel.class,"rightSwitch");
+        leftSwitch.setMode(DigitalChannel.Mode.INPUT);
+        rightSwitch.setMode(DigitalChannel.Mode.INPUT);
         reversed = false;
+        startSensorThread();
     }
 
     public void setPower(double power) {
         motor.setPower(power);
     }
+
+    private void startSensorThread() {
+        Thread sensorThread = new Thread(() -> {
+            boolean currentRight, currentLeft;
+            boolean lastRight = false, lastLeft = false;
+            while (!Thread.currentThread().isInterrupted()) {
+                currentRight = !rightSwitch.getState();
+                currentLeft = !leftSwitch.getState();
+                if ((currentRight && !lastRight) || (currentLeft && !lastLeft)) {   // pressed (REV is inverted)
+                    count += 1;
+                }
+                if(currentRight || currentLeft){
+                    count_2 += 1;
+                }
+                lastLeft = currentLeft;
+                lastRight = currentRight;
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        sensorThread.setDaemon(true); // important
+        sensorThread.start();
+    }
+
 
     public void setPosition(double position) {
         intakeServo1.setPosition(position);

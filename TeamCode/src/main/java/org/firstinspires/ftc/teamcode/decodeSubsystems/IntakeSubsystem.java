@@ -35,7 +35,7 @@ public class IntakeSubsystem extends SubsystemBase {
         leftSwitch.setMode(DigitalChannel.Mode.INPUT);
         rightSwitch.setMode(DigitalChannel.Mode.INPUT);
         reversed = false;
-        startSensorThread();
+//        startSensorThread();
     }
 
     public void setPower(double power) {

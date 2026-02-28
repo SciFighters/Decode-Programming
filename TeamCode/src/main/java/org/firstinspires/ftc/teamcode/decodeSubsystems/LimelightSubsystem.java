@@ -191,16 +191,16 @@ public class LimelightSubsystem extends SubsystemBase {
             switch (color) {
                 case RED:
                     if(fiducialResult.getFiducialId() == 24){
-                        return fiducialResult.getTargetXPixels();
+                        return fiducialResult.getTargetXDegrees();
                     }
                 case BLUE:
                     if(fiducialResult.getFiducialId() == 20){
-                        return fiducialResult.getTargetXPixels();
+                        return fiducialResult.getTargetXDegrees();
                     }
             }
         }
         return 0;
-        }
+    }
     public Vector2d getPixelError() {
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducialResult : results) {

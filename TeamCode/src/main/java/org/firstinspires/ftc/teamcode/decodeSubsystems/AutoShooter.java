@@ -7,7 +7,8 @@ public class AutoShooter {
     private static final double robotWidth = 18, robotLength = 18;//inch
     private static final double goalHeight = 40;//inch
     private static final double g = 386.1;//inch/s^2
-    private static final Vector2d goalPos = new Vector2d(-62, 62);//red, 58
+    private static final Vector2d goalPos = new Vector2d(-62, 62);
+    private static final Vector2d aprilTagPos = new Vector2d(-58.346457, 55.629921);
     private static final double[][] points ={{23,56,2400},{44.4,45.5,2600},{62,42,2900},{83.5,38,3200}, {100,38,3400},{118,38,3680},{135,38,3900},{150,36,4160}};//distance, angle, rpm
     private static final double[][] times = {{43.8,0.36},{61,0.46},{76,0.5},{85,0.5},{97,0.63},{107.2,0.63},{118.9,0.63},{124.2,0.67},{139.7,0.7}};
 
@@ -46,7 +47,18 @@ public class AutoShooter {
         }
         return 180;
     }
-
+    public static double getAprilTagAngle(Pose2d robotPose, TeamColor teamColor) {//returns in degrees, 180 is towards motifs
+        switch (teamColor) {
+            case RED:
+                return Math.toDegrees(Math.atan2(aprilTagPos.getY() - robotPose.position.y, aprilTagPos.getX() - robotPose.position.x) - robotPose.heading.toDouble());
+            case BLUE:
+                return -Math.toDegrees(Math.atan2(aprilTagPos.getY() + robotPose.position.y, aprilTagPos.getX() - robotPose.position.x) + robotPose.heading.toDouble());
+        }
+        return 180;
+    }
+    public static double getWantedTx(Pose2d robotPose, TeamColor teamColor){
+        return getLaunchAngle(robotPose,teamColor) - getAprilTagAngle(robotPose,teamColor);
+    }
 
     public static double[] getLaunchVector(Pose2d robotPose, TeamColor teamColor) {
         double distance = getGoalDistance(robotPose, teamColor);

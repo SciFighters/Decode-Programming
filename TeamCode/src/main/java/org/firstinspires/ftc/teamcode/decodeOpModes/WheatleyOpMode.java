@@ -71,18 +71,18 @@ public class WheatleyOpMode extends ActionOpMode {
         mecanumDrive = new MecanumDrive(hardwareMap, SavedValues.position);
 
         limelightSubsystem = new LimelightSubsystem(hardwareMap, teamColor, mecanumDrive);
-
+        limelightSubsystem.setPipeline(1);
+        limelightSubsystem.startLimelight();
         driver = new GamepadEx(gamepad1);
         system = new GamepadEx(gamepad2);
         initButtons();
 
-        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX(), () -> 1 - 0.5 * gamepad1.right_trigger, teamColor));
+        mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX() * 1.25, () -> 1 - 0.5 * gamepad1.right_trigger, teamColor));
         dischargeSubsystem.setDefaultCommand(new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, teamColor));
         driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem));
         driverB.whenPressed(new SequentialCommandGroup(
                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive),
                 new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem).withTimeout(800)));
-//        driverBack.whenPressed(new InstantCommand(() -> mecanumDrive.localizer.setPose(new Pose2d(mecanumDrive.localizer.getPose().position, Math.PI))));
         driverX.whenPressed(new SequentialCommandGroup(
                 new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(800)));
@@ -105,15 +105,6 @@ public class WheatleyOpMode extends ActionOpMode {
         systemY.whenReleased(() -> gamepad2.rumble(100));
         systemB.whenReleased(() -> gamepad2.rumble(100));
 
-//        driverDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);
-//        driverDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection -= 2);
-//        driverDPadUp.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection += 25);
-//        driverDPadDown.whenPressed(() -> DischargeCommands.AutomaticAiming.rpmCorrection -= 25);
-
-//        systemLeftStick.whenPressed(new CarouselCommands.SafeSlide(carouselSubsystem,intakeSubsystem,0.3,0.8));
-//        systemB.whenPressed(() -> carouselSubsystem.artifactsInGoal = (carouselSubsystem.artifactsInGoal + 1) % 3);
-//        systemA.whenPressed(() -> carouselSubsystem.resetEncoders());
-//        schedule(new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle, SavedValues.covariances.getX(),SavedValues.covariances.getY()));
     }
 
     @Override
@@ -146,16 +137,16 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addData("Y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
         multipleTelemetry.addLine("Carousel");
-        multipleTelemetry.addData("current", carouselSubsystem.getCurrent());
+//        multipleTelemetry.addData("current", carouselSubsystem.getCurrent());
         multipleTelemetry.addData("carouselAngle", carouselSubsystem.getAngle());
         multipleTelemetry.addData("carouselPosition", carouselSubsystem.getPosition());
         multipleTelemetry.addLine("Discharge");
+//        multipleTelemetry.addData("tx", limelightSubsystem.getTx());
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
         multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
         multipleTelemetry.addData("correction",DischargeCommands.AutomaticAiming.turretCorrection);
-        multipleTelemetry.addData("count(carousel)", /*IntakeCommands.IntakeState.count*/ intakeSubsystem.count);
-        multipleTelemetry.addData("state independent count", /*IntakeCommands.IntakeState.count*/ intakeSubsystem.count_2);
+
         multipleTelemetry.update();
         SavedValues.position = mecanumDrive.localizer.getPose();
     }

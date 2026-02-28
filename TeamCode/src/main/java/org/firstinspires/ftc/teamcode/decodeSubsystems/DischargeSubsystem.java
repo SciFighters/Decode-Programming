@@ -62,7 +62,7 @@ public class DischargeSubsystem extends SubsystemBase {
     }
     public void stayRPM(double rpm){
         rpm *= gearRatio;
-        flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.02 + Math.max(kP * (rpm - getRPM()),0));
+        flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.02 + kP * (rpm - getRPM()));
     }
 
     public double getRPM() {//swapped encoders

@@ -26,33 +26,32 @@ public class LimelightSubsystemTester extends ActionOpMode {
         dischargeSubsystem.resetTurret();
         limelightSubsystem.setPipeline(1);
         limelightSubsystem.startLimelight();
-        schedule(new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle));
+//        schedule(new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle));
     }
 
     @Override
     public void run() {
         mecanumDrive.localizer.update();
-        mecanumDrive.setDrivePowers(new PoseVelocity2d(new com.acmerobotics.roadrunner.Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),-gamepad1.right_stick_x));
-        Position llCalcPos = limelightSubsystem.getRobotPosMT2(dischargeSubsystem.getTurretAngle());
-        if(llCalcPos != null){
-            multipleTelemetry.addData("llCalcX",llCalcPos.x);
-            multipleTelemetry.addData("llCalcY",llCalcPos.y);
-        }
-        Position llPos = limelightSubsystem.getLimelightByTagPosMT2();
-        if(llPos != null){
-            multipleTelemetry.addData("llX",llPos.x * limelightSubsystem.metersToInch);
-            multipleTelemetry.addData("llY",llPos.y * limelightSubsystem.metersToInch);
-        }
+        mecanumDrive.setDrivePowers(new PoseVelocity2d(new com.acmerobotics.roadrunner.Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),-gamepad1.right_stick_x * 0.2));
+        multipleTelemetry.addData("tx",limelightSubsystem.getTx());
+        multipleTelemetry.addData("angleDiff",AutoShooter.getWantedTx(mecanumDrive.localizer.getPose(), AutoShooter.TeamColor.RED));
         multipleTelemetry.addData("pinpointX",mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("pinpointY",mecanumDrive.localizer.getPose().position.y);
-        multipleTelemetry.addData("kalmanX", LimelightCommands.KalmanFilter.position.getX());
-        multipleTelemetry.addData("kalmanY", LimelightCommands.KalmanFilter.position.getY());
         multipleTelemetry.addData("heading",mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
-//        multipleTelemetry.addData("yawScalar",mecanumDrive.localizer.)
         multipleTelemetry.addData("IMUheading",mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw());
         multipleTelemetry.addData("turretAngle",dischargeSubsystem.getTurretAngle());
         multipleTelemetry.update();
         super.run();
+//        Position llCalcPos = limelightSubsystem.getRobotPosMT2(dischargeSubsystem.getTurretAngle());
+//        if(llCalcPos != null){
+//            multipleTelemetry.addData("llCalcX",llCalcPos.x);
+//            multipleTelemetry.addData("llCalcY",llCalcPos.y);
+//        }
+//        Position llPos = limelightSubsystem.getLimelightByTagPosMT2();
+//        if(llPos != null){
+//            multipleTelemetry.addData("llX",llPos.x * limelightSubsystem.metersToInch);
+//            multipleTelemetry.addData("llY",llPos.y * limelightSubsystem.metersToInch);
+//        }
     }
 
     @Override

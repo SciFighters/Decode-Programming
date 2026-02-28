@@ -13,7 +13,7 @@ public class TurretTester extends ActionOpMode {
     GamepadEx gamepad;
     GamepadButton A, B;
     DischargeSubsystem dischargeSubsystem;
-    boolean manual = false;
+    boolean manual = true;
     double power = 0;
 
     @Override
@@ -32,7 +32,7 @@ public class TurretTester extends ActionOpMode {
         if(manual){
             dischargeSubsystem.setTurretPower(gamepad.getRightX() *(0.5 + 0.5 * gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
         } else{
-            dischargeSubsystem.setTurretPower(power* 2 *(Math.random() - 0.5));
+            dischargeSubsystem.setTurretPower(power);
         }
         multipleTelemetry.addData("power", power);
         multipleTelemetry.addData("speed", dischargeSubsystem.getRPS());

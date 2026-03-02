@@ -11,7 +11,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
     public static void main(String[] args) { //-70,45.6 ,44.6, 64.5
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(750);
 
 
         RoadRunnerBotEntity wheatley = new DefaultBotBuilder(meepMeep)
@@ -153,8 +153,29 @@ public class MeepMeepTesting {
 
                 .setTangent(0)
                 .splineToConstantHeading(new Vector2d(0, 40), -Math.PI / 2);
+        TrajectoryActionBuilder wheatleyAuto18V2 = wheatley.getDrive().actionBuilder(new Pose2d(-41.2, 54.3, 0))
+                .setTangent(-Math.PI / 4)
+                .splineToConstantHeading(new Vector2d(-32, 44), -Math.PI / 4)
+                //shoot preload
+                //startIntake
+                .setTangent(Math.PI / 6)
+                .splineToConstantHeading(new Vector2d(-18,47),0)//prepareShooting
+                .splineToConstantHeading(new Vector2d(-32,44),-Math.PI * 7 / 8)
+                //shoot
+                //start intake
+                .setTangent(Math.PI / 9)
+                .splineToConstantHeading(new Vector2d(6,47),0)//prepareShooting
+                .setTangent(-Math.PI)
+                .splineTo(new Vector2d(-14,23),-Math.PI * 26 / 36)
+                //shoot
+                //stopped intake
+                .setTangent(Math.PI * 10 / 36)
+                .splineTo(new Vector2d(12,49),Math.PI * 18 / 36)
+                .splineToSplineHeading(new Pose2d(11,60,Math.PI * 11 / 16),Math.PI /2)
 
-        wheatley.runAction(wheatleyAuto18Full.build());
+                ;
+
+        wheatley.runAction(wheatleyAuto18V2.build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)
                 .setDarkMode(true)

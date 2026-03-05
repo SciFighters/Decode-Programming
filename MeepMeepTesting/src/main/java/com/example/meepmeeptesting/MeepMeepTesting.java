@@ -170,8 +170,11 @@ public class MeepMeepTesting {
                 //shoot
                 //stopped intake
                 .setTangent(Math.PI * 10 / 36)
-                .splineTo(new Vector2d(12,49),Math.PI * 18 / 36)
-                .splineToSplineHeading(new Pose2d(11,60,Math.PI * 11 / 16),Math.PI /2)
+                .splineTo(new Vector2d(12,54),Math.PI * 18 / 36)
+                .splineToSplineHeading(new Pose2d(12,54.1,Math.PI /2),Math.PI /2)
+                .splineToLinearHeading(new Pose2d(11,60,Math.PI * 11 / 16),Math.PI / 2)
+                .waitSeconds(1)
+
 
                 ;
 

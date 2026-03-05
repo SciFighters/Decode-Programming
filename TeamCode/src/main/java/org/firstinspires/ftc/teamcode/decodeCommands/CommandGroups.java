@@ -108,17 +108,18 @@ public class CommandGroups {
         public void execute() {
             double power = this.power.get() - 0.01;
             power += Math.signum(power) * 0.1;
-
-            if (mecanumDrive.rightFront.getCurrentPosition() - rStart > 537.6 / 4 + mecanumDrive.leftFront.getCurrentPosition() - lStart) {
-                mecanumDrive.rightFront.setPower(-0.1);
-                mecanumDrive.rightBack.setPower(0.1);
+            double right = Math.abs(mecanumDrive.rightFront.getCurrentPosition() - rStart);
+            double left = Math.abs(mecanumDrive.leftFront.getCurrentPosition() - lStart);
+            if (right > 537.6 / 4 + left) {
+                mecanumDrive.rightFront.setPower(0.1);
+                mecanumDrive.rightBack.setPower(-0.1);
             } else {
                 mecanumDrive.rightFront.setPower(-power);
                 mecanumDrive.rightBack.setPower(power);
             }
-            if (mecanumDrive.leftFront.getCurrentPosition() - lStart > 537.6 / 4 + mecanumDrive.rightFront.getCurrentPosition() - rStart) {
-                mecanumDrive.leftFront.setPower(-0.1);
-                mecanumDrive.leftBack.setPower(0.1);
+            if (left > 537.6 / 4 + right) {
+                mecanumDrive.leftFront.setPower(0.1);
+                mecanumDrive.leftBack.setPower(-0.1);
             } else {
                 mecanumDrive.leftFront.setPower(-power);
                 mecanumDrive.leftBack.setPower(power);

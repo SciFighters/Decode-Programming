@@ -68,25 +68,6 @@ public class IntakeCommands {
         }
     }
 
-    public static class SemiTransferState extends CommandBase {
-        IntakeSubsystem intakeSubsystem;
-
-        public SemiTransferState(IntakeSubsystem intakeSubsystem) {
-            this.intakeSubsystem = intakeSubsystem;
-            addRequirements(intakeSubsystem);
-        }
-
-        @Override
-        public void initialize() {
-            intakeSubsystem.setPower(1);
-            intakeSubsystem.setPosition(0.21);
-        }
-
-        @Override
-        public boolean isFinished() {
-            return true;
-        }
-    }
 
     public static class ClosedState extends CommandBase {
         IntakeSubsystem intakeSubsystem;

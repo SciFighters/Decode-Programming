@@ -9,16 +9,27 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
+
 @TeleOp(group = "tests")
 public class PTOTest extends ActionOpMode {
     MecanumDrive mecanumDrive;
     GamepadEx gamepad;
+
     @Override
     public void initialize() {
-        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
+        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         mecanumDrive.driveMode();
         gamepad = new GamepadEx(gamepad1);
-        new GamepadButton(gamepad, GamepadKeys.Button.A).whenPressed(new CommandGroups.PowerTakeOff(mecanumDrive,gamepad::getRightY));
+        new GamepadButton(gamepad, GamepadKeys.Button.A).whenPressed(new CommandGroups.PowerTakeOff(mecanumDrive));
+        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP).whenPressed(() -> CommandGroups.PowerTakeOff.power += 0.1);
+        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_DOWN).whenPressed(() -> CommandGroups.PowerTakeOff.power -= 0.1);
+        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_LEFT).whenPressed(() -> CommandGroups.PowerTakeOff.left += 0.05);
+        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_RIGHT).whenPressed(() -> CommandGroups.PowerTakeOff.right += 0.05);
+        new GamepadButton(gamepad, GamepadKeys.Button.B).whenPressed(() -> {
+            CommandGroups.PowerTakeOff.power = 0;
+            CommandGroups.PowerTakeOff.left = 0;
+            CommandGroups.PowerTakeOff.right = 0;
+        });
     }
 
 

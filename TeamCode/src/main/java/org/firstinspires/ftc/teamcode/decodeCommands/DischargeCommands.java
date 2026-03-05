@@ -130,12 +130,13 @@ public class DischargeCommands {
             double turretAngle = dischargeSubsystem.getTurretAngle();
 
             double power;
-            if (angleError != 0 && inRange && !(Math.abs(currentPos.position.y) > 40)){
+            if (angleError != 0 && inRange && !(Math.abs(currentPos.position.y) > 40) && false){
                 double wantedError = AutoShooter.getWantedTx(new Pose2d(currentPos.position.x + mecanumToTurret.getX(),
                         currentPos.position.y + mecanumToTurret.getY(),
                         currentPos.heading.toDouble() - Math.PI), teamColor);
                 power = -(wantedError - angleError) * 0.014;
                 power += Math.signum(power) * 0.045;
+
 
 
             } else if(lastAngleError != 0 && angleError == 0){
@@ -146,8 +147,8 @@ public class DischargeCommands {
                         (AutoShooter.getLaunchAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX(),
                                 currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY(),
                                 currentPos.heading.toDouble() - Math.PI), teamColor) + 360 + turretCorrection) % 360;
-                inRange = launchAngle > 50 && launchAngle < 290;
-                launchAngle = Range.clip(launchAngle,50,290);
+                inRange = launchAngle > 20 && launchAngle < 340;
+                launchAngle = Range.clip(launchAngle,20,340);
                 power = -(launchAngle - turretAngle) * kp;
                 power += Math.signum(power) * ks;
             }else{

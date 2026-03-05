@@ -84,47 +84,32 @@ public class CommandGroups {
 
     public static class PowerTakeOff extends CommandBase {
         MecanumDrive mecanumDrive;
-        Supplier<Double> power;
-        double rStart, lStart;
+        public static double power = 0;
+        public static double left = 0, right = 0;
 
-        public PowerTakeOff(MecanumDrive mecanumDrive, Supplier<Double> power) {
+        public PowerTakeOff(MecanumDrive mecanumDrive) {
             this.mecanumDrive = mecanumDrive;
-            this.power = power;
             addRequirements(mecanumDrive);
         }
 
         @Override
         public void initialize() {
-            rStart = mecanumDrive.rightFront.getCurrentPosition();
-            lStart = mecanumDrive.leftFront.getCurrentPosition();
             mecanumDrive.PTOMode();
-            mecanumDrive.leftFront.setPower(-0.1);
-            mecanumDrive.rightFront.setPower(-0.1);
-            mecanumDrive.rightBack.setPower(0.1);
-            mecanumDrive.leftBack.setPower(0.1);
+            power = 0;
+            right = 0;
+            left = 0;
         }
 
         @Override
         public void execute() {
-            double power = this.power.get() - 0.01;
+            double power = PowerTakeOff.power + 0.01;
             power += Math.signum(power) * 0.1;
-            double right = Math.abs(mecanumDrive.rightFront.getCurrentPosition() - rStart);
-            double left = Math.abs(mecanumDrive.leftFront.getCurrentPosition() - lStart);
-            if (right > 537.6 / 4 + left) {
-                mecanumDrive.rightFront.setPower(0.1);
-                mecanumDrive.rightBack.setPower(-0.1);
-            } else {
-                mecanumDrive.rightFront.setPower(-power);
-                mecanumDrive.rightBack.setPower(power);
-            }
-            if (left > 537.6 / 4 + right) {
-                mecanumDrive.leftFront.setPower(0.1);
-                mecanumDrive.leftBack.setPower(-0.1);
-            } else {
-                mecanumDrive.leftFront.setPower(-power);
-                mecanumDrive.leftBack.setPower(power);
 
-            }
+            mecanumDrive.rightFront.setPower(power + right);
+            mecanumDrive.rightBack.setPower(-power - right);
+
+            mecanumDrive.leftFront.setPower(power + left);
+            mecanumDrive.leftBack.setPower(-power - left);
 
         }
     }

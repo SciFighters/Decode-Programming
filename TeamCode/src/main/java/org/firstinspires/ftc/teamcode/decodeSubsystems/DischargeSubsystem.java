@@ -73,9 +73,9 @@ public class DischargeSubsystem extends SubsystemBase {
     }
 
     public void setTurretPower(double turretPower) {
-        if(getTurretAngle() > 290){
+        if(getTurretAngle() > 340){
             turretPower = Math.max(turretPower,0);
-        } else if (getTurretAngle() < 50) {
+        } else if (getTurretAngle() < 20) {
             turretPower = Math.min(turretPower,0);
         }
         turretMotor.setPower(turretPower);

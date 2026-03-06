@@ -19,7 +19,7 @@ public class DischargeSubsystem extends SubsystemBase {
     private final Servo rampServo;
     private final double kS = 0.12, kV = 0.00017459567, kP = 0.000833333, kI = 0.000005;
     private final double ticksPerDegree = 383.6 * (198.0/49.0) / 360.0;
-    private final double startAngle;
+    private double startAngle;
     private final double gearRatio = 35.0/35; // 34:30
     double integral;
     public static boolean shooting = false;
@@ -89,6 +89,9 @@ public class DischargeSubsystem extends SubsystemBase {
     public double getTurretAngle() {
         return 360 - (turretMotor.getCurrentPosition() / ticksPerDegree + startAngle);
 //        return 0;
+    }
+    public void setTurretAngle(double angle){
+        startAngle += getTurretAngle() - angle;
     }
 
     public double getRPS() {

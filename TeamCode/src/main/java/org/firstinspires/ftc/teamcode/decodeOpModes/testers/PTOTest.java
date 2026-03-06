@@ -20,17 +20,28 @@ public class PTOTest extends ActionOpMode {
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         mecanumDrive.driveMode();
         gamepad = new GamepadEx(gamepad1);
-        new GamepadButton(gamepad, GamepadKeys.Button.A).whenPressed(new CommandGroups.PowerTakeOff(mecanumDrive));
-        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP).whenPressed(() -> CommandGroups.PowerTakeOff.power += 0.1);
-        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_DOWN).whenPressed(() -> CommandGroups.PowerTakeOff.power -= 0.1);
-        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_LEFT).whenPressed(() -> CommandGroups.PowerTakeOff.left += 0.05);
-        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_RIGHT).whenPressed(() -> CommandGroups.PowerTakeOff.right += 0.05);
-        new GamepadButton(gamepad, GamepadKeys.Button.B).whenPressed(() -> {
-            CommandGroups.PowerTakeOff.power = 0;
-            CommandGroups.PowerTakeOff.left = 0;
-            CommandGroups.PowerTakeOff.right = 0;
-        });
+        new GamepadButton(gamepad, GamepadKeys.Button.A).whenPressed(new CommandGroups.PowerTakeOff(mecanumDrive, () -> -gamepad.getRightY()));
+//        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP).whenPressed(() -> CommandGroups.PowerTakeOff.power += 0.1);
+//        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_DOWN).whenPressed(() -> CommandGroups.PowerTakeOff.power -= 0.1);
+//        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_LEFT).whenPressed(() -> CommandGroups.PowerTakeOff.left += 0.05);
+//        new GamepadButton(gamepad, GamepadKeys.Button.DPAD_RIGHT).whenPressed(() -> CommandGroups.PowerTakeOff.right += 0.05);
+//        new GamepadButton(gamepad, GamepadKeys.Button.B).whenPressed(() -> {
+//            CommandGroups.PowerTakeOff.power = 0;
+//            CommandGroups.PowerTakeOff.left = 0;
+//            CommandGroups.PowerTakeOff.right = 0;
+//        });
     }
 
+    @Override
+    public void run() {
+        super.run();
+        multipleTelemetry.addData("rightDelta",CommandGroups.PowerTakeOff.right);
+        multipleTelemetry.addData("leftDelta",CommandGroups.PowerTakeOff.left);
+        multipleTelemetry.update();
+    }
 
+    @Override
+    public void end() {
+        mecanumDrive.driveMode();
+    }
 }

@@ -130,16 +130,22 @@ public class DischargeCommands {
             double turretAngle = dischargeSubsystem.getTurretAngle();
 
             double power;
-            if (angleError != 0 && inRange && !(Math.abs(currentPos.position.y) > 40) && false){
-                double wantedError = AutoShooter.getWantedTx(new Pose2d(currentPos.position.x + mecanumToTurret.getX(),
+            if (angleError != 0 && inRange && !(Math.abs(currentPos.position.y) > 40)){
+                double aprilTagAngle = AutoShooter.getAprilTagAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX(),
                         currentPos.position.y + mecanumToTurret.getY(),
                         currentPos.heading.toDouble() - Math.PI), teamColor);
+                double wantedError =
+                        AutoShooter.getLaunchAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX()  + movementEffect.getX(),
+                        currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY(),
+                        currentPos.heading.toDouble() - Math.PI), teamColor) - aprilTagAngle;
                 power = -(wantedError - angleError) * 0.014;
                 power += Math.signum(power) * 0.045;
-
-
+                if(Math.abs(angleError) < 5 && movement.linearVel.dot(movement.linearVel) < 10){
+                    dischargeSubsystem.setTurretAngle((aprilTagAngle + lastAngleError));
+                }
 
             } else if(lastAngleError != 0 && angleError == 0){
+
                 llTime = time.seconds();
                 power = 0;
             }else  if(time.seconds() - llTime > 0.1){

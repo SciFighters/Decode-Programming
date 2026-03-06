@@ -24,11 +24,12 @@ public class LimelightSubsystem extends SubsystemBase {
     public Pose2d aprilTagPos;
     public MecanumDrive mecanumDrive;
     int pipeline = 1;
-    private Limelight3A limelight;
+    private final Limelight3A limelight;
 
     public LimelightSubsystem(HardwareMap hm, TeamColor color, MecanumDrive mecanumDrive) {
         limelight = hm.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(pipeline);
+        setPipeline((color == TeamColor.RED) ? 1:2);
+        startLimelight();
         this.color = color;
         this.mecanumDrive = mecanumDrive;
         aprilTagPos = color == TeamColor.RED ? new Pose2d(-58, 56, Rotation2d.fromDegrees(-54)) : new Pose2d(-58, -56, Rotation2d.fromDegrees(54));
@@ -188,7 +189,7 @@ public class LimelightSubsystem extends SubsystemBase {
     public double getTx(){
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducialResult : results) {
-            switch (color) {
+            switch (SavedValues.teamColor) {
                 case RED:
                     if(fiducialResult.getFiducialId() == 24){
                         return fiducialResult.getTargetXDegrees();

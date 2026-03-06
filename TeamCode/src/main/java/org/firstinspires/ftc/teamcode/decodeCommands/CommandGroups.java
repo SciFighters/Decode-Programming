@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.decodeCommands;
 
+import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
@@ -84,33 +85,40 @@ public class CommandGroups {
 
     public static class PowerTakeOff extends CommandBase {
         MecanumDrive mecanumDrive;
-        public static double power = 0;
-        public static double left = 0, right = 0;
-
-        public PowerTakeOff(MecanumDrive mecanumDrive) {
+        Supplier<Double> power;
+        double rStart,lStart;
+        public static double right = 0,left = 0;
+        public PowerTakeOff(MecanumDrive mecanumDrive, Supplier<Double> power) {
             this.mecanumDrive = mecanumDrive;
+            this.power = power;
             addRequirements(mecanumDrive);
         }
 
         @Override
         public void initialize() {
             mecanumDrive.PTOMode();
-            power = 0;
-            right = 0;
-            left = 0;
+            rStart = mecanumDrive.rightBack.getCurrentPosition();
+            lStart = mecanumDrive.leftBack.getCurrentPosition();
         }
 
         @Override
         public void execute() {
-            double power = PowerTakeOff.power + 0.01;
+            double power = this.power.get() + 0.01;
             power += Math.signum(power) * 0.1;
 
-            mecanumDrive.rightFront.setPower(power + right);
-            mecanumDrive.rightBack.setPower(-power - right);
+            right = Math.abs(mecanumDrive.rightBack.getCurrentPosition() - rStart);
+            left = Math.abs(mecanumDrive.leftBack.getCurrentPosition() - lStart);
 
-            mecanumDrive.leftFront.setPower(power + left);
-            mecanumDrive.leftBack.setPower(-power - left);
+            double delta = (right - left) * 0.001;
 
+            double rPower = Range.clip(power - delta,0.1,power);
+            double lPower = Range.clip(power + delta,0.1,power);
+
+            mecanumDrive.rightFront.setPower(rPower);
+            mecanumDrive.rightBack.setPower(-rPower);
+
+            mecanumDrive.leftFront.setPower(lPower);
+            mecanumDrive.leftBack.setPower(-lPower);
         }
     }
 

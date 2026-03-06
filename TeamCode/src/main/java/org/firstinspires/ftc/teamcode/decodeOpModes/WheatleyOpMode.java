@@ -69,8 +69,7 @@ public class WheatleyOpMode extends ActionOpMode {
         mecanumDrive = new MecanumDrive(hardwareMap, SavedValues.position);
 
         limelightSubsystem = new LimelightSubsystem(hardwareMap, teamColor, mecanumDrive);
-        limelightSubsystem.setPipeline(1);
-        limelightSubsystem.startLimelight();
+
         driver = new GamepadEx(gamepad1);
         system = new GamepadEx(gamepad2);
         initButtons();

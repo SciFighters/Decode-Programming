@@ -173,8 +173,9 @@ public class MeepMeepTesting {
                 .splineTo(new Vector2d(12,54),Math.PI * 18 / 36)
                 .splineToSplineHeading(new Pose2d(12,54.1,Math.PI /2),Math.PI /2)
                 .splineToLinearHeading(new Pose2d(11,60,Math.PI * 11 / 16),Math.PI / 2)
-                .waitSeconds(1)
-                .
+                .waitSeconds(2)//intaking artifacts
+                .setTangent(-Math.PI/2)
+                .splineToLinearHeading(new Pose2d(4,38,Math.PI/2),-Math.PI*2/3)
 
 
                 ;

@@ -51,6 +51,7 @@ public class BlueClose12Sorted extends ActionOpMode {
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
         carouselSubsystem.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-41.2, 54.3, 0));
+        mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
         boolean reversed = SavedValues.teamColor == AutoShooter.TeamColor.BLUE;
         requirements.add(mecanumDrive);

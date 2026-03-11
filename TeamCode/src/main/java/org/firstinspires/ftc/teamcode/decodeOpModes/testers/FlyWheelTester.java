@@ -20,10 +20,10 @@ public class FlyWheelTester extends ActionOpMode {
     GamepadButton A, B, X, Y, up, down;
     //    MotorEx flyWheelMotor;
 //    Servo servo;
-    double power = 0.00;
+    double power = 1;
     double kS = 0.09, kV = 0.0002, kP = 0.000833333, kI = 0.001;
-    public static double wantedRpm = 3100;
-    double wantedAngle = 45;
+    public static double wantedRpm = 6000;
+    double wantedAngle = 28;
     DischargeSubsystem dischargeSubsystem;
     DcMotor m2;
 
@@ -63,7 +63,7 @@ public class FlyWheelTester extends ActionOpMode {
     @Override
     public void run() {
 //        m2.setPower(power);
-//        dischargeSubsystem.setRampDegree(wantedAngle);
+        dischargeSubsystem.setRampDegree(wantedAngle);
 //        dischargeSubsystem.setFlyWheelRPM(wantedRpm);
         dischargeSubsystem.setFlyWheelPower(power);
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());

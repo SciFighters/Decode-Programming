@@ -53,6 +53,7 @@ public class RedFar15Sorted extends ActionOpMode {
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
         carouselSubsystem.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(61.5, 22, Math.PI / 2));
+        mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
         boolean reversed = SavedValues.teamColor == AutoShooter.TeamColor.BLUE;
         requirements.add(mecanumDrive);
@@ -157,6 +158,7 @@ public class RedFar15Sorted extends ActionOpMode {
             multipleTelemetry.addData("used", SavedValues.startMotif);
             multipleTelemetry.addData("current", current);
             multipleTelemetry.update();
+            mecanumDrive.localizer.setPose(new Pose2d(61.5, 22, Math.PI / 2));
         }
     }
 

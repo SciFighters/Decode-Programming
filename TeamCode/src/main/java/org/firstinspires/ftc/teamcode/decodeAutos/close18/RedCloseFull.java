@@ -1,14 +1,12 @@
-package org.firstinspires.ftc.teamcode.decodeAutos.expiremental;
+package org.firstinspires.ftc.teamcode.decodeAutos.close18;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
-import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
@@ -56,6 +54,7 @@ public class RedCloseFull extends ActionOpMode {
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
         carouselSubsystem.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-41.2, 54.3, 0));
+        mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
         boolean reversed = SavedValues.teamColor == AutoShooter.TeamColor.BLUE;
         requirements.add(mecanumDrive);
@@ -65,8 +64,8 @@ public class RedCloseFull extends ActionOpMode {
 
         TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(-18, 18, 0), reversed)
                 .setTangent(0)
-                .splineToLinearHeading(new Pose2d(14, 36, Math.PI / 2), Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(14, 36.1, Math.PI / 2), Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(14, 42, Math.PI / 2), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(14, 42.1, Math.PI / 2), Math.PI / 2)
 //                .splineToConstantHeading(new Vector2d(14, 48), Math.PI *5/ 8)
                 .splineToConstantHeading(new Vector2d(-8, 12), -Math.PI * 3 / 4);
         TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(14, 44, Math.PI / 2)), reversed)
@@ -133,7 +132,7 @@ public class RedCloseFull extends ActionOpMode {
                                         new SequentialCommandGroup(
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
-                                                        new WaitUntilCommand(() -> IntakeSubsystem.count >= 60).withTimeout(700),
+                                                        new WaitCommand(700),
                                                         new ActionCommand(pressGate.build(),requirements)
                                                 )
                                         ),
@@ -145,8 +144,11 @@ public class RedCloseFull extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new WaitCommand(400),
-                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
+                                                new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem).withTimeout(400),
+                                                new ParallelCommandGroup(
+                                                        new IntakeCommands.OutTakeState(intakeSubsystem),
+                                                        new WaitCommand(500)
+                                                ),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
 
@@ -169,7 +171,7 @@ public class RedCloseFull extends ActionOpMode {
                                                         new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem),
                                                         new WaitCommand(900)
                                                 ),
-                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
+                                                new CommandGroups.StartOuttake(intakeSubsystem,carouselSubsystem).withTimeout(500),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
                                 new ParallelCommandGroup(
@@ -181,8 +183,8 @@ public class RedCloseFull extends ActionOpMode {
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2500),
-                                                new CommandGroups.StartOuttake(intakeSubsystem,carouselSubsystem).withTimeout(800),
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2700),
+                                                new CommandGroups.StartOuttake(intakeSubsystem,carouselSubsystem).withTimeout(600),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
@@ -216,6 +218,7 @@ public class RedCloseFull extends ActionOpMode {
             multipleTelemetry.addData("current", current);
             multipleTelemetry.addData("heading",mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
             multipleTelemetry.update();
+            mecanumDrive.localizer.setPose( new Pose2d(-41.2, 54.3, 0));
         }
 
     }

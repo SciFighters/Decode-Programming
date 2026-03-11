@@ -6,6 +6,7 @@ import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
@@ -37,6 +38,8 @@ public class PTOTest extends ActionOpMode {
         super.run();
         multipleTelemetry.addData("rightDelta",CommandGroups.PowerTakeOff.right);
         multipleTelemetry.addData("leftDelta",CommandGroups.PowerTakeOff.left);
+        multipleTelemetry.addData("pitch",mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES));
+        multipleTelemetry.addData("roll",mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES));
         multipleTelemetry.update();
     }
 

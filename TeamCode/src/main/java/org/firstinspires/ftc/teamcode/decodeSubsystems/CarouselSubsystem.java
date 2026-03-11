@@ -14,26 +14,18 @@ import org.jetbrains.annotations.Nullable;
 public class CarouselSubsystem extends SubsystemBase {
     private final DcMotorEx carouselMotor;
     double tickPerRev = 537.6;
-    // accurate amount of tick per revolution
-    public final double spinConversion = tickPerRev * 132.0 / 39.0 / 3.0; // for moving the motor about a third of a spin
-    // calculation for a third of a spin knowing the amount of ticks per revolution
+
+    public final double spinConversion = tickPerRev * 132.0 / 39.0 / 3.0; // for moving the motor a third of a spin
     public ColorSensor leftColorSensor, rightColorSensor, middleColorSensor;
-    public final double transferSpeed = 0.3, travelSpeed = 0.6;
-    DistanceSensor left, right;
+
     public int startingTicks = 0;
 
     public CarouselSubsystem(HardwareMap hm) {
         carouselMotor = hm.get(DcMotorEx.class, "carouselMotor");
-//        carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        carouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         leftColorSensor = hm.get(ColorSensor.class, "leftColorSensor");
         rightColorSensor = hm.get(ColorSensor.class, "rightColorSensor");
         middleColorSensor = hm.get(ColorSensor.class, "middleColorSensor");
-
-//        left = hm.get(DistanceSensor.class,"leftDistance");
-//        left = hm.get(DistanceSensor.class,"rightDistance");
     }
 
     public void resetEncoders() {

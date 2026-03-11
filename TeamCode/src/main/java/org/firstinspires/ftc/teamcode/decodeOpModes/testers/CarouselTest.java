@@ -24,6 +24,7 @@ public class CarouselTest extends ActionOpMode {
 
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
         carouselSubsystem.resetEncoders();
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new CarouselCommands.SlideDistance(carouselSubsystem,3,0.5));
     }
 
     @Override

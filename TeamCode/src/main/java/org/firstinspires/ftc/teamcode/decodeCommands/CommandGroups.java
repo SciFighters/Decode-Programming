@@ -9,6 +9,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
@@ -86,7 +87,7 @@ public class CommandGroups {
     public static class PowerTakeOff extends CommandBase {
         MecanumDrive mecanumDrive;
         Supplier<Double> power;
-        double rStart,lStart;
+        double rStart,lStart,rollStart;
         public static double right = 0,left = 0;
         public PowerTakeOff(MecanumDrive mecanumDrive, Supplier<Double> power) {
             this.mecanumDrive = mecanumDrive;
@@ -99,6 +100,7 @@ public class CommandGroups {
             mecanumDrive.PTOMode();
             rStart = mecanumDrive.rightBack.getCurrentPosition();
             lStart = mecanumDrive.leftBack.getCurrentPosition();
+            rollStart = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES);
         }
 
         @Override
@@ -109,7 +111,7 @@ public class CommandGroups {
             right = Math.abs(mecanumDrive.rightBack.getCurrentPosition() - rStart);
             left = Math.abs(mecanumDrive.leftBack.getCurrentPosition() - lStart);
 
-            double delta = (right - left) * 0.001;
+            double delta = - (mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES) - rollStart) * 0.1;
 
             double rPower = Range.clip(power - delta,0.1,power);
             double lPower = Range.clip(power + delta,0.1,power);

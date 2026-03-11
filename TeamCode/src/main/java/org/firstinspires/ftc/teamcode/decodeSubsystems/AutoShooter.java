@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.decodeSubsystems;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.geometry.Vector2d;
 
 public class AutoShooter {
@@ -9,7 +10,7 @@ public class AutoShooter {
     private static final double g = 386.1;//inch/s^2
     private static final Vector2d goalPos = new Vector2d(-62, 62);
     private static final Vector2d aprilTagPos = new Vector2d(-58.346457, 55.629921);
-    private static final double[][] points ={{23,56,2400},{44.4,45.5,2600},{62,42,2900},{83.5,38,3200}, {100,38,3400},{118,38,3680},{135,38,3900},{150,36,4160}};//distance, angle, rpm
+    private static final double[][] points ={{23,56,2400},{44.4,45.5,2600},{62,42,2900},{83.5,38,3200}, {100,38,3400},{118,38,3620},{135,38,3820},{150,36,4110}};//distance, angle, rpm
     private static final double[][] times = {{43.8,0.36},{61,0.46},{76,0.5},{85,0.5},{97,0.63},{107.2,0.63},{118.9,0.63},{124.2,0.67},{139.7,0.7}};
 
     //robot corners
@@ -36,6 +37,49 @@ public class AutoShooter {
         }
         return false;
 
+    }
+    public static Vector2d closestPoint(double x1, double y1) {
+        Vector2d p = new Vector2d(x1,y1);
+        Vector2d best = null;
+        double bestDist = Double.MAX_VALUE;
+
+        double x = Range.clip((x1 + y1) / 2.0, -60, 0);
+        double y = x;
+        double d = dist2(p, x, y);
+        if (d < bestDist) {
+            bestDist = d;
+            best = new Vector2d(x, y);
+        }
+
+        x = Range.clip((x1 - y1) / 2.0, -60, 0);
+        y = -x;
+        d = dist2(p, x, y);
+        if (d < bestDist) {
+            bestDist = d;
+            best = new Vector2d(x, y);
+        }
+
+        x = Range.clip((x1 + y1 + 48) / 2.0, 48, 72);
+        y = x - 48;
+        d = dist2(p, x, y);
+        if (d < bestDist) {
+            bestDist = d;
+            best = new Vector2d(x, y);
+        }
+
+        x = Range.clip((x1 - y1 + 48) / 2.0, 48, 72);
+        y = 48 - x;
+        d = dist2(p, x, y);
+        if (d < bestDist) {
+            best = new Vector2d(x, y);
+        }
+
+        return best;
+    }
+    static double dist2(Vector2d a, double x, double y) {
+        double dx = a.getX() - x;
+        double dy = a.getY() - y;
+        return dx * dx + dy * dy;
     }
 
     public static double getLaunchAngle(Pose2d robotPose, TeamColor teamColor) {//returns in degrees, 180 is towards motifs

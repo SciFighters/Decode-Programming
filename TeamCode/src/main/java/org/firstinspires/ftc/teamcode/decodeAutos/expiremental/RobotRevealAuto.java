@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.decodeAutos.far15;
+package org.firstinspires.ftc.teamcode.decodeAutos.expiremental;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -13,6 +13,7 @@ import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.Subsystem;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionCommand;
@@ -30,8 +31,8 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import java.util.HashSet;
 import java.util.Set;
 
-@Autonomous(name = "15 blue far")
-public class BlueFar15 extends ActionOpMode {
+@Autonomous()
+public class RobotRevealAuto extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
     CarouselSubsystem carouselSubsystem;
@@ -45,48 +46,25 @@ public class BlueFar15 extends ActionOpMode {
     public void initialize() {
         time = new ElapsedTime();
         SavedValues.currentCount = 0;
-        SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
+        SavedValues.teamColor = AutoShooter.TeamColor.RED;
         Set<Subsystem> requirements = new HashSet<>();
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         dischargeSubsystem.resetTurret();
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
         carouselSubsystem.resetEncoders();
-        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(61.5, 22, Math.PI / 2));
+        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(61.5, 22, -Math.PI / 2));
         mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
         boolean reversed = SavedValues.teamColor == AutoShooter.TeamColor.BLUE;
         requirements.add(mecanumDrive);
-        TrajectoryActionBuilder wheatleyAutoOne = mecanumDrive.actionBuilder(mecanumDrive.localizer.getPose(), reversed)
-                .splineToConstantHeading(new Vector2d(61.4, 58), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(59, 23), -Math.PI / 2);
+        TrajectoryActionBuilder wheatleyAutoOne = mecanumDrive.actionBuilder(mecanumDrive.localizer.getPose())
+                .splineToConstantHeading(new Vector2d(61.4, -58), -Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(60, -30), Math.PI / 2);
+        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(60,-30,-Math.PI/2))
+                .splineToConstantHeading(new Vector2d(61.4, -58), -Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(60, -30), Math.PI / 2);
 
-        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(59, 23, Math.PI / 2), reversed)
-                .setTangent(Math.PI)
-                .splineToConstantHeading(new Vector2d(9, 26), Math.PI * 3 / 4)
-                .splineToConstantHeading(new Vector2d(6, 38), Math.PI * 5 / 8, new TranslationalVelConstraint(20.0))
-                .splineToConstantHeading(new Vector2d(5.9, 38.1), Math.PI * 5 / 8)
-                .splineToConstantHeading(new Vector2d(2, 53), Math.PI / 2);
-
-        TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(2, 53, Math.PI / 2)), reversed)
-                .setTangent(-Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-14, 20), Math.PI);
-
-        TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(-14, 20, Math.PI / 2), reversed)
-                .setTangent(Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-12, 46), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-12, 22), -Math.PI / 2);
-
-        TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-12, 22, Math.PI / 2), reversed)
-                .setTangent(0)
-                .splineToConstantHeading(new Vector2d(30, 28), Math.PI / 4)
-                .splineToConstantHeading(new Vector2d(36, 52), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(36, 52.1), -Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-8, 16), -Math.PI * 3 / 4);
-
-        TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-8, -16, -Math.PI / 2))
-                .setTangent(-Math.PI * 3 / 8)
-                .splineToConstantHeading(new Vector2d(0, -40), Math.PI / 2);
 
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
@@ -94,47 +72,23 @@ public class BlueFar15 extends ActionOpMode {
                         new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
                         new SequentialCommandGroup(
                                 new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
+                                new WaitUntilCommand(() -> dischargeSubsystem.getRPM()> 4000),
+                                new WaitCommand(1),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1850),
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3350),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         )
 
-                                ),
-                                new ParallelRaceGroup(
-                                        new ActionCommand(wheatleyAutoTwo.build(), requirements),
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
-                                ),
-                                new WaitCommand(100),
-                                new IntakeCommands.ClosedState(intakeSubsystem),
-                                new WaitCommand(800),
-                                new ParallelCommandGroup(
-                                        new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
-                                        new SequentialCommandGroup(
-                                                new WaitCommand(300),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
-                                ),
-
-                                new ParallelCommandGroup(
-                                        new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1300),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
-                                        ),
-                                        new ActionCommand(wheatleyAutoThree.build(), requirements)
-                                ),
-                                new ParallelCommandGroup(
-                                        new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
-                                        ),
-                                        new ActionCommand(wheatleyAutoFour.build(), requirements)
-                                ),
-                                new ParallelCommandGroup(
-                                        new ActionCommand(prepareGate.build(), requirements),
-                                        new IntakeCommands.ClosedState(intakeSubsystem)
+                                ),new ParallelCommandGroup(
+                                new ActionCommand(wheatleyAutoTwo.build(), requirements),
+                                new SequentialCommandGroup(
+                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1950),
+                                        new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                 )
 
+                        )
 
                         )
                 )

@@ -68,7 +68,7 @@ public final class MecanumDrive extends SubsystemBase {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         // drive model parameters
         public double inPerTick = 0.00197416797; //0.001978956 , 0.00197416797
-        public double lateralInPerTick =  0.00197416797;//0.0013678570914981494, 0.0015432081508325105
+        public double lateralInPerTick = 0.00197416797;//0.0013678570914981494, 0.0015432081508325105
         public double trackWidthTicks = 6479.276782546479;
 
         // feedforward parameters (in tick units)
@@ -110,9 +110,10 @@ public final class MecanumDrive extends SubsystemBase {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    Servo leftPTO, rightPTO;
+    Servo leftPTO, rightPTO, liftLeft, liftRight;
 
     private final double leftPTOPos = 0.29, rightPTOPos = 1, leftDrivePos = 1, rightDrivePos = 0.1;
+    private final double liftLeftClose = 1, liftLeftOpen = 0.5, liftRightClose = 0.5, liftRightOpen = 1;
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
@@ -232,6 +233,8 @@ public final class MecanumDrive extends SubsystemBase {
         }
         leftPTO = hardwareMap.get(Servo.class, "leftPTO");
         rightPTO = hardwareMap.get(Servo.class, "rightPTO");
+        liftLeft = hardwareMap.get(Servo.class, "liftLeft");
+        liftRight = hardwareMap.get(Servo.class, "liftRight");
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -563,10 +566,15 @@ public final class MecanumDrive extends SubsystemBase {
     public void driveMode() {
         leftPTO.setPosition(leftDrivePos);
         rightPTO.setPosition(rightDrivePos);
+        liftLeft.setPosition(liftLeftClose);
+        liftRight.setPosition(liftRightClose);
     }
 
     public void PTOMode() {
         leftPTO.setPosition(leftPTOPos);
         rightPTO.setPosition(rightPTOPos);
+        liftLeft.setPosition(liftLeftOpen);
+        liftRight.setPosition(liftRightOpen);
     }
+
 }

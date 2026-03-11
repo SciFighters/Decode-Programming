@@ -67,6 +67,7 @@ public class WheatleyOpMode extends ActionOpMode {
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
 
         mecanumDrive = new MecanumDrive(hardwareMap, SavedValues.position);
+        mecanumDrive.driveMode();
 
         limelightSubsystem = new LimelightSubsystem(hardwareMap, teamColor, mecanumDrive);
 
@@ -107,6 +108,7 @@ public class WheatleyOpMode extends ActionOpMode {
         systemA.whenReleased(() -> gamepad2.rumble(100));
         systemY.whenReleased(() -> gamepad2.rumble(100));
         systemB.whenReleased(() -> gamepad2.rumble(100));
+        systemLeftBumper.whenPressed(() -> DischargeCommands.AutomaticAiming.limelight = !DischargeCommands.AutomaticAiming.limelight);
 
     }
 
@@ -146,6 +148,7 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addLine("Discharge");
 //        multipleTelemetry.addData("tx", limelightSubsystem.getTx());
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
+        multipleTelemetry.addData("turret Ticks", dischargeSubsystem.getTurretPosition());
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
         multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
         multipleTelemetry.addData("correction", DischargeCommands.AutomaticAiming.turretCorrection);

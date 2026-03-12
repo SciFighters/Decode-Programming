@@ -76,7 +76,10 @@ public class RedClose18V2 extends ActionOpMode {
                 .setTangent(Math.PI * 10 / 36)
 //                .splineTo(new Vector2d(5,40),Math.PI * 18 / 36)
 //                .splineToSplineHeading(new Pose2d(5,40.1,Math.PI /2),Math.PI /2)
-                .splineToLinearHeading(new Pose2d(14,60,Math.PI * 11 / 16),Math.PI / 2);
+                .splineToLinearHeading(new Pose2d(15,62,Math.PI * 10.5 / 16),Math.PI / 2);
+        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(16,62.5,Math.PI * 10.5 / 16), reversed)
+                .setTangent(Math.PI * 3.5/4)
+                .lineToX(12);
         TrajectoryActionBuilder gateCycleP2 = mecanumDrive.actionBuilder(new Pose2d(14,60,Math.PI * 11 / 16))
                 .setTangent(-Math.PI*5 / 16)
                 .splineTo(new Vector2d(-13,20),-Math.PI * 4/5);
@@ -123,7 +126,10 @@ public class RedClose18V2 extends ActionOpMode {
                                 new ParallelRaceGroup(
                                         new SequentialCommandGroup(
                                                 new ActionCommand(gateCycle.build(), requirements),
-                                                new WaitCommand(1000)
+                                                new ParallelDeadlineGroup(
+                                                        new WaitCommand(800),
+                                                        new ActionCommand(pressGate.build(),requirements)
+                                                )
                                         ),
 
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)

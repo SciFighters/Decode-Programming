@@ -178,9 +178,11 @@ public class MeepMeepTesting {
                 .setTangent(Math.PI * 10 / 36)
 //                .splineTo(new Vector2d(5,40),Math.PI * 18 / 36)
 //                .splineToSplineHeading(new Pose2d(5,40.1,Math.PI /2),Math.PI /2)
-                .splineToLinearHeading(new Pose2d(14,60,Math.PI * 11 / 16),Math.PI / 2)
+//                .splineToConstantHeading(new Vector2d(6, 30), Math.PI / 3)
+//                .splineToSplineHeading(new Pose2d(16, 62.5, Math.PI * 11 / 16), Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(15,62,Math.PI * 10.5 / 16),Math.PI / 2)
                 .waitSeconds(2)//intaking artifacts
-                .setTangent(-Math.PI*5 / 16)
+                .setTangent(-Math.PI*5.5 / 16)
                 .splineTo(new Vector2d(-13,20),-Math.PI * 4/5)
                 .waitSeconds(1)//shoot
                 .setTangent(Math.PI / 5)//start intake
@@ -198,7 +200,7 @@ public class MeepMeepTesting {
                 .splineToConstantHeading(new Vector2d(0,30),Math.PI/2)//park
                 ;
 
-        wheatley.runAction(wheatleyAuto18Full.build());
+        wheatley.runAction(wheatleyAuto18V2.build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)
                 .setDarkMode(true)

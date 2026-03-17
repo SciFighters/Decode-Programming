@@ -20,7 +20,7 @@ public class FlyWheelTester extends ActionOpMode {
     GamepadButton A, B, X, Y, up, down;
     //    MotorEx flyWheelMotor;
 //    Servo servo;
-    double power = 1;
+    double power = 0;
     double kS = 0.09, kV = 0.0002, kP = 0.000833333, kI = 0.001;
     public static double wantedRpm = 6000;
     double wantedAngle = 28;

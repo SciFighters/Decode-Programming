@@ -21,13 +21,13 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DcMotorEx motor;
     private final Servo intakeServo1, intakeServo2;
     public final DigitalChannel leftSwitch, rightSwitch;
-
+    private Thread sensorThread;
     public static boolean reversed = false;
-    public static int count = 0, count_2 = 0;
+    public static int count = 0;
 
     public IntakeSubsystem(HardwareMap hm) {
         motor = hm.get(DcMotorEx.class, "intakeMotor");
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);//todo: remove if unnecessary
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeServo1 = hm.get(Servo.class, "rightIntake");
         intakeServo2 = hm.get(Servo.class, "leftIntake");
         leftSwitch = hm.get(DigitalChannel.class,"leftSwitch");
@@ -43,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     private void startSensorThread() {
-        Thread sensorThread = new Thread(() -> {
+        sensorThread = new Thread(() -> {
             ElapsedTime time = new ElapsedTime();
             time.reset();
             double rightSensorTime = 0, leftSensorTime = 0;
@@ -54,11 +54,11 @@ public class IntakeSubsystem extends SubsystemBase {
                 cTime = time.time(TimeUnit.MILLISECONDS);
                 currentRight = !rightSwitch.getState();
                 currentLeft = !leftSwitch.getState();
-                if ((currentRight && !lastRight) && (cTime - rightSensorTime > 150) ){
+                if ((currentRight && !lastRight) && (cTime - rightSensorTime > 50) ){
                     count += 1;
                     rightSensorTime = cTime;
                 }
-                if((currentLeft && !lastLeft) && (cTime - leftSensorTime > 150)){
+                if((currentLeft && !lastLeft) && (cTime - leftSensorTime > 50)){
                     count += 1;
                     leftSensorTime = cTime;
                 }
@@ -77,6 +77,9 @@ public class IntakeSubsystem extends SubsystemBase {
         sensorThread.start();
     }
 
+    public void stopSensorThread(){
+        sensorThread.interrupt();
+    }
 
     public void setPosition(double position) {
         intakeServo1.setPosition(position);

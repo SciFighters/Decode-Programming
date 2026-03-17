@@ -9,6 +9,7 @@ import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
+import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
@@ -142,7 +143,7 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addData("Y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
         multipleTelemetry.addLine("Carousel");
-//        multipleTelemetry.addData("current", carouselSubsystem.getCurrent());
+        multipleTelemetry.addData("carouselCount", IntakeSubsystem.count);
         multipleTelemetry.addData("carouselAngle", carouselSubsystem.getAngle());
         multipleTelemetry.addData("carouselPosition", carouselSubsystem.getPosition());
         multipleTelemetry.addLine("Discharge");
@@ -159,12 +160,7 @@ public class WheatleyOpMode extends ActionOpMode {
 
     @Override
     public void end() {
-//        carouselSubsystem.resetEncoders();
         limelightSubsystem.stopLimelight();
-//        SavedValues.position = new Pose2d(63, 0, Math.PI);
-//        SavedValues.carouselTicks = 0;
-//        SavedValues.covariances = new Vector2d(0,0);
-
     }
 
     public void initButtons() {

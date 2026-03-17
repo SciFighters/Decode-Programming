@@ -13,7 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class CarouselSubsystem extends SubsystemBase {
     private final DcMotorEx carouselMotor;
-    double tickPerRev = 537.6;
+    double tickPerRev = 384.5;//537.6
+
 
     public final double spinConversion = tickPerRev * 132.0 / 39.0 / 3.0; // for moving the motor a third of a spin
     public ColorSensor leftColorSensor, rightColorSensor, middleColorSensor;
@@ -22,7 +23,7 @@ public class CarouselSubsystem extends SubsystemBase {
 
     public CarouselSubsystem(HardwareMap hm) {
         carouselMotor = hm.get(DcMotorEx.class, "carouselMotor");
-        carouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        carouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftColorSensor = hm.get(ColorSensor.class, "leftColorSensor");
         rightColorSensor = hm.get(ColorSensor.class, "rightColorSensor");
         middleColorSensor = hm.get(ColorSensor.class, "middleColorSensor");

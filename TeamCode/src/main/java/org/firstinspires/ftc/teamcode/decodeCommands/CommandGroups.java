@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.decodeCommands;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -48,7 +50,13 @@ public class CommandGroups {
                     new IntakeCommands.TransferState(intakeSubsystem),
 //                    new WaitCommand(100),
 //                    new WaitCommand(300),
-                    new WaitUntilCommand(() -> AutoShooter.canLaunch(mecanumDrive.localizer.getPose())),
+                    new WaitUntilCommand(() -> {
+                        PoseVelocity2d movement = mecanumDrive.localizer.update();
+                        Pose2d pos = mecanumDrive.localizer.getPose();
+                        com.seattlesolvers.solverslib.geometry.Vector2d movementEffect = new com.seattlesolvers.solverslib.geometry.Vector2d(
+                                movement.linearVel.x,movement.linearVel.y).rotateBy(pos.heading.toDouble() / Math.PI * 180).times(0.5);
+                        return AutoShooter.canLaunch(new Pose2d(pos.position.x + movementEffect.getX(), pos.position.y + movementEffect.getY(),pos.heading.toDouble()));
+                    }),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
                     new CarouselCommands.Discharge(carouselSubsystem, intakeSubsystem),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)

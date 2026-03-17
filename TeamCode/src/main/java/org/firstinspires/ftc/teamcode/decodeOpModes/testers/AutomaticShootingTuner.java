@@ -89,7 +89,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
     @Override
     public void run() {
         aimTurret();
-        atSpeed = Math.abs(dischargeSubsystem.getRPM() - wantedRPM) < 200;
+        atSpeed = Math.abs(dischargeSubsystem.getRPM() - wantedRPM) < 70;
 
         mecanumDrive.localizer.update();
         double launchAngle =

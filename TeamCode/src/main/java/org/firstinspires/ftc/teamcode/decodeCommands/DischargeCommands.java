@@ -115,8 +115,8 @@ public class DischargeCommands {
                     atCloseSpeed = delta < 70;//delta < 70
                 } else if (shooting) {
                     com.seattlesolvers.solverslib.geometry.Vector2d closest = AutoShooter.closestPoint(
-                            currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX(),
-                            currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY());
+                            currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX() / time,
+                            currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY() / time);
                     double[] launchVector = AutoShooter.getLaunchVector(new Pose2d(new Vector2d(closest.getX(),
                             closest.getY()), currentPos.heading.toDouble()), teamColor);
                     dischargeSubsystem.setRampDegree(launchVector[0]);

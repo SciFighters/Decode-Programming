@@ -56,7 +56,7 @@ public class TouchSensorTester extends ActionOpMode {
     public void run() {
         super.run();
 
-        multipleTelemetry.addData("count",IntakeCommands.IntakeState.count);
+        multipleTelemetry.addData("count",IntakeSubsystem.count);
 //        multipleTelemetry.addData("count",i);
         multipleTelemetry.update();
     }

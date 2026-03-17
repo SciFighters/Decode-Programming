@@ -27,7 +27,7 @@ public class LimelightCommands {
         LimelightSubsystem limelightSubsystem;
         MecanumDrive mecanumDrive;
         final Supplier<Double> turretAngle;
-        final double llHeight = 0;//todo: change
+        final double llHeight = 0;
 
         public KalmanFilter(LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, Supplier<Double> turretAngle) {
             this.limelightSubsystem = limelightSubsystem;

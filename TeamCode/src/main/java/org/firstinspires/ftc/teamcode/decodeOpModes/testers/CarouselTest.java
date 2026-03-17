@@ -24,11 +24,12 @@ public class CarouselTest extends ActionOpMode {
 
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
         carouselSubsystem.resetEncoders();
-        gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new CarouselCommands.SlideDistance(carouselSubsystem,3,0.5));
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new CarouselCommands.SlideDistance(carouselSubsystem,3,1));
     }
 
     @Override
     public void run() {
+        carouselSubsystem.setSpinPower(gamepad1.left_stick_x);
         multipleTelemetry.addData("pos", carouselSubsystem.getPosition());
         multipleTelemetry.addData("angle", carouselSubsystem.getAngle());
         multipleTelemetry.update();

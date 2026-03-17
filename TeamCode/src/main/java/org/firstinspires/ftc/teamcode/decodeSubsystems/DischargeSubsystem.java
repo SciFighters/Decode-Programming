@@ -49,9 +49,14 @@ public class DischargeSubsystem extends SubsystemBase {
 //            turretMotor.setPower(0);
             return;
         }
+
+
         rpm *= gearRatio;
         double currentRPM = getRPM();
-        if(currentRPM < rpm || shooting){
+        if(currentRPM - rpm > 280){
+            flyWheelMotor.set(-1);
+        }
+        else if(currentRPM < rpm || shooting){
             flyWheelMotor.set(1);
 //            turretMotor.setPower(-1);
         }else{

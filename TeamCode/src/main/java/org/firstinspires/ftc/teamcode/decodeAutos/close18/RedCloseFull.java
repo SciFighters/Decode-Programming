@@ -80,8 +80,8 @@ public class RedCloseFull extends ActionOpMode {
                 .setTangent(Math.PI / 5)
                 .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
                 .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 10.5 / 16), Math.PI / 2);
-        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(16,62.5,Math.PI * 10.5 / 16), reversed)
-                .setTangent(Math.PI * 3.5/4)
+        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(16, 62.5, Math.PI * 10.5 / 16), reversed)
+                .setTangent(Math.PI * 3.5 / 4)
                 .lineToX(12);
 
         TrajectoryActionBuilder midOneP2 = mecanumDrive.actionBuilder(new Pose2d(14, 60, Math.PI * 5 / 8), reversed)
@@ -95,7 +95,7 @@ public class RedCloseFull extends ActionOpMode {
                 .setTangent(Math.PI / 2)
                 .splineTo(new Vector2d(-13, 46), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI / 2);
-        TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-13,20, Math.PI/2),reversed)
+        TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(0)
                 .splineToConstantHeading(new Vector2d(32, 28), Math.PI / 4)
                 .splineToConstantHeading(new Vector2d(38, 52), Math.PI / 2)
@@ -133,7 +133,7 @@ public class RedCloseFull extends ActionOpMode {
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
                                                         new WaitCommand(700),
-                                                        new ActionCommand(pressGate.build(),requirements)
+                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
 
@@ -144,7 +144,7 @@ public class RedCloseFull extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem).withTimeout(400),
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(400),
                                                 new ParallelCommandGroup(
                                                         new IntakeCommands.OutTakeState(intakeSubsystem),
                                                         new WaitCommand(500)
@@ -158,7 +158,7 @@ public class RedCloseFull extends ActionOpMode {
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
                                                         new WaitUntilCommand(() -> IntakeSubsystem.count >= 60).withTimeout(1000),
-                                                        new ActionCommand(pressGate.build(),requirements)
+                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
@@ -168,10 +168,10 @@ public class RedCloseFull extends ActionOpMode {
                                         new ActionCommand(midTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new ParallelRaceGroup(
-                                                        new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem),
+                                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem),
                                                         new WaitCommand(900)
                                                 ),
-                                                new CommandGroups.StartOuttake(intakeSubsystem,carouselSubsystem).withTimeout(500),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
                                 new ParallelCommandGroup(
@@ -184,7 +184,7 @@ public class RedCloseFull extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2700),
-                                                new CommandGroups.StartOuttake(intakeSubsystem,carouselSubsystem).withTimeout(600),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(600),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
@@ -216,9 +216,9 @@ public class RedCloseFull extends ActionOpMode {
             dischargeSubsystem.setTurretPower(power);
             multipleTelemetry.addData("used", SavedValues.startMotif);
             multipleTelemetry.addData("current", current);
-            multipleTelemetry.addData("heading",mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
+            multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
             multipleTelemetry.update();
-            mecanumDrive.localizer.setPose( new Pose2d(-41.2, 54.3, 0));
+            mecanumDrive.localizer.setPose(new Pose2d(-41.2, 54.3, 0));
         }
 
     }

@@ -50,7 +50,8 @@ public class CarouselSubsystem extends SubsystemBase {
         //weird algorithm for getting angle from 0 to 360
         return ((getPosition() / (spinConversion * 3) * 360) % 360 + 540) % 360;
     }
-    public double getCarouselDistance(){
+
+    public double getCarouselDistance() {
         return (getPosition() / (spinConversion * 3));
     }
 

@@ -36,10 +36,10 @@ public class PTOTest extends ActionOpMode {
     @Override
     public void run() {
         super.run();
-        multipleTelemetry.addData("rightDelta",CommandGroups.PowerTakeOff.right);
-        multipleTelemetry.addData("leftDelta",CommandGroups.PowerTakeOff.left);
-        multipleTelemetry.addData("pitch",mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES));
-        multipleTelemetry.addData("roll",mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES));
+        multipleTelemetry.addData("rightDelta", CommandGroups.PowerTakeOff.right);
+        multipleTelemetry.addData("leftDelta", CommandGroups.PowerTakeOff.left);
+        multipleTelemetry.addData("pitch", mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES));
+        multipleTelemetry.addData("roll", mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES));
         multipleTelemetry.update();
     }
 

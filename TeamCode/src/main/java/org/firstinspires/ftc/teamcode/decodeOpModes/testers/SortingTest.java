@@ -29,7 +29,7 @@ public class SortingTest extends ActionOpMode {
     public void initialize() {
 
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        mecanumDrive = new MecanumDrive(hardwareMap,new Pose2d(63,0,-Math.PI));
+        mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(63, 0, -Math.PI));
         carouselSubsystem.resetEncoders();
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         gamepad = new GamepadEx(gamepad1);
@@ -37,20 +37,17 @@ public class SortingTest extends ActionOpMode {
         B = new GamepadButton(gamepad, GamepadKeys.Button.B);
         X = new GamepadButton(gamepad, GamepadKeys.Button.X);
         Y = new GamepadButton(gamepad, GamepadKeys.Button.Y);
-        UP = new GamepadButton(gamepad,GamepadKeys.Button.DPAD_UP);
-//        X.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive, 0));
-//        Y.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive,1));
-//        B.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive,2));
+        UP = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP);
+
         A.whenPressed(new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem));
         UP.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
         schedule(new MecanumCommands.Drive(mecanumDrive, () -> gamepad.getLeftY(), () -> gamepad.getLeftX(), () -> gamepad.getRightX()));
-//        schedule(new CommandGroups.Sort(intakeSubsystem,carouselSubsystem,Motif.PGP));
     }
 
     @Override
     public void run() {
-        multipleTelemetry.addData("greenPos",carouselSubsystem.getGreenPlacement());
-        multipleTelemetry.addData("intakeCurrent",intakeSubsystem.getCurrent());
+        multipleTelemetry.addData("greenPos", carouselSubsystem.getGreenPlacement());
+        multipleTelemetry.addData("intakeCurrent", intakeSubsystem.getCurrent());
         multipleTelemetry.update();
         super.run();
     }

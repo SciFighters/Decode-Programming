@@ -63,8 +63,8 @@ public class LimelightCommands {
             pinpointPos = new Vector2d(mecanumDrivePos.x, mecanumDrivePos.y);
             Position limelightPos3d = limelightSubsystem.getRobotPos(turretAngle.get());
             Vector2d pixelError = limelightSubsystem.getPixelError();
-            double distance = AutoShooter.getGoalDistance(new Pose2d(position.getX(),position.getY(),0),limelightSubsystem.color);
-            if(limelightPos3d == null || pixelError == null || distance > 115){
+            double distance = AutoShooter.getGoalDistance(new Pose2d(position.getX(), position.getY(), 0), limelightSubsystem.color);
+            if (limelightPos3d == null || pixelError == null || distance > 115) {
                 double pinpointCovarianceX = Math.abs(pinpointDelta.getX() * pinpointKDistance);
                 double pinpointCovarianceY = Math.abs(pinpointDelta.getY() * pinpointKDistance);
                 positionCovarianceX += pinpointCovarianceX;
@@ -72,7 +72,7 @@ public class LimelightCommands {
                 position = new Vector2d(position.getX() + pinpointDelta.getX(), position.getY() + pinpointDelta.getY());
                 return;
             }
-            Vector2d limelightPos = new Vector2d(limelightPos3d.x,limelightPos3d.y);
+            Vector2d limelightPos = new Vector2d(limelightPos3d.x, limelightPos3d.y);
             double pinpointCovarianceX = Math.abs(pinpointDelta.getX() * pinpointKDistance);
             double pinpointCovarianceY = Math.abs(pinpointDelta.getY() * pinpointKDistance);
             double limelightVelocityCovariance = 1 + Math.hypot(pinpointDelta.getX(), pinpointDelta.getY()) * Kv / (currentTime - lastTime);
@@ -97,7 +97,7 @@ public class LimelightCommands {
 
         @Override
         public void end(boolean interrupted) {
-            mecanumDrive.localizer.setPose(new Pose2d(position.getX(),position.getY(),mecanumDrive.localizer.getPose().heading.toDouble()));
+            mecanumDrive.localizer.setPose(new Pose2d(position.getX(), position.getY(), mecanumDrive.localizer.getPose().heading.toDouble()));
             limelightSubsystem.stopLimelight();
         }
     }

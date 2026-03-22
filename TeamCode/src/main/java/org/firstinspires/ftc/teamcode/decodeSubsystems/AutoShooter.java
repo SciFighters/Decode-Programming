@@ -10,8 +10,8 @@ public class AutoShooter {
     private static final double g = 386.1;//inch/s^2
     private static final Vector2d goalPos = new Vector2d(-62, 62);
     private static final Vector2d aprilTagPos = new Vector2d(-58.346457, 55.629921);
-    private static final double[][] points ={{23,56,2400},{44.4,45.5,2680},{62,42,2980},{83.5,38,3250}, {100,38,3480},{118,38,3620},{135,38,3820},{150,36,4110}};//distance, angle, rpm
-    private static final double[][] times = {{43.8,0.36},{61,0.46},{76,0.5},{85,0.5},{97,0.63},{107.2,0.63},{118.9,0.63},{124.2,0.67},{139.7,0.7}};
+    private static final double[][] points = {{23, 56, 2400}, {44.4, 45.5, 2665}, {62, 42, 2940}, {83.5, 38, 3235}, {100, 38, 3480}, {118, 38, 3620}, {135, 38, 3820}, {150, 36, 4110}};//distance, angle, rpm
+    private static final double[][] times = {{43.8, 0.36}, {61, 0.46}, {76, 0.5}, {85, 0.5}, {97, 0.63}, {107.2, 0.63}, {118.9, 0.63}, {124.2, 0.67}, {139.7, 0.7}};
 
     //robot corners
     private static final Vector2d[] edges = {
@@ -38,13 +38,14 @@ public class AutoShooter {
         return false;
 
     }
+
     public static Vector2d closestPoint(double x1, double y1) {
-        Vector2d p = new Vector2d(x1,y1);
+        Vector2d p = new Vector2d(x1, y1);
         Vector2d best = null;
         double bestDist = Double.MAX_VALUE;
 
-        double x = Range.clip((x1 + y1 + 12 ) / 2.0, -60, 9);
-        double y = x - 12;
+        double x = Range.clip((x1 + y1 + 12) / 2.0, -60, 9);
+        double y = x - 10;
         double d = dist2(p, x, y);
         if (d < bestDist) {
             bestDist = d;
@@ -52,7 +53,7 @@ public class AutoShooter {
         }
 
         x = Range.clip((x1 - y1 + 12) / 2.0, -60, 9);
-        y = -x + 12;
+        y = -x + 10;
         d = dist2(p, x, y);
         if (d < bestDist) {
             bestDist = d;
@@ -76,6 +77,7 @@ public class AutoShooter {
 
         return best;
     }
+
     static double dist2(Vector2d a, double x, double y) {
         double dx = a.getX() - x;
         double dy = a.getY() - y;
@@ -91,6 +93,7 @@ public class AutoShooter {
         }
         return 180;
     }
+
     public static double getAprilTagAngle(Pose2d robotPose, TeamColor teamColor) {//returns in degrees, 180 is towards motifs
         switch (teamColor) {
             case RED:
@@ -100,8 +103,9 @@ public class AutoShooter {
         }
         return 180;
     }
-    public static double getWantedTx(Pose2d robotPose, TeamColor teamColor){
-        return getLaunchAngle(robotPose,teamColor) - getAprilTagAngle(robotPose,teamColor);
+
+    public static double getWantedTx(Pose2d robotPose, TeamColor teamColor) {
+        return getLaunchAngle(robotPose, teamColor) - getAprilTagAngle(robotPose, teamColor);
     }
 
     public static double[] getLaunchVector(Pose2d robotPose, TeamColor teamColor) {
@@ -127,6 +131,7 @@ public class AutoShooter {
         return new double[]{(lowerRatio * max[1] + higherRatio * min[1]) * ratio, (lowerRatio * max[2] + higherRatio * min[2]) * ratio};
 
     }
+
     public static double getTime(Pose2d robotPose) {
 //        return Math.sqrt(g * (Math.sqrt(Math.pow(getGoalDistance(robotPose, teamColor), 2) + Math.pow(goalHeight, 2)) + goalHeight));
         double distance = getGoalDistance(robotPose, SavedValues.teamColor);
@@ -164,6 +169,12 @@ public class AutoShooter {
 
     private static boolean isInZone(double x, double y) {
         return Math.abs(y) < -x || 48 + Math.abs(y) < x;
+    }
+    public static double normalizeAngleError(double error) {//degrees
+        error = (error + 180) % 360;
+        if (error < 0)
+            error += 360;
+        return error - 180;
     }
 
     public enum TeamColor {RED, BLUE}

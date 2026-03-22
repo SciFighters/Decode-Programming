@@ -26,9 +26,11 @@ public class GlobalTest extends ActionOpMode {
         gamepad = new GamepadEx(gamepad1);
 
         new GamepadButton(gamepad, GamepadKeys.Button.DPAD_RIGHT).whenPressed(() -> {
-            currentMotor = (currentMotor + 1) % motorCount; });
+            currentMotor = (currentMotor + 1) % motorCount;
+        });
         new GamepadButton(gamepad, GamepadKeys.Button.DPAD_LEFT).whenPressed(() -> {
-            currentMotor = (currentMotor - 1) % motorCount; });
+            currentMotor = (currentMotor - 1) % motorCount;
+        });
 
         new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP).whenPressed(() -> changePower(0.1));
         new GamepadButton(gamepad, GamepadKeys.Button.DPAD_DOWN).whenPressed(() -> changePower(-0.1));
@@ -36,12 +38,15 @@ public class GlobalTest extends ActionOpMode {
 
     private void changePower(double power) {
         switch (currentMotor) {
-            case 0: carouselPower += power;
-            break;
-            case 1: intakePower += power;
-            break;
-            case 2: dischargePower += power;
-            break;
+            case 0:
+                carouselPower += power;
+                break;
+            case 1:
+                intakePower += power;
+                break;
+            case 2:
+                dischargePower += power;
+                break;
         }
     }
 

@@ -71,7 +71,7 @@ public class WheatleyOpMode extends ActionOpMode {
         mecanumDrive.driveMode();
 
         limelightSubsystem = new LimelightSubsystem(hardwareMap, teamColor, mecanumDrive);
-
+        register(limelightSubsystem);
         driver = new GamepadEx(gamepad1);
         system = new GamepadEx(gamepad2);
         initButtons();
@@ -94,9 +94,9 @@ public class WheatleyOpMode extends ActionOpMode {
 
         driverY.whenPressed(new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem));
         driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
-                        .whenFinished(() -> CommandScheduler.getInstance().schedule(
-                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)))
-                );
+                .whenFinished(() -> CommandScheduler.getInstance().schedule(
+                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)))
+        );
         driverRightBumper.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
         mecanumDrive.lazyImu.get().resetYaw();
         systemDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);

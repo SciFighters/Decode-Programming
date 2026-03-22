@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 public class reset extends LinearOpMode {
     DischargeSubsystem dischargeSubsystem;
     CarouselSubsystem carouselSubsystem;
+
     @Override
     public void runOpMode() throws InterruptedException {
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
@@ -20,7 +21,7 @@ public class reset extends LinearOpMode {
         waitForStart();
         dischargeSubsystem.resetTurret();
         carouselSubsystem.resetEncoders();
-        SavedValues.position = new Pose2d(63,0,Math.PI);
+        SavedValues.position = new Pose2d(63, 0, Math.PI);
         SavedValues.turretAngle = 180;
         SavedValues.teamColor = AutoShooter.TeamColor.RED;
 

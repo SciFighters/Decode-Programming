@@ -80,8 +80,8 @@ public class RedClose extends ActionOpMode {
                 .setTangent(Math.PI / 5)
                 .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
                 .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 11 / 16), Math.PI / 2);
-        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(16,62.5,Math.PI * 11 / 16), reversed)
-                .setTangent(Math.PI * 3.2/4)
+        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(16, 62.5, Math.PI * 11 / 16), reversed)
+                .setTangent(Math.PI * 3.2 / 4)
                 .lineToY(64.5);
 
         TrajectoryActionBuilder midOneP2 = mecanumDrive.actionBuilder(new Pose2d(14, 60, Math.PI * 5 / 8), reversed)
@@ -127,7 +127,7 @@ public class RedClose extends ActionOpMode {
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
                                                         new WaitUntilCommand(() -> IntakeSubsystem.count >= 3).withTimeout(650),
-                                                        new ActionCommand(pressGate.build(),requirements)
+                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
 
@@ -149,7 +149,7 @@ public class RedClose extends ActionOpMode {
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
                                                         new WaitUntilCommand(() -> IntakeSubsystem.count >= 3).withTimeout(650),
-                                                        new ActionCommand(pressGate.build(),requirements)
+                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
 
@@ -169,7 +169,7 @@ public class RedClose extends ActionOpMode {
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
                                                         new WaitUntilCommand(() -> IntakeSubsystem.count >= 3).withTimeout(650),
-                                                        new ActionCommand(pressGate.build(),requirements)
+                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)

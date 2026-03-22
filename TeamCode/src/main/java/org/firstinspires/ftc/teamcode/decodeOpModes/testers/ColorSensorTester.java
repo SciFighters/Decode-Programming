@@ -12,9 +12,9 @@ public class ColorSensorTester extends ActionOpMode {
 
     @Override
     public void initialize() {
-        left = hardwareMap.get(ColorSensor.class,"leftColorSensor");
-        right = hardwareMap.get(ColorSensor.class,"rightColorSensor");
-        middle = hardwareMap.get(ColorSensor.class,"middleColorSensor");
+        left = hardwareMap.get(ColorSensor.class, "leftColorSensor");
+        right = hardwareMap.get(ColorSensor.class, "rightColorSensor");
+        middle = hardwareMap.get(ColorSensor.class, "middleColorSensor");
     }
 
     @Override
@@ -22,23 +22,23 @@ public class ColorSensorTester extends ActionOpMode {
         multipleTelemetry.addLine("left");
 
         multipleTelemetry.addData("left", CarouselSubsystem.colorIdentifier(left));
-        multipleTelemetry.addData("leftRed",left.red());
-        multipleTelemetry.addData("leftBlue",left.blue());
-        multipleTelemetry.addData("leftGreen",left.green());
+        multipleTelemetry.addData("leftRed", left.red());
+        multipleTelemetry.addData("leftBlue", left.blue());
+        multipleTelemetry.addData("leftGreen", left.green());
 
         multipleTelemetry.addLine("right");
 
         multipleTelemetry.addData("right", CarouselSubsystem.colorIdentifier(right));
-        multipleTelemetry.addData("rightRed",right.red());
-        multipleTelemetry.addData("rightBlue",right.blue());
-        multipleTelemetry.addData("rightGreen",right.green());
+        multipleTelemetry.addData("rightRed", right.red());
+        multipleTelemetry.addData("rightBlue", right.blue());
+        multipleTelemetry.addData("rightGreen", right.green());
 
         multipleTelemetry.addLine("middle");
 
         multipleTelemetry.addData("middle", CarouselSubsystem.colorIdentifier(middle));
-        multipleTelemetry.addData("middleRed",middle.red());
-        multipleTelemetry.addData("middleBlue",middle.blue());
-        multipleTelemetry.addData("middleGreen",middle.green());
+        multipleTelemetry.addData("middleRed", middle.red());
+        multipleTelemetry.addData("middleBlue", middle.blue());
+        multipleTelemetry.addData("middleGreen", middle.green());
         multipleTelemetry.update();
     }
 }

@@ -36,7 +36,7 @@ public class TouchSensorTester extends ActionOpMode {
     IntakeSubsystem intakeSubsystem;
     int i = 0;
     GamepadEx gamepad;
-    Button A,B,X,Y;
+    Button A, B, X, Y;
 
 
     @Override
@@ -46,7 +46,8 @@ public class TouchSensorTester extends ActionOpMode {
         A = new GamepadButton(gamepad, GamepadKeys.Button.A);
         Y = new GamepadButton(gamepad, GamepadKeys.Button.Y);
         X = new GamepadButton(gamepad, GamepadKeys.Button.X);
-        B = new GamepadButton(gamepad, GamepadKeys.Button.B);;
+        B = new GamepadButton(gamepad, GamepadKeys.Button.B);
+        ;
         X.whenPressed(new IntakeCommands.IntakeState(intakeSubsystem));
         Y.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
         B.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
@@ -56,8 +57,7 @@ public class TouchSensorTester extends ActionOpMode {
     public void run() {
         super.run();
 
-        multipleTelemetry.addData("count",IntakeSubsystem.count);
-//        multipleTelemetry.addData("count",i);
+        multipleTelemetry.addData("count", IntakeSubsystem.count);
         multipleTelemetry.update();
     }
 }

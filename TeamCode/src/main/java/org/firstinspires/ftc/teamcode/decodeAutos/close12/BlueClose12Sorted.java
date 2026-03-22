@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import java.util.HashSet;
 import java.util.Set;
 
-@Autonomous(name = "12 blue close sort",group = "blue close")
+@Autonomous(name = "12 blue close sort", group = "blue close")
 public class BlueClose12Sorted extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
@@ -39,6 +39,7 @@ public class BlueClose12Sorted extends ActionOpMode {
     double iteration = 1;
     double turretStartAngle = 310;
     ElapsedTime time;
+
     @Override
     public void initialize() {
         time = new ElapsedTime();
@@ -61,7 +62,7 @@ public class BlueClose12Sorted extends ActionOpMode {
 
         TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(-22, 24, 0), reversed)
                 .setTangent(0)
-                .splineToLinearHeading(new Pose2d(14, 44, Math.PI/2), Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(14, 44, Math.PI / 2), Math.PI / 2)
                 .splineToSplineHeading(new Pose2d(14, 44.1, Math.PI / 2), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(5, 54), Math.PI / 2);
         TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(5, 54, Math.PI / 2)), reversed)
@@ -75,7 +76,7 @@ public class BlueClose12Sorted extends ActionOpMode {
 
         TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(0)
-                .splineToConstantHeading(new Vector2d(30,30),Math.PI /18 * 6.5)
+                .splineToConstantHeading(new Vector2d(30, 30), Math.PI / 18 * 6.5)
                 .splineToConstantHeading(new Vector2d(36, 48), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-8, 14), -Math.PI * 3 / 4);
         TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-6, -16, -Math.PI / 2))
@@ -131,17 +132,17 @@ public class BlueClose12Sorted extends ActionOpMode {
     @Override
     public void initialize_loop() {
         limelightSubsystem.startLimelight();
-        if(time.seconds() > 1){
+        if (time.seconds() > 1) {
             int current = limelightSubsystem.getMotif();
-            SavedValues.startMotif = (current != -1)? current : SavedValues.startMotif;
+            SavedValues.startMotif = (current != -1) ? current : SavedValues.startMotif;
             double power = -(turretStartAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
-            if(Math.abs(turretStartAngle - dischargeSubsystem.getTurretAngle()) < 5){
+            if (Math.abs(turretStartAngle - dischargeSubsystem.getTurretAngle()) < 5) {
                 power = 0;
             }
-            power = Range.clip(power,-0.3,0.3);
+            power = Range.clip(power, -0.3, 0.3);
             dischargeSubsystem.setTurretPower(power);
-            multipleTelemetry.addData("used",SavedValues.startMotif);
-            multipleTelemetry.addData("current",current);
+            multipleTelemetry.addData("used", SavedValues.startMotif);
+            multipleTelemetry.addData("current", current);
             multipleTelemetry.update();
         }
     }

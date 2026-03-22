@@ -19,16 +19,23 @@ import java.util.List;
 public class LimelightSubsystem extends SubsystemBase {
     public final double metersToInch = 39.3700787;
     public TeamColor color;
-    public Vector2d initialLimelightPos = new Vector2d(1.5748,0);
+    public Vector2d initialLimelightPos = new Vector2d(1.5748, 0);
     public Vector2d limelightByTurret = new Vector2d(-5.6868, 0);//y: 2.6454415267717
     public Pose2d aprilTagPos;
     public MecanumDrive mecanumDrive;
     int pipeline = 1;
     private final Limelight3A limelight;
+    public double currentTx;
+
+    @Override
+    public void periodic() {
+        super.periodic();
+        currentTx = getTx();
+    }
 
     public LimelightSubsystem(HardwareMap hm, TeamColor color, MecanumDrive mecanumDrive) {
         limelight = hm.get(Limelight3A.class, "limelight");
-        setPipeline((color == TeamColor.RED) ? 1:2);
+        setPipeline((color == TeamColor.RED) ? 1 : 2);
         startLimelight();
         this.color = color;
         this.mecanumDrive = mecanumDrive;
@@ -48,17 +55,19 @@ public class LimelightSubsystem extends SubsystemBase {
     public void stopLimelight() {
         limelight.stop();
     }
-    public void updateLimelightDegree(double angle){
+
+    public void updateLimelightDegree(double angle) {
         limelight.updateRobotOrientation(angle);
     }
 
-    public TeamColor getTeamColor(){
+    public TeamColor getTeamColor() {
         TeamColor goalColor = getColorFromGoal();
-        if (goalColor != null){
+        if (goalColor != null) {
             return goalColor;
         }
         return getColorFromObelisk();
     }
+
     public TeamColor getColorFromObelisk() {
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducialResult : results) {
@@ -73,12 +82,13 @@ public class LimelightSubsystem extends SubsystemBase {
         }
         return null;
     }
+
     public TeamColor getColorFromGoal() {
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducialResult : results) {
             int id = fiducialResult.getFiducialId();
 
-            if(id == 20 || id ==24){
+            if (id == 20 || id == 24) {
                 if (fiducialResult.getRobotPoseFieldSpace().getPosition().y > 0) {
                     return TeamColor.RED;
                 }
@@ -145,6 +155,7 @@ public class LimelightSubsystem extends SubsystemBase {
         return pos1;
 
     }
+
     public Position getLimelightByTagPosMT2() {
         return limelight.getLatestResult().getBotpose_MT2().getPosition();
     }
@@ -166,6 +177,7 @@ public class LimelightSubsystem extends SubsystemBase {
         }
         return null; // only if result isn't in field and or is invalid
     }
+
     public Position getRobotPosMT2(double turretHeading) {
 
         double robotHeading = mecanumDrive.localizer.getPose().heading.toDouble();
@@ -186,22 +198,24 @@ public class LimelightSubsystem extends SubsystemBase {
         }
         return null;
     }
-    public double getTx(){
+
+    public double getTx() {
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducialResult : results) {
             switch (SavedValues.teamColor) {
                 case RED:
-                    if(fiducialResult.getFiducialId() == 24){
+                    if (fiducialResult.getFiducialId() == 24) {
                         return fiducialResult.getTargetXDegrees();
                     }
                 case BLUE:
-                    if(fiducialResult.getFiducialId() == 20){
+                    if (fiducialResult.getFiducialId() == 20) {
                         return fiducialResult.getTargetXDegrees();
                     }
             }
         }
         return 0;
     }
+
     public Vector2d getPixelError() {
         List<LLResultTypes.FiducialResult> results = limelight.getLatestResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducialResult : results) {

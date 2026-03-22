@@ -18,9 +18,9 @@ public class DischargeSubsystem extends SubsystemBase {
     public final MotorEx flyWheelMotor;
     private final Servo rampServo;
     private final double kS = 0.12, kV = 0.00017459567, kP = 0.000833333, kI = 0.000005;
-    private final double ticksPerDegree = 383.6 * (198.0/49.0) / 360.0;
+    private final double ticksPerDegree = 383.6 * (198.0 / 49.0) / 360.0;
     private double startAngle;
-    private final double gearRatio = 35.0/35; // 34:30
+    private final double gearRatio = 35.0 / 35; // 34:30
     double integral;
     public static boolean shooting = false;
 
@@ -33,7 +33,8 @@ public class DischargeSubsystem extends SubsystemBase {
         integral = 0;
         shooting = false;
     }
-    public void resetTurret(){
+
+    public void resetTurret() {
         turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -44,7 +45,7 @@ public class DischargeSubsystem extends SubsystemBase {
     }
 
     public void setFlyWheelRPM(double rpm) {
-        if(Math.abs(rpm) < 200){
+        if (Math.abs(rpm) < 200) {
             flyWheelMotor.set(0);
 //            turretMotor.setPower(0);
             return;
@@ -53,19 +54,19 @@ public class DischargeSubsystem extends SubsystemBase {
 
         rpm *= gearRatio;
         double currentRPM = getRPM();
-        if(currentRPM - rpm > 280){
+        if (currentRPM - rpm > 280) {
             flyWheelMotor.set(-1);
-        }
-        else if(currentRPM < rpm || shooting){
+        } else if (currentRPM < rpm || shooting) {
             flyWheelMotor.set(1);
 //            turretMotor.setPower(-1);
-        }else{
+        } else {
             flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.02 + kP * (rpm - getRPM()));
 //            turretMotor.setPower(-kS * Math.signum(rpm) - kV * rpm + 0.04);
         }
 
     }
-    public void stayRPM(double rpm){
+
+    public void stayRPM(double rpm) {
         rpm *= gearRatio;
         flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.02 + kP * (rpm - getRPM()));
     }
@@ -73,15 +74,16 @@ public class DischargeSubsystem extends SubsystemBase {
     public double getRPM() {//swapped encoders
         return -flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60 * gearRatio;
     }
-    public double getFlyWheelPower(){
+
+    public double getFlyWheelPower() {
         return flyWheelMotor.get();
     }
 
     public void setTurretPower(double turretPower) {
-        if(getTurretAngle() > 340){
-            turretPower = Math.max(turretPower,0);
+        if (getTurretAngle() > 340) {
+            turretPower = Math.max(turretPower, 0);
         } else if (getTurretAngle() < 20) {
-            turretPower = Math.min(turretPower,0);
+            turretPower = Math.min(turretPower, 0);
         }
         turretMotor.setPower(turretPower);
     }
@@ -95,12 +97,13 @@ public class DischargeSubsystem extends SubsystemBase {
         return 360 - (turretMotor.getCurrentPosition() / ticksPerDegree + startAngle);
 //        return 0;
     }
-    public void setTurretAngle(double angle){
+
+    public void setTurretAngle(double angle) {
         startAngle += getTurretAngle() - angle;
     }
 
     public double getRPS() {
-        return turretMotor.getVelocity(AngleUnit.RADIANS) / (198.0/49.0);
+        return turretMotor.getVelocity(AngleUnit.RADIANS) / (198.0 / 49.0);
     }
 
     public void setRampDegree(double rampDegree) {

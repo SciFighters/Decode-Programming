@@ -69,9 +69,9 @@ public class DischargeCommands {
         public static boolean limelight = true;
         public static double turretCorrection = 0, rpmCorrection = 0;
         private com.seattlesolvers.solverslib.geometry.Vector2d movementEffect;
-        Pose2d currentPos;
+        Pose2d currentPos, lastPos = new Pose2d(0,0,0);
         ElapsedTime time;
-        double llTime = 0, lastAngleError;
+        double llTime = 0, lastAngleError, lastTurretAngle;
         PoseVelocity2d movement;
 
         public AutomaticAiming(DischargeSubsystem dischargeSubsystem, LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, CarouselSubsystem carouselSubsystem, AutoShooter.TeamColor teamColor) {
@@ -94,14 +94,13 @@ public class DischargeCommands {
 
         @Override
         public void execute() {
-            if(aim){
+            if (aim) {
                 movement = mecanumDrive.localizer.update();
                 mecanumToTurret = new com.seattlesolvers.solverslib.geometry.Vector2d(1.5748, 0).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
                 currentPos = mecanumDrive.localizer.getPose();
                 double time = AutoShooter.getTime(mecanumDrive.localizer.getPose());
-                movementEffect = new com.seattlesolvers.solverslib.geometry.Vector2d(movement.linearVel.x * time,movement.linearVel.y * time).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
+                movementEffect = new com.seattlesolvers.solverslib.geometry.Vector2d(movement.linearVel.x * time, movement.linearVel.y * time).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
                 aimTurret();
-
 
 
                 if (AutoShooter.canLaunch(new Pose2d(new Vector2d(currentPos.position.x + mecanumToTurret.getX(),
@@ -123,8 +122,8 @@ public class DischargeCommands {
                     dischargeSubsystem.setFlyWheelRPM(launchVector[1] + rpmCorrection);
                     double delta = Math.abs(dischargeSubsystem.getRPM() - (launchVector[1] + rpmCorrection));
                     atSpeed = delta < 200;
-                    atCloseSpeed =  delta < 70;
-                }else {
+                    atCloseSpeed = delta < 70;
+                } else {
                     com.seattlesolvers.solverslib.geometry.Vector2d closest = AutoShooter.closestPoint(
                             currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX(),
                             currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY());
@@ -134,8 +133,8 @@ public class DischargeCommands {
                     dischargeSubsystem.stayRPM(launchVector[1] + rpmCorrection);
                     atSpeed = false;
                 }
-            }
-            else {
+                lastPos = currentPos;
+            } else {
                 inRange = true;
                 dischargeSubsystem.setRampDegree(41);
                 dischargeSubsystem.setFlyWheelRPM(3000);
@@ -147,41 +146,56 @@ public class DischargeCommands {
         }
 
         private void aimTurret() {
-            double angleError = limelightSubsystem.getTx();
+            double angleError = limelightSubsystem.currentTx;
             double turretAngle = dischargeSubsystem.getTurretAngle();
-
+            com.seattlesolvers.solverslib.geometry.Vector2d closest = AutoShooter.closestPoint(
+                    currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX(),
+                    currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY());
             double power;
-            if (angleError != 0 && inRange && !(Math.abs(currentPos.position.y) > 40) && limelight){
+            if (angleError != 0 && inRange && !(Math.abs(currentPos.position.y) > 40) && limelight) {
+
+                if(lastAngleError == angleError){
+                    angleError += (turretAngle - lastTurretAngle) +
+                            (AutoShooter.normalizeAngleError(Math.toDegrees
+                                    (currentPos.heading.toDouble() - lastPos.heading.toDouble())));
+                }
                 double aprilTagAngle = AutoShooter.getAprilTagAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX(),
                         currentPos.position.y + mecanumToTurret.getY(),
                         currentPos.heading.toDouble() - Math.PI), teamColor);
-                double wantedError =
-                        AutoShooter.getLaunchAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX()  + movementEffect.getX(),
-                        currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY(),
-                        currentPos.heading.toDouble() - Math.PI), teamColor) - aprilTagAngle;
-                power = -(wantedError - angleError) * 0.014;
-                power += Math.signum(power) * 0.045;
-//                if(Math.abs(angleError) < 5 && movement.linearVel.dot(movement.linearVel) < 10){
-//                    dischargeSubsystem.setTurretAngle((aprilTagAngle + lastAngleError));
-//                }
 
-            } else if(lastAngleError != 0 && angleError == 0){
+                double wantedError = (AutoShooter.canLaunch(currentPos))?
+                        AutoShooter.getLaunchAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX() * 0.9,
+                                currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY() * 0.9,
+                                 currentPos.heading.toDouble() - Math.PI), teamColor) - aprilTagAngle :
+                        AutoShooter.getLaunchAngle(new Pose2d(closest.getX() + mecanumToTurret.getX() + movementEffect.getX() * 0.5,
+                            closest.getY() + mecanumToTurret.getY() + movementEffect.getY() * 0.5,
+                             currentPos.heading.toDouble() - Math.PI), teamColor) - aprilTagAngle;
+                power = -(wantedError - angleError) * 0.014;
+
+                power += Math.signum(power) * 0.045;
+
+
+            } else if (lastAngleError != 0 && angleError == 0) {
 
                 llTime = time.seconds();
                 power = 0;
-            }else  if(time.seconds() - llTime > 0.1){
-                launchAngle =
+            } else if (time.seconds() - llTime > 0.1) {
+                launchAngle = (AutoShooter.canLaunch(currentPos)) ?
                         (AutoShooter.getLaunchAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX(),
                                 currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY(),
-                                currentPos.heading.toDouble() - Math.PI), teamColor) + 360 + turretCorrection) % 360;
+                                 currentPos.heading.toDouble() - Math.PI), teamColor) + 360 + turretCorrection) % 360 :
+                        (AutoShooter.getLaunchAngle(new Pose2d(closest.getX() + mecanumToTurret.getX(),
+                                closest.getY() + mecanumToTurret.getY() ,
+                                 currentPos.heading.toDouble() - Math.PI), teamColor) + 360 + turretCorrection) % 360;
                 inRange = launchAngle > 20 && launchAngle < 340;
-                launchAngle = Range.clip(launchAngle,20,340);
+                launchAngle = Range.clip(launchAngle, 20, 340);
                 power = -(launchAngle - turretAngle) * kp;
                 power += Math.signum(power) * ks;
-            }else{
+            } else {
                 power = 0;
             }
             lastAngleError = angleError;
+            lastTurretAngle = turretAngle;
             power += movement.angVel * kv;
 
             dischargeSubsystem.setTurretPower(power);

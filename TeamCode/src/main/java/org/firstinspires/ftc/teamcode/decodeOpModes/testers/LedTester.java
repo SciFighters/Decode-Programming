@@ -18,7 +18,7 @@ public class LedTester extends ActionOpMode {
 
     @Override
     public void initialize() {
-        ledDriver = hardwareMap.get(RevBlinkinLedDriver.class,"blinkin");
+        ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         gamepad = new GamepadEx(gamepad1);
         A = new GamepadButton(gamepad, GamepadKeys.Button.A);
         Y = new GamepadButton(gamepad, GamepadKeys.Button.Y);

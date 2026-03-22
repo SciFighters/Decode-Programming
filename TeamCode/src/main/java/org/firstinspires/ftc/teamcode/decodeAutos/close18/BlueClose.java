@@ -79,7 +79,7 @@ public class BlueClose extends ActionOpMode {
                 .setTangent(Math.PI / 5)
                 .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
                 .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 11 / 16), Math.PI / 2);
-        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(13,62.5,Math.PI * 11 / 16), reversed)
+        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(13, 62.5, Math.PI * 11 / 16), reversed)
                 .setTangent(Math.PI * 11 / 16)
                 .lineToY(63.5);
 
@@ -130,7 +130,7 @@ public class BlueClose extends ActionOpMode {
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 ),
                                 new ParallelCommandGroup(
-                                        new ActionCommand(pressGate.build(),requirements).withTimeout(450),
+                                        new ActionCommand(pressGate.build(), requirements).withTimeout(450),
                                         new WaitCommand(450)
                                 ),
 
@@ -149,7 +149,7 @@ public class BlueClose extends ActionOpMode {
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 ),
                                 new ParallelCommandGroup(
-                                        new ActionCommand(pressGate.build(),requirements).withTimeout(650),
+                                        new ActionCommand(pressGate.build(), requirements).withTimeout(650),
                                         new WaitCommand(650)
                                 ),
 
@@ -165,7 +165,7 @@ public class BlueClose extends ActionOpMode {
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 ),
                                 new ParallelCommandGroup(
-                                        new ActionCommand(pressGate.build(),requirements).withTimeout(650),
+                                        new ActionCommand(pressGate.build(), requirements).withTimeout(650),
                                         new WaitCommand(650)
                                 ),
 

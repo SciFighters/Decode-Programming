@@ -61,7 +61,7 @@ public class RobotRevealAuto extends ActionOpMode {
         TrajectoryActionBuilder wheatleyAutoOne = mecanumDrive.actionBuilder(mecanumDrive.localizer.getPose())
                 .splineToConstantHeading(new Vector2d(61.4, -58), -Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(60, -30), Math.PI / 2);
-        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(60,-30,-Math.PI/2))
+        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(60, -30, -Math.PI / 2))
                 .splineToConstantHeading(new Vector2d(61.4, -58), -Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(60, -30), Math.PI / 2);
 
@@ -72,7 +72,7 @@ public class RobotRevealAuto extends ActionOpMode {
                         new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
                         new SequentialCommandGroup(
                                 new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
-                                new WaitUntilCommand(() -> dischargeSubsystem.getRPM()> 4000),
+                                new WaitUntilCommand(() -> dischargeSubsystem.getRPM() > 4000),
                                 new WaitCommand(1),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
@@ -81,7 +81,7 @@ public class RobotRevealAuto extends ActionOpMode {
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         )
 
-                                ),new ParallelCommandGroup(
+                                ), new ParallelCommandGroup(
                                 new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                 new SequentialCommandGroup(
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1950),

@@ -54,8 +54,8 @@ public class CommandGroups {
                         PoseVelocity2d movement = mecanumDrive.localizer.update();
                         Pose2d pos = mecanumDrive.localizer.getPose();
                         com.seattlesolvers.solverslib.geometry.Vector2d movementEffect = new com.seattlesolvers.solverslib.geometry.Vector2d(
-                                movement.linearVel.x,movement.linearVel.y).rotateBy(pos.heading.toDouble() / Math.PI * 180).times(0.5);
-                        return AutoShooter.canLaunch(new Pose2d(pos.position.x + movementEffect.getX(), pos.position.y + movementEffect.getY(),pos.heading.toDouble()));
+                                movement.linearVel.x, movement.linearVel.y).rotateBy(pos.heading.toDouble() / Math.PI * 180).times(0.5);
+                        return AutoShooter.canLaunch(new Pose2d(pos.position.x + movementEffect.getX(), pos.position.y + movementEffect.getY(), pos.heading.toDouble()));
                     }),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
                     new CarouselCommands.Discharge(carouselSubsystem, intakeSubsystem),
@@ -95,8 +95,9 @@ public class CommandGroups {
     public static class PowerTakeOff extends CommandBase {
         MecanumDrive mecanumDrive;
         Supplier<Double> power;
-        double rStart,lStart,rollStart;
-        public static double right = 0,left = 0;
+        double rStart, lStart, rollStart;
+        public static double right = 0, left = 0;
+
         public PowerTakeOff(MecanumDrive mecanumDrive, Supplier<Double> power) {
             this.mecanumDrive = mecanumDrive;
             this.power = power;
@@ -119,10 +120,10 @@ public class CommandGroups {
             right = Math.abs(mecanumDrive.rightBack.getCurrentPosition() - rStart);
             left = Math.abs(mecanumDrive.leftBack.getCurrentPosition() - lStart);
 
-            double delta = - (mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES) - rollStart) * 0.1;
+            double delta = -(mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES) - rollStart) * 0.1;
 
-            double rPower = Range.clip(power - delta,0.1,power);
-            double lPower = Range.clip(power + delta,0.1,power);
+            double rPower = Range.clip(power - delta, 0.1, power);
+            double lPower = Range.clip(power + delta, 0.1, power);
 
             mecanumDrive.rightFront.setPower(rPower);
             mecanumDrive.rightBack.setPower(-rPower);

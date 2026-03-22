@@ -30,8 +30,8 @@ public class IntakeSubsystem extends SubsystemBase {
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeServo1 = hm.get(Servo.class, "rightIntake");
         intakeServo2 = hm.get(Servo.class, "leftIntake");
-        leftSwitch = hm.get(DigitalChannel.class,"leftSwitch");
-        rightSwitch = hm.get(DigitalChannel.class,"rightSwitch");
+        leftSwitch = hm.get(DigitalChannel.class, "leftSwitch");
+        rightSwitch = hm.get(DigitalChannel.class, "rightSwitch");
         leftSwitch.setMode(DigitalChannel.Mode.INPUT);
         rightSwitch.setMode(DigitalChannel.Mode.INPUT);
         reversed = false;
@@ -54,11 +54,11 @@ public class IntakeSubsystem extends SubsystemBase {
                 cTime = time.time(TimeUnit.MILLISECONDS);
                 currentRight = !rightSwitch.getState();
                 currentLeft = !leftSwitch.getState();
-                if ((currentRight && !lastRight) && (cTime - rightSensorTime > 50) ){
+                if ((currentRight && !lastRight) && (cTime - rightSensorTime > 50)) {
                     count += 1;
                     rightSensorTime = cTime;
                 }
-                if((currentLeft && !lastLeft) && (cTime - leftSensorTime > 50)){
+                if ((currentLeft && !lastLeft) && (cTime - leftSensorTime > 50)) {
                     count += 1;
                     leftSensorTime = cTime;
                 }
@@ -77,7 +77,7 @@ public class IntakeSubsystem extends SubsystemBase {
         sensorThread.start();
     }
 
-    public void stopSensorThread(){
+    public void stopSensorThread() {
         sensorThread.interrupt();
     }
 

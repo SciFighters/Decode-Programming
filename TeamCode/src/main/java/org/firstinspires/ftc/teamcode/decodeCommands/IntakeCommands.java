@@ -14,7 +14,7 @@ public class IntakeCommands {
     public static class IntakeState extends CommandBase {
         IntakeSubsystem intakeSubsystem;
         ElapsedTime time;
-        double  currentTime;
+        double currentTime;
 
         public static int count;
         public static boolean resetCount;
@@ -34,7 +34,6 @@ public class IntakeCommands {
             intakeSubsystem.setPower(1);
             intakeSubsystem.setPosition(1);
         }
-
 
 
         @Override
@@ -112,7 +111,6 @@ public class IntakeCommands {
         }
 
     }
-
 
 
     public static class SortingState extends CommandBase {

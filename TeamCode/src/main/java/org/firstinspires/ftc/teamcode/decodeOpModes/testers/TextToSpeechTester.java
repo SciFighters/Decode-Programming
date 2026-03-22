@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 public class TextToSpeechTester extends ActionOpMode {
 
     GamepadEx gamepad;
+
     @Override
     public void initialize() {
         gamepad = new GamepadEx(gamepad1);

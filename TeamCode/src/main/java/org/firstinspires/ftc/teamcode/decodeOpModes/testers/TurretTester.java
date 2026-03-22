@@ -8,6 +8,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
+
 @TeleOp(group = "tests")
 public class TurretTester extends ActionOpMode {
     GamepadEx gamepad;
@@ -29,15 +30,15 @@ public class TurretTester extends ActionOpMode {
 
     @Override
     public void run() {
-        if(manual){
-            dischargeSubsystem.setTurretPower(gamepad.getRightX() *(0.5 + 0.5 * gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
-        } else{
+        if (manual) {
+            dischargeSubsystem.setTurretPower(gamepad.getRightX() * (0.5 + 0.5 * gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+        } else {
             dischargeSubsystem.setTurretPower(power);
         }
         multipleTelemetry.addData("power", power);
         multipleTelemetry.addData("speed", dischargeSubsystem.getRPS());
-        multipleTelemetry.addData("ticks",dischargeSubsystem.getTurretPosition());
-        multipleTelemetry.addData("angle",dischargeSubsystem.getTurretAngle());
+        multipleTelemetry.addData("ticks", dischargeSubsystem.getTurretPosition());
+        multipleTelemetry.addData("angle", dischargeSubsystem.getTurretAngle());
         multipleTelemetry.update();
         super.run();
     }

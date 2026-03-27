@@ -228,7 +228,6 @@ public class CarouselCommands {
                         new SlideDistance(carouselSubsystem, 2.2, 1)
                 ));
                 put(Sequence.MIDDLE, new SequentialCommandGroup(
-//                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
 
                         new SlideDistance(carouselSubsystem, 2, 0.95),
                         new WaitCommand(80),

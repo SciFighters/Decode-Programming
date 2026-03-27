@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.util.Range;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -48,7 +49,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
     Button driverStart, systemStart;
     Button driverBack, systemBack;
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
-    double wantedRPM = 1000, wantedDegree = 50;
+    double wantedRPM = 1000, wantedDegree = 45;
     public static boolean atSpeed;
 
     @Override
@@ -70,10 +71,10 @@ public class AutomaticShootingTuner extends ActionOpMode {
         driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem));
         driverB.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
-        driverX.whenPressed(new SequentialCommandGroup(new CommandGroups.Shoot(intakeSubsystem,carouselSubsystem),
-                new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem).withTimeout(1000)));
-        systemDPadUp.whenPressed(() -> wantedRPM += 100);
-        systemDPadDown.whenPressed(() -> wantedRPM -= 100);
+        driverX.whenPressed(new CommandGroups.Shoot(intakeSubsystem,carouselSubsystem) .whenFinished(() -> CommandScheduler.getInstance().schedule(
+                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem))));
+        systemDPadUp.whenPressed(() -> wantedRPM += 50);
+        systemDPadDown.whenPressed(() -> wantedRPM -= 50);
         systemA.whenPressed(() -> wantedDegree += 2);
         systemY.whenPressed(() -> wantedDegree -= 2);
         systemX.whenPressed(() -> wantedDegree += 0.2);
@@ -99,9 +100,10 @@ public class AutomaticShootingTuner extends ActionOpMode {
 //        power = Range.clip(power, -0.4, 0.4);
 //        dischargeSubsystem.setTurretPower(power);
 
-
-        dischargeSubsystem.setFlyWheelRPM(wantedRPM);
-        dischargeSubsystem.setRampDegree(wantedDegree);
+        if(!CommandScheduler.getInstance().isScheduled(new DischargeCommands.setState(dischargeSubsystem,0,54))){
+            dischargeSubsystem.setFlyWheelRPM(wantedRPM);
+            dischargeSubsystem.setRampDegree(wantedDegree);
+        }
         super.run();
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
 

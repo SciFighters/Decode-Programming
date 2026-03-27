@@ -17,10 +17,10 @@ public class DischargeSubsystem extends SubsystemBase {
     private final DcMotorEx turretMotor;
     public final MotorEx flyWheelMotor;
     private final Servo rampServo;
-    private final double kS = 0.12, kV = 0.00017459567, kP = 0.000833333, kI = 0.000005;
+    private final double kS = 0.17, kV = 0.00025772193, kP = 0.00133333, kI = 0.000005;
     private final double ticksPerDegree = 383.6 * (198.0 / 49.0) / 360.0;
     private double startAngle;
-    private final double gearRatio = 35.0 / 35; // 34:30
+    private final double gearRatio = 27.0 / 37.0; // 34:30
     double integral;
     public static boolean shooting = false;
 
@@ -28,6 +28,7 @@ public class DischargeSubsystem extends SubsystemBase {
         flyWheelMotor = new MotorEx(hm, "flyWheelMotor", Motor.GoBILDA.BARE);
         flyWheelMotor.encoder.setDirection(Motor.Direction.REVERSE);
         turretMotor = hm.get(DcMotorEx.class, "turretMotor");
+        turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rampServo = hm.get(Servo.class, "rampServo");
         startAngle = 180;
         integral = 0;
@@ -52,7 +53,7 @@ public class DischargeSubsystem extends SubsystemBase {
         }
 
 
-        rpm *= gearRatio;
+//        rpm *= gearRatio;
         double currentRPM = getRPM();
         if (currentRPM - rpm > 280) {
             flyWheelMotor.set(-1);
@@ -67,7 +68,7 @@ public class DischargeSubsystem extends SubsystemBase {
     }
 
     public void stayRPM(double rpm) {
-        rpm *= gearRatio;
+//        rpm *= gearRatio;
         flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.02 + kP * (rpm - getRPM()));
     }
 
@@ -107,8 +108,7 @@ public class DischargeSubsystem extends SubsystemBase {
     }
 
     public void setRampDegree(double rampDegree) {
-        double pos = (62.5 - rampDegree) / (42.12);
-//        double pos = -(34.13 - rampDegree)/(38.87);
-        rampServo.setPosition(Math.min(pos * 0.8, 0.8) - 0.1);
+        double pos = (60 - rampDegree) / 30.0;
+        rampServo.setPosition(Math.min(pos * 0.6, 0.8));
     }
 }

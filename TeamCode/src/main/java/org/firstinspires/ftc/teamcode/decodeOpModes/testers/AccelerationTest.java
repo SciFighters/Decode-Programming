@@ -18,7 +18,7 @@ public class AccelerationTest extends ActionOpMode {
     GamepadButton A, B, X, Y, up, down;
     ElapsedTime time;
     DischargeSubsystem dischargeSubsystem;
-    public static double wantedRpm = 3900;
+    public static double wantedRpm = 2500;
     double timeTaken = 0;
     boolean reached;
 

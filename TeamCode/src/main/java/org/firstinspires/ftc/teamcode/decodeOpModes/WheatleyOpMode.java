@@ -147,7 +147,6 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addData("carouselAngle", carouselSubsystem.getAngle());
         multipleTelemetry.addData("carouselPosition", carouselSubsystem.getPosition());
         multipleTelemetry.addLine("Discharge");
-//        multipleTelemetry.addData("tx", limelightSubsystem.getTx());
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
         multipleTelemetry.addData("turret Ticks", dischargeSubsystem.getTurretPosition());
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());

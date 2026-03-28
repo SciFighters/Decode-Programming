@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -51,6 +52,8 @@ public class AutomaticShootingTuner extends ActionOpMode {
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
     double wantedRPM = 1000, wantedDegree = 45;
     public static boolean atSpeed;
+    boolean work = true;
+    double correction = 0;
 
     @Override
     public void initialize() {
@@ -81,9 +84,14 @@ public class AutomaticShootingTuner extends ActionOpMode {
         systemB.whenPressed(() -> wantedDegree -= 0.2);
 
         driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
-        driverDPadDown.whenPressed(new DischargeCommands.setState(dischargeSubsystem, 0, 54).withTimeout(10000));
+        driverDPadDown.whenPressed(new SequentialCommandGroup(
+                new InstantCommand(() -> work = false),
+                new WaitCommand(30000),
+                new InstantCommand(() -> work = true)
+        ));
         driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
-
+        systemDPadLeft.whenPressed(() -> correction +=2);
+        systemDPadRight.whenPressed(() -> correction -=2);
 //        limelightSubsystem.startLimelight();
     }
 
@@ -100,9 +108,11 @@ public class AutomaticShootingTuner extends ActionOpMode {
 //        power = Range.clip(power, -0.4, 0.4);
 //        dischargeSubsystem.setTurretPower(power);
 
-        if(!CommandScheduler.getInstance().isScheduled(new DischargeCommands.setState(dischargeSubsystem,0,54))){
+        if(work){
             dischargeSubsystem.setFlyWheelRPM(wantedRPM);
             dischargeSubsystem.setRampDegree(wantedDegree);
+        }else{
+            dischargeSubsystem.setFlyWheelRPM(0);
         }
         super.run();
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
@@ -114,7 +124,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
         multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.addData("distance", AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), AutoShooter.TeamColor.RED));
-        multipleTelemetry.addData("anglee", launchAngle);
+        multipleTelemetry.addData("angle", launchAngle);
         multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
         multipleTelemetry.addData("velX", mecanumDrive.localizer.update().linearVel.x);
         multipleTelemetry.addData("velY", mecanumDrive.localizer.update().linearVel.y);
@@ -126,7 +136,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
         double launchAngle =
                 (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position.x + mecanumToTurret.getX(),
                         mecanumDrive.localizer.getPose().position.y + mecanumToTurret.getY(),
-                        mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), SavedValues.teamColor) + 360) % 360;
+                        mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), SavedValues.teamColor) + 360) % 360 + correction;
         launchAngle = Range.clip(launchAngle,24,332);
 
         double power;

@@ -58,6 +58,7 @@ public class DischargeCommands {
         MecanumDrive mecanumDrive;
         AutoShooter.TeamColor teamColor;
         public static double kp = 0.018;//0.018
+        public static double ki = 0.0;
         public static double launchAngle;
         public static boolean shooting = false;
         public static boolean atSpeed = false;//+- 200rpm
@@ -75,6 +76,7 @@ public class DischargeCommands {
         PoseVelocity2d movement;
         com.seattlesolvers.solverslib.geometry.Vector2d lastMovement, acceleration;
         double currentTime, lastTime, deltaTime;
+        double integral = 0;
 
         public AutomaticAiming(DischargeSubsystem dischargeSubsystem, LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, CarouselSubsystem carouselSubsystem, AutoShooter.TeamColor teamColor) {
             this.dischargeSubsystem = dischargeSubsystem;
@@ -104,9 +106,10 @@ public class DischargeCommands {
 
                 mecanumToTurret = new com.seattlesolvers.solverslib.geometry.Vector2d(1.5748, 0).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
                 currentPos = mecanumDrive.localizer.getPose();
-                double time = AutoShooter.getTime(mecanumDrive.localizer.getPose());
-                movementEffect = new com.seattlesolvers.solverslib.geometry.Vector2d(movement.linearVel.x * time, movement.linearVel.y * time).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
-                acceleration = movementEffect.div(time).minus((lastMovement != null) ? lastMovement : movementEffect).times(time * time / 2).div(deltaTime);
+                double time = AutoShooter.getTime(mecanumDrive.localizer.getPose()) + 0.1;
+                movementEffect = new com.seattlesolvers.solverslib.geometry.Vector2d(movement.linearVel.x * time, movement.linearVel.y * time)
+                        .rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
+                acceleration = movementEffect.div(time).minus((lastMovement != null) ? lastMovement : movementEffect).times(time * time / 2).div(deltaTime).times(0.2);
                 aimTurret();
 
 
@@ -162,12 +165,12 @@ public class DischargeCommands {
             double power;
             if (angleError != 0 && inRange && !(Math.abs(currentPos.position.y) > 40) && limelight) {
 
-                if (lastAngleError == angleError) {
-                    angleError += (turretAngle - lastTurretAngle) +
-                            (AutoShooter.normalizeAngleError(Math.toDegrees
-                                    (currentPos.heading.toDouble() - lastPos.heading.toDouble())));
-                }
-                double deltaTx = dischargeSubsystem.getRPS();//(angleError - lastAngleError) / deltaTime
+//                if (lastAngleError == angleError) {
+//                    angleError += (turretAngle - lastTurretAngle) +
+//                            (AutoShooter.normalizeAngleError(Math.toDegrees
+//                                    (currentPos.heading.toDouble() - lastPos.heading.toDouble())));
+//                }
+                double rps = dischargeSubsystem.getRPS();
                 double aprilTagAngle = AutoShooter.getAprilTagAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX(),
                         currentPos.position.y + mecanumToTurret.getY(),
                         currentPos.heading.toDouble() - Math.PI), teamColor);
@@ -175,13 +178,15 @@ public class DischargeCommands {
                         AutoShooter.getLaunchAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX() + acceleration.getX(),
                                 currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY() + acceleration.getY(),
                                 currentPos.heading.toDouble() - Math.PI), teamColor) - aprilTagAngle;
-
+                integral += angleError * (currentTime - lastTime);
                 power = -(wantedError - angleError) * kp;
-                power += deltaTx * kd;
+                power += rps * kd;
+                power += integral * ki;
 
-                power = (Math.abs(Math.signum(power) * ks) > Math.abs(power)) ? Math.signum(power) * ks : power;
+                power = (ks > Math.abs(power)) ? Math.signum(power) * ks : power;
 
             } else if (lastAngleError != 0 && angleError == 0) {
+                integral = 0;
 
                 llTime = time.seconds();
                 power = 0;
@@ -195,10 +200,13 @@ public class DischargeCommands {
                                 currentPos.heading.toDouble() - Math.PI), teamColor) + 360 + turretCorrection) % 360;
                 inRange = launchAngle > 20 && launchAngle < 340;
                 launchAngle = Range.clip(launchAngle, 20, 340);
+                integral = 0;
                 power = -(launchAngle - turretAngle) * kp;
                 power += Math.signum(power) * ks;
             } else {
                 power = 0;
+                integral = 0;
+
             }
             lastAngleError = angleError;
             lastTurretAngle = turretAngle;

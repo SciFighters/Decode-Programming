@@ -1,30 +1,21 @@
 package org.firstinspires.ftc.teamcode.decodeCommands;
 
-import androidx.annotation.NonNull;
-
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandBase;
-import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.WaitUntilCommand;
-import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.teamcode.decodeOpModes.testers.AutomaticShootingTuner;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class CarouselCommands {
 
@@ -220,7 +211,7 @@ public class CarouselCommands {
 
         }
 
-        public Discharge(CarouselSubsystem carouselSubsystem, IntakeSubsystem intakeSubsystem) {
+        public Discharge(CarouselSubsystem carouselSubsystem) {
             super(new HashMap<Object, Command>() {{
                 put(Sequence.CLOSE, new SequentialCommandGroup(
                         new InstantCommand(() -> DischargeSubsystem.shooting = false),
@@ -234,7 +225,7 @@ public class CarouselCommands {
                         new SlideDistance(carouselSubsystem, 1.2, 0.65)));
                 put(Sequence.FAR, new SequentialCommandGroup(
                         new InstantCommand(() -> DischargeSubsystem.shooting = false),
-                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
+                        new WaitUntilCommand(() -> AutomaticShootingTuner.atSpeed),
                         new InstantCommand(() -> DischargeSubsystem.shooting = true),
                         new SlideDistance(carouselSubsystem, 2.2, 1),
                         new InstantCommand(() -> DischargeSubsystem.shooting = false)));

@@ -28,7 +28,7 @@ public class CommandGroups {
                     new IntakeCommands.TransferState(intakeSubsystem),
 //                    new WaitCommand(100),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
-                    new CarouselCommands.Discharge(carouselSubsystem, intakeSubsystem),
+                    new CarouselCommands.Discharge(carouselSubsystem),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
             ));
         }
@@ -58,7 +58,7 @@ public class CommandGroups {
                         return AutoShooter.canLaunch(new Pose2d(pos.position.x + movementEffect.getX(), pos.position.y + movementEffect.getY(), pos.heading.toDouble()));
                     }),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
-                    new CarouselCommands.Discharge(carouselSubsystem, intakeSubsystem),
+                    new CarouselCommands.Discharge(carouselSubsystem),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
 
             );

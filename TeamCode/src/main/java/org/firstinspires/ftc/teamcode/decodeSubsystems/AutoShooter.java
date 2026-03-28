@@ -10,7 +10,7 @@ public class AutoShooter {
     private static final double g = 386.1;//inch/s^2
     private static final Vector2d goalPos = new Vector2d(-62, 62);
     private static final Vector2d aprilTagPos = new Vector2d(-58.346457, 55.629921);
-    private static final double[][] points = {{27.6, 60, 1750}, {45.7, 57.6, 1850}, {64, 48, 2170}, {81, 46.4, 2320}, {98.4, 41.6, 2650}, {118, 38, 2641}, {135, 38, 2787}, {150, 36, 3000}};//distance, angle, rpm
+    private static final double[][] points = {{34, 60, 1550}, {54, 54.4, 1700}, {64, 48, 2170}, {81, 46.4, 2320}, {98.4, 41.6, 2650}, {118, 38, 2641}, {135, 38, 2787}, {150, 36, 3000}};//distance, angle, rpm
     private static final double[][] times = {{43.8, 0.36}, {61, 0.46}, {76, 0.5}, {85, 0.5}, {97, 0.63}, {107.2, 0.63}, {118.9, 0.63}, {124.2, 0.67}, {139.7, 0.7}};
 
     //robot corners
@@ -60,20 +60,20 @@ public class AutoShooter {
             best = new Vector2d(x, y);
         }
 
-//        x = Range.clip((x1 + y1 + 48) / 2.0, 48, 72);
-//        y = x - 48;
-//        d = dist2(p, x, y);
-//        if (d < bestDist) {
-//            bestDist = d;
-//            best = new Vector2d(x, y);
-//        }
-//
-//        x = Range.clip((x1 - y1 + 48) / 2.0, 48, 72);
-//        y = 48 - x;
-//        d = dist2(p, x, y);
-//        if (d < bestDist) {
-//            best = new Vector2d(x, y);
-//        }
+        x = Range.clip((x1 + y1 + 48) / 2.0, 48, 72);
+        y = x - 48;
+        d = dist2(p, x, y);
+        if (d < bestDist) {
+            bestDist = d;
+            best = new Vector2d(x, y);
+        }
+
+        x = Range.clip((x1 - y1 + 48) / 2.0, 48, 72);
+        y = 48 - x;
+        d = dist2(p, x, y);
+        if (d < bestDist) {
+            best = new Vector2d(x, y);
+        }
 
         return best;
     }

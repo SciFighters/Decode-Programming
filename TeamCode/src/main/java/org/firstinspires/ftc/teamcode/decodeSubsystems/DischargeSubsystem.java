@@ -20,7 +20,7 @@ public class DischargeSubsystem extends SubsystemBase {
     private final double kS = 0.17, kV = 0.00025772193, kP = 0.00133333, kI = 0.000005;
     private final double ticksPerDegree = 383.6 * (198.0 / 49.0) / 360.0;
     private double startAngle;
-    private final double gearRatio = 27.0 / 37.0; // 34:30
+    private final double gearRatio = 27.0 / 37; // 34:30
     double integral;
     public static boolean shooting = false;
 
@@ -68,12 +68,11 @@ public class DischargeSubsystem extends SubsystemBase {
     }
 
     public void stayRPM(double rpm) {
-//        rpm *= gearRatio;
         flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.02 + kP * (rpm - getRPM()));
     }
 
-    public double getRPM() {//swapped encoders
-        return -flyWheelMotor.getVelocity() / flyWheelMotor.getCPR() * 60 * gearRatio;
+    public double getRPM() {
+        return -flyWheelMotor.getCorrectedVelocity() / flyWheelMotor.getCPR() * 60 * gearRatio;
     }
 
     public double getFlyWheelPower() {
@@ -91,12 +90,10 @@ public class DischargeSubsystem extends SubsystemBase {
 
     public double getTurretPosition() {
         return turretMotor.getCurrentPosition();
-//        return 0;
     }
 
     public double getTurretAngle() {
         return 360 - (turretMotor.getCurrentPosition() / ticksPerDegree + startAngle);
-//        return 0;
     }
 
     public void setTurretAngle(double angle) {

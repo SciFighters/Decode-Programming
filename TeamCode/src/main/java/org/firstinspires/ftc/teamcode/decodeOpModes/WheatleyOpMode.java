@@ -109,7 +109,10 @@ public class WheatleyOpMode extends ActionOpMode {
         systemA.whenReleased(() -> gamepad2.rumble(100));
         systemY.whenReleased(() -> gamepad2.rumble(100));
         systemB.whenReleased(() -> gamepad2.rumble(100));
-        systemLeftBumper.whenPressed(() -> DischargeCommands.AutomaticAiming.limelight = !DischargeCommands.AutomaticAiming.limelight);
+        systemB.whenPressed(() -> SavedValues.zone = AutoShooter.Zone.BOTH);
+        systemLeftBumper.whenPressed(() ->  SavedValues.zone = SavedValues.teamColor == AutoShooter.TeamColor.RED ? AutoShooter.Zone.CLOSE : AutoShooter.Zone.FAR);
+        systemRightBumper.whenPressed(() ->  SavedValues.zone = SavedValues.teamColor == AutoShooter.TeamColor.RED ? AutoShooter.Zone.FAR : AutoShooter.Zone.CLOSE);
+        systemLeftStick.whenPressed(() -> DischargeCommands.AutomaticAiming.limelight = !DischargeCommands.AutomaticAiming.limelight);
 
     }
 

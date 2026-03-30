@@ -202,8 +202,6 @@ public class CarouselCommands {
     }
 
     public static class Discharge extends SelectCommand {
-        private static final double transferSpeed = 0.7, travelSpeed = 1;
-
         enum Sequence {
             CLOSE,
             MIDDLE,
@@ -225,7 +223,7 @@ public class CarouselCommands {
                         new SlideDistance(carouselSubsystem, 1.2, 0.65)));
                 put(Sequence.FAR, new SequentialCommandGroup(
                         new InstantCommand(() -> DischargeSubsystem.shooting = false),
-                        new WaitUntilCommand(() -> AutomaticShootingTuner.atSpeed),
+                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
                         new InstantCommand(() -> DischargeSubsystem.shooting = true),
                         new SlideDistance(carouselSubsystem, 2.2, 1),
                         new InstantCommand(() -> DischargeSubsystem.shooting = false)));

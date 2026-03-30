@@ -48,8 +48,6 @@ public class CommandGroups {
             addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
                     new IntakeCommands.TransferState(intakeSubsystem),
-//                    new WaitCommand(100),
-//                    new WaitCommand(300),
                     new WaitUntilCommand(() -> {
                         PoseVelocity2d movement = mecanumDrive.localizer.update();
                         Pose2d pos = mecanumDrive.localizer.getPose();

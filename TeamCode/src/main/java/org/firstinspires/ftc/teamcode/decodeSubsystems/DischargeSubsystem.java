@@ -20,7 +20,7 @@ public class DischargeSubsystem extends SubsystemBase {
     private final double kS = 0.17, kV = 0.00025772193, kP = 0.00133333, kI = 0.000005;
     private final double ticksPerDegree = 383.6 * (198.0 / 49.0) / 360.0;
     private double startAngle;
-    private final double gearRatio = 27.0 / 37; // 34:30
+    private final double gearRatio = 37.0 / 37; // 34:30
     double integral;
     public static boolean shooting = false;
 
@@ -61,7 +61,7 @@ public class DischargeSubsystem extends SubsystemBase {
             flyWheelMotor.set(1);
 //            turretMotor.setPower(-1);
         } else {
-            flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.02 + kP * (rpm - getRPM()));
+            flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.07 + kP * (rpm - getRPM()));
 //            turretMotor.setPower(-kS * Math.signum(rpm) - kV * rpm + 0.04);
         }
 
@@ -106,6 +106,6 @@ public class DischargeSubsystem extends SubsystemBase {
 
     public void setRampDegree(double rampDegree) {
         double pos = (60 - rampDegree) / 30.0;
-        rampServo.setPosition(Math.min(pos * 0.6, 0.8));
+        rampServo.setPosition(Math.min(pos * 0.6 - 0.2, 0.6));
     }
 }

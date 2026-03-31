@@ -3,16 +3,19 @@ package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 
 @Config
 @TeleOp(group = "tests")
 public class ManualCarouselTest extends ActionOpMode {
-    DcMotor carousel, intake;
+    DcMotor carousel;
+    DcMotorEx intake;
     double spinPower = 0, intakePower = 0;
     GamepadEx gamepad;
     GamepadButton up, down, left, right, a;
@@ -22,7 +25,7 @@ public class ManualCarouselTest extends ActionOpMode {
     @Override
     public void initialize() {
         carousel = hardwareMap.dcMotor.get("carouselMotor");
-        intake = hardwareMap.dcMotor.get("intakeMotor");
+        intake = hardwareMap.get(DcMotorEx.class,"intakeMotor");
         gamepad = new GamepadEx(gamepad1);
 //        up = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP);
 //        down = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_DOWN);
@@ -48,6 +51,7 @@ public class ManualCarouselTest extends ActionOpMode {
         }
 
         multipleTelemetry.addData("intakePower", intakePower);
+        multipleTelemetry.addData("current",intake.getCurrent(CurrentUnit.AMPS));
         multipleTelemetry.addData("carouselPower", spinPower);
         multipleTelemetry.update();
     }

@@ -39,7 +39,7 @@ public class RedClose21 extends ActionOpMode {
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
-    double turretStartAngle = 50;
+    double turretStartAngle = 65;
     ElapsedTime time;
 
     @Override
@@ -64,8 +64,8 @@ public class RedClose21 extends ActionOpMode {
 
         TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(-18, 18, 0), reversed)
                 .setTangent(0)
-                .splineToLinearHeading(new Pose2d(14, 42, Math.PI / 2), Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(14, 42.1, Math.PI / 2), Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(14, 36, Math.PI / 2), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(14, 36.1, Math.PI / 2), Math.PI / 2)
 //                .splineToConstantHeading(new Vector2d(14, 48), Math.PI *5/ 8)
                 .splineToConstantHeading(new Vector2d(-8, 12), -Math.PI * 3 / 4);
         TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(14, 44, Math.PI / 2)), reversed)
@@ -145,10 +145,7 @@ public class RedClose21 extends ActionOpMode {
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(400),
-                                                new ParallelCommandGroup(
-                                                        new IntakeCommands.OutTakeState(intakeSubsystem),
-                                                        new WaitCommand(500)
-                                                ),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
                                 new ParallelRaceGroup(
@@ -168,10 +165,7 @@ public class RedClose21 extends ActionOpMode {
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(400),
-                                                new ParallelCommandGroup(
-                                                        new IntakeCommands.OutTakeState(intakeSubsystem),
-                                                        new WaitCommand(500)
-                                                ),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
 
@@ -194,7 +188,7 @@ public class RedClose21 extends ActionOpMode {
                                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem),
                                                         new WaitCommand(900)
                                                 ),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
                                 new ParallelCommandGroup(
@@ -227,6 +221,7 @@ public class RedClose21 extends ActionOpMode {
 
     @Override
     public void initialize_loop() {
+        limelightSubsystem.setPipeline(0);
         limelightSubsystem.startLimelight();
         if (time.seconds() > 3) {
             int current = limelightSubsystem.getMotif();
@@ -248,6 +243,7 @@ public class RedClose21 extends ActionOpMode {
 
     @Override
     public void run() {
+        limelightSubsystem.setPipeline(1);
         super.run();
         SavedValues.position = mecanumDrive.localizer.getPose();
     }

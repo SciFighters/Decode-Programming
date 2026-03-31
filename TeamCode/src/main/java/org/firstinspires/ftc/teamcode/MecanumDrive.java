@@ -113,7 +113,7 @@ public final class MecanumDrive extends SubsystemBase {
     Servo leftPTO, rightPTO, liftLeft, liftRight;
 
     private final double leftPTOPos = 0.29, rightPTOPos = 1, leftDrivePos = 1, rightDrivePos = 0.1;
-    private final double liftLeftClose = 1, liftLeftOpen = 0.5, liftRightClose = 0.5, liftRightOpen = 1;
+    private final double liftLeftClose = 0.3, liftLeftOpen = 0.78, liftRightClose = 1, liftRightOpen = 0.62;
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 

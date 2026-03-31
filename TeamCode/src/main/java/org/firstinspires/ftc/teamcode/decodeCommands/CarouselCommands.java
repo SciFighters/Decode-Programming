@@ -214,7 +214,7 @@ public class CarouselCommands {
                 put(Sequence.CLOSE, new SequentialCommandGroup(
                         new InstantCommand(() -> DischargeSubsystem.shooting = false),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-                        new SlideDistance(carouselSubsystem, 2.2, 1)
+                        new SlideDistance(carouselSubsystem, 2.8, 1)
                 ));
                 put(Sequence.MIDDLE, new SequentialCommandGroup(
 
@@ -225,7 +225,7 @@ public class CarouselCommands {
                         new InstantCommand(() -> DischargeSubsystem.shooting = false),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
                         new InstantCommand(() -> DischargeSubsystem.shooting = true),
-                        new SlideDistance(carouselSubsystem, 2.2, 1),
+                        new SlideDistance(carouselSubsystem, 2.8, 1),
                         new InstantCommand(() -> DischargeSubsystem.shooting = false)));
 
 

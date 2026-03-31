@@ -84,7 +84,7 @@ public class CommandGroups {
         public StartOuttake(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
             addCommands(
                     new IntakeCommands.OutTakeState(intakeSubsystem),
-                    new CarouselCommands.MoveToAngle(carouselSubsystem, 190)
+                    new CarouselCommands.MoveToAngle(carouselSubsystem, 195)
             );
         }
     }

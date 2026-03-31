@@ -39,7 +39,7 @@ public class RedCloseFull extends ActionOpMode {
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
-    double turretStartAngle = 50;
+    double turretStartAngle = 65;
     ElapsedTime time;
 
     @Override
@@ -147,7 +147,7 @@ public class RedCloseFull extends ActionOpMode {
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(400),
                                                 new ParallelCommandGroup(
                                                         new IntakeCommands.OutTakeState(intakeSubsystem),
-                                                        new WaitCommand(500)
+                                                        new WaitCommand(200)
                                                 ),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
@@ -171,7 +171,7 @@ public class RedCloseFull extends ActionOpMode {
                                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem),
                                                         new WaitCommand(900)
                                                 ),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(200),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
                                 new ParallelCommandGroup(

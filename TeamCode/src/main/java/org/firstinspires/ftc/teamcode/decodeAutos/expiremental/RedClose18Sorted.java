@@ -204,6 +204,7 @@ public class RedClose18Sorted extends ActionOpMode {
 
     @Override
     public void initialize_loop() {
+        limelightSubsystem.setPipeline(0);
         limelightSubsystem.startLimelight();
         if (time.seconds() > 3) {
             int current = limelightSubsystem.getMotif();
@@ -225,6 +226,7 @@ public class RedClose18Sorted extends ActionOpMode {
 
     @Override
     public void run() {
+        limelightSubsystem.setPipeline(1);
         super.run();
         SavedValues.position = mecanumDrive.localizer.getPose();
     }

@@ -43,8 +43,10 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     public void setPipeline(int pipeline) {
+        if (this.pipeline != pipeline){
         this.pipeline = pipeline;
         limelight.pipelineSwitch(pipeline);
+        }
     }
 
 

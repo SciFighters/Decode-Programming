@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.seattlesolvers.solverslib.command.ScheduleCommand;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -14,8 +13,7 @@ import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
-import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
+import org.firstinspires.ftc.teamcode.decodeCommands.MecanumCommands;
 
 @TeleOp(group = "tests")
 public class SortingTest extends ActionOpMode {

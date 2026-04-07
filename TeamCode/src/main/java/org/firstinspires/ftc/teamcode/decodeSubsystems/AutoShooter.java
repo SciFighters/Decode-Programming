@@ -12,7 +12,7 @@ public class AutoShooter {
     private static final double g = 386.1;//inch/s^2
     private static final Vector2d goalPos = new Vector2d(-62, 62);
     private static final Vector2d aprilTagPos = new Vector2d(-58.346457, 55.629921);
-    private static final double[][] points = {{23,56,2400},{44.4,45.5,2680},{62,42,2830},{83.5,38,3100}, {100,38,3380},{118,38,3620},{135,38,3820},{150,36,4110}};//distance, angle, rpm
+    private static final double[][] points = {{23,56,2400},{44.4,45.5,2680},{62,42,2800},{83.5,38,3050}, {100,38,3480},{118,38,3620},{135,38,3820},{150,36,4110}};//distance, angle, rpm
     private static final double[][] times = {{43.8, 0.36}, {61, 0.46}, {76, 0.5}, {85, 0.5}, {97, 0.63}, {107.2, 0.63}, {118.9, 0.63}, {124.2, 0.67}, {139.7, 0.7}};
 
     //robot corners
@@ -33,6 +33,20 @@ public class AutoShooter {
         double heading = robotPose.heading.toDouble();
         for (Vector2d p : edges) {
             p = p.rotateBy(Math.toDegrees(heading));
+            if (isInZone(x + p.getX(), y + p.getY())) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+    //lose to zone
+    public static boolean zoneClose(Pose2d robotPose) {
+        double x = robotPose.position.x;
+        double y = robotPose.position.y;
+        double heading = robotPose.heading.toDouble();
+        for (Vector2d p : edges) {
+            p = p.rotateBy(Math.toDegrees(heading)).times(2);
             if (isInZone(x + p.getX(), y + p.getY())) {
                 return true;
             }

@@ -136,9 +136,8 @@ public class CommandGroups {
             addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
                     new IntakeCommands.SortingState(intakeSubsystem),
-                    new CarouselCommands.SlideDistance(carouselSubsystem, -0.56, 0.6).withTimeout(1000),
-                    new WaitCommand(200),
-                    new WaitUntilCommand(() -> AutoShooter.canLaunch(mecanumDrive.localizer.getPose())),
+                    new CarouselCommands.SlideDistance(carouselSubsystem, -0.56, 0.6).withTimeout(1000).whenFinished(() -> carouselSubsystem.setSpinPower(0)),
+//                    new WaitCommand(200),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
                     new CarouselCommands.SmartDischarge(carouselSubsystem, intakeSubsystem),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)

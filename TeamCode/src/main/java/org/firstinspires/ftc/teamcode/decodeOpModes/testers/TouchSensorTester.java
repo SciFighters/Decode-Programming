@@ -1,30 +1,16 @@
 package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 
 
-import com.acmerobotics.roadrunner.Pose2d;
-import com.qualcomm.hardware.lynx.LynxController;
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 
 @TeleOp(group = "tests")
 public class TouchSensorTester extends ActionOpMode {
@@ -58,7 +44,14 @@ public class TouchSensorTester extends ActionOpMode {
         super.run();
 
         multipleTelemetry.addData("count", IntakeSubsystem.count);
+//        multipleTelemetry.addData("left",intakeSubsystem.leftSwitch.getState()  ? 0:1);
+//        multipleTelemetry.addData("right",intakeSubsystem.rightSwitch.getState() ? 0:1);
         multipleTelemetry.update();
+    }
+
+    @Override
+    public void end() {
+        intakeSubsystem.stopSensorThread();
     }
 }
 

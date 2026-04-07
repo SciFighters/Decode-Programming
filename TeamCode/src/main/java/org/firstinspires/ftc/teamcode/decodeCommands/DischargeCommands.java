@@ -106,12 +106,11 @@ public class DischargeCommands {
 
                 mecanumToTurret = new com.seattlesolvers.solverslib.geometry.Vector2d(1.5748, 0).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
                 currentPos = mecanumDrive.localizer.getPose();
-                double time = AutoShooter.getTime(mecanumDrive.localizer.getPose()) + 0.1;
+                double time = AutoShooter.getTime(mecanumDrive.localizer.getPose()) * 2;
                 movementEffect = new com.seattlesolvers.solverslib.geometry.Vector2d(movement.linearVel.x * time, movement.linearVel.y * time)
                         .rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
-                acceleration = movementEffect.div(time).minus((lastMovement != null) ? lastMovement : movementEffect).times(time * time / 2).div(deltaTime).times(0.2);
+                acceleration = movementEffect.div(time).minus((lastMovement != null) ? lastMovement : movementEffect).times(time * time / 2).div(deltaTime).times(0.002);
                 aimTurret();
-
 
                 if (AutoShooter.canLaunch(new Pose2d(new Vector2d(currentPos.position.x + mecanumToTurret.getX(),
                         currentPos.position.y + mecanumToTurret.getY()), currentPos.heading.toDouble()))) {
@@ -165,11 +164,6 @@ public class DischargeCommands {
             double power;
             if (angleError != 0 && inRange && !(Math.abs(currentPos.position.y) > 40) && limelight) {
 
-//                if (lastAngleError == angleError) {
-//                    angleError += (turretAngle - lastTurretAngle) +
-//                            (AutoShooter.normalizeAngleError(Math.toDegrees
-//                                    (currentPos.heading.toDouble() - lastPos.heading.toDouble())));
-//                }
                 double rps = dischargeSubsystem.getRPS();
                 double aprilTagAngle = AutoShooter.getAprilTagAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX(),
                         currentPos.position.y + mecanumToTurret.getY(),
@@ -215,6 +209,12 @@ public class DischargeCommands {
             dischargeSubsystem.setTurretPower(power);
 
 
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            dischargeSubsystem.setFlyWheelPower(0);
+            dischargeSubsystem.setTurretPower(0);
         }
     }
 }

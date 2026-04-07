@@ -9,6 +9,6 @@ public class SavedValues {
     public static AutoShooter.Zone zone = AutoShooter.Zone.CLOSE;
     public static int carouselTicks = 0;
     public static double turretAngle = 180;
-    public static int startMotif = 0;
+    public static int startMotif = 1;
     public static int currentCount = 0;
 }

@@ -64,7 +64,7 @@ dependencies {
         exclude group: "com.acmerobotics.dashboard"
         
     }
-    implementation "org.solverslib:core:SNAPSHOT-7cdcc66"
-    implementation "org.solverslib:pedroPathing:SNAPSHOT-7cdcc66"
+    implementation "org.solverslib:core:0.3.4" // core
+//    implementation "org.solverslib:pedroPathing:0.3.4" // pedroPathing
 //    implementation "com.acmerobotics.dashboard:dashboard:0.4.17"
 }

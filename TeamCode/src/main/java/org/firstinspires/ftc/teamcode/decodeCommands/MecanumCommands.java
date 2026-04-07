@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.needle.commands;
+package org.firstinspires.ftc.teamcode.decodeCommands;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.seattlesolvers.solverslib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 
 import java.util.function.Supplier;
@@ -52,7 +51,7 @@ public class MecanumCommands {
         public void execute() {
             double currentX = x.get();
             double currentY = y.get();
-            if ((currentX == 0 && currentY == 0) && DischargeCommands.AutomaticAiming.shooting && AutoShooter.canLaunch(mecanumDrive.localizer.getPose())) {
+            if ((currentX == 0 && currentY == 0) && DischargeCommands.AutomaticAiming.shooting && AutoShooter.canLaunch(mecanumDrive.localizer.getPose()) && false) {
                 Vector2d pos = mecanumDrive.localizer.getPose().position;
                 Vector2d velocity = mecanumDrive.localizer.update().linearVel;
                 if ((lastX != 0 || lastY != 0) || (holdPos.x == 0 && holdPos.y == 0)) {

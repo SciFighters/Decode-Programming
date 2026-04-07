@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.decodeAutos.expiremental;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -74,20 +75,19 @@ public class RedClose21 extends ActionOpMode {
 
         TrajectoryActionBuilder midOneP1 = mecanumDrive.actionBuilder(new Pose2d(-8, 12, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 5)
-                .splineToConstantHeading(new Vector2d(6, 30), Math.PI / 3)
-                .splineToSplineHeading(new Pose2d(15, 62.5, Math.PI * 10.5 / 16), Math.PI / 2);//15.5, 60
+                .splineToLinearHeading(new Pose2d(15, 59.5, Math.PI * 23 / 36), Math.PI * 23 / 36);//15.5, 60
         TrajectoryActionBuilder midTwoP1 = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 5)
                 .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
                 .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 10.5 / 16), Math.PI / 2);
         TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(16, 62.5, Math.PI * 10.5 / 16), reversed)
                 .setTangent(Math.PI * 3.5 / 4)
-                .lineToX(12);
+                .lineToX(12,new TranslationalVelConstraint(5));
 
-        TrajectoryActionBuilder midOneP2 = mecanumDrive.actionBuilder(new Pose2d(14, 60, Math.PI * 5 / 8), reversed)
+        TrajectoryActionBuilder midOneP2 = mecanumDrive.actionBuilder(new Pose2d(13, 56, Math.PI * 23 / 36), reversed)
                 .setTangent(-Math.PI / 2)
                 .splineToLinearHeading(new Pose2d(-8, 12, Math.PI / 2), -Math.PI * 3 / 4);
-        TrajectoryActionBuilder midTwoP2 = mecanumDrive.actionBuilder(new Pose2d(14, 60, Math.PI * 5 / 8), reversed)
+        TrajectoryActionBuilder midTwoP2 = mecanumDrive.actionBuilder(new Pose2d(13, 56, Math.PI * 23 / 36), reversed)
                 .setTangent(-Math.PI / 2)
                 .splineToLinearHeading(new Pose2d(-13, 20, Math.PI / 2), -Math.PI * 3 / 4);
 
@@ -132,8 +132,9 @@ public class RedClose21 extends ActionOpMode {
                                         new SequentialCommandGroup(
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
-                                                        new WaitCommand(500),
-                                                        new ActionCommand(pressGate.build(), requirements)
+                                                        new WaitCommand(500)
+//                                                        ,
+//                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
 
@@ -240,6 +241,7 @@ public class RedClose21 extends ActionOpMode {
         }
 
     }
+
 
     @Override
     public void run() {

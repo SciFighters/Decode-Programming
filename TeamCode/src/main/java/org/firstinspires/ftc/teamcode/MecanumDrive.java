@@ -69,7 +69,7 @@ public final class MecanumDrive extends SubsystemBase {
         // drive model parameters
         public double inPerTick = 0.00197416797; //0.001978956 , 0.00197416797
         public double lateralInPerTick = 0.00197416797;//0.0013678570914981494, 0.0015432081508325105
-        public double trackWidthTicks = 6479.276782546479;
+        public double trackWidthTicks = 6484.557971510754;//6479.276782546479
 
         // feedforward parameters (in tick units)
         public double kS = 1.6651351141977813;

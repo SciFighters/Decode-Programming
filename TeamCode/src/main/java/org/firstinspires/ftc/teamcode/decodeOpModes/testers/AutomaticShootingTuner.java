@@ -47,13 +47,14 @@ public class AutomaticShootingTuner extends ActionOpMode {
     Button driverStart, systemStart;
     Button driverBack, systemBack;
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
-    double wantedRPM = 1000, wantedDegree = 45;
+    double wantedRPM = 2000, wantedDegree = 45;
     public static boolean atSpeed;
     boolean work = true;
     double correction = 0;
 
     @Override
     public void initialize() {
+        SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
 
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
@@ -62,7 +63,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
 
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(63, 0), Math.PI));
 
-        limelightSubsystem = new LimelightSubsystem(hardwareMap, AutoShooter.TeamColor.RED, mecanumDrive);
+        limelightSubsystem = new LimelightSubsystem(hardwareMap, AutoShooter.TeamColor.BLUE, mecanumDrive);
 
         driver = new GamepadEx(gamepad1);
         system = new GamepadEx(gamepad2);
@@ -99,7 +100,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
 
         mecanumDrive.localizer.update();
         double launchAngle =
-                (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position,mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), AutoShooter.TeamColor.RED) + 360) % 360;
+                (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position,mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), AutoShooter.TeamColor.BLUE) + 360) % 360;
 //        double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle());
 //        power += Math.signum(power) * 0.03;
 //        power = Range.clip(power, -0.4, 0.4);
@@ -120,7 +121,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
         multipleTelemetry.addData("power", dischargeSubsystem.getFlyWheelPower());
         multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
-        multipleTelemetry.addData("distance", AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), AutoShooter.TeamColor.RED));
+        multipleTelemetry.addData("distance", AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), AutoShooter.TeamColor.BLUE));
         multipleTelemetry.addData("angle", launchAngle);
         multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
         multipleTelemetry.addData("velX", mecanumDrive.localizer.update().linearVel.x);

@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import org.firstinspires.ftc.teamcode.decodeCommands.MecanumCommands;
 
@@ -44,7 +43,6 @@ public class WheatleyOpMode extends ActionOpMode {
     Button driverStart, systemStart;
     Button driverBack, systemBack;
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
-    Motif motif = Motif.GPP;
     AutoShooter.TeamColor teamColor;
     ElapsedTime time;
     boolean endGame = false;
@@ -52,11 +50,7 @@ public class WheatleyOpMode extends ActionOpMode {
 
     @Override
     public void initialize() {
-//        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-//
-//        for (LynxModule hub : allHubs) {
-//            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-//        }
+
         SavedValues.currentCount = 0;
         time = new ElapsedTime();
         teamColor = SavedValues.teamColor;
@@ -91,7 +85,7 @@ public class WheatleyOpMode extends ActionOpMode {
         driverLeftBumper.whenPressed(() -> IntakeCommands.IntakeState.resetCount = !IntakeCommands.IntakeState.resetCount);
 
         driverY.whenPressed(new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem));
-        driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+        driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
                 .whenFinished(() -> CommandScheduler.getInstance().schedule(
                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)))
         );
@@ -107,7 +101,7 @@ public class WheatleyOpMode extends ActionOpMode {
         systemA.whenReleased(() -> gamepad2.rumble(100));
         systemY.whenReleased(() -> gamepad2.rumble(100));
         systemB.whenReleased(() -> gamepad2.rumble(100));
-        systemB.whenPressed(() -> SavedValues.zone = AutoShooter.Zone.BOTH);
+//        systemB.whenPressed(() -> SavedValues.zone = AutoShooter.Zone.BOTH);
         systemLeftBumper.whenPressed(() ->  SavedValues.zone = SavedValues.teamColor == AutoShooter.TeamColor.RED ? AutoShooter.Zone.CLOSE : AutoShooter.Zone.FAR);
         systemRightBumper.whenPressed(() ->  SavedValues.zone = SavedValues.teamColor == AutoShooter.TeamColor.RED ? AutoShooter.Zone.FAR : AutoShooter.Zone.CLOSE);
         systemLeftStick.whenPressed(() -> DischargeCommands.AutomaticAiming.limelight = !DischargeCommands.AutomaticAiming.limelight);

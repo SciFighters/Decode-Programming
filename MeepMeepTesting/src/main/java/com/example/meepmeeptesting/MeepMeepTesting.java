@@ -201,45 +201,50 @@ public class MeepMeepTesting {
                 .splineToConstantHeading(new Vector2d(0,30),Math.PI/2)//park
                 ;
         double waitTime = 1.5;
-        TrajectoryActionBuilder twentyFourOld = wheatley.getDrive().actionBuilder(new Pose2d(61, 23 + 1 / 3.0, Math.PI))
-                .splineToSplineHeading(new Pose2d(52, 23.0, Math.PI / 2), Math.PI)
-                .setTangent(Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(61, 61), Math.PI / 2)
-//                .setTangent(-Math.PI/2)
-                .splineToConstantHeading(new Vector2d(56, 48), -Math.PI * 3 / 5)
-                .splineToSplineHeading(new Pose2d(54, 8, Math.PI * 3 / 4), -Math.PI / 4)
-                .splineToSplineHeading(new Pose2d(54.1, 7.9, Math.PI * 3 / 4), Math.PI * 3 / 4)
-//                .setTangent(Math.PI * 3/4)
-                .splineTo(new Vector2d(9, 50), Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(9, 50.1, Math.PI / 2), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-9, 9), -Math.PI * 2 / 3)
-                .splineToConstantHeading(new Vector2d(-11, 46), Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(-11, 46.1, Math.PI / 2), -Math.PI / 2)
-                .splineTo(new Vector2d(-16, 15), -Math.PI * 7 / 9)
-                .splineToSplineHeading(new Pose2d(-16.076604444311, 14.93572123903, Math.PI * 2 / 9), Math.PI * 2 / 9)
-//                .setTangent(Math.PI * 2 / 9)
-                .splineTo(new Vector2d(35.5, 47), 0)
-                .splineToSplineHeading(new Pose2d(35.6,47,0),0)
-                .splineToLinearHeading(new Pose2d(58, 20,Math.PI/2), -Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(58,19.9,Math.PI/2),-Math.PI/2)
-                .splineToConstantHeading(new Vector2d(61, 54), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(9,46),Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(58, 20), -Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(56, 54), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(58, 20), -Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(61, 54), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(58, 20), -Math.PI / 2)
-
-                .splineToConstantHeading(new Vector2d(9,52),Math.PI / 2)
+        TrajectoryActionBuilder newAuto = wheatley.getDrive().actionBuilder(new Pose2d(-41.2, 54.3, 0))
+                .setTangent(-Math.PI / 4)
+                .splineToConstantHeading(new Vector2d(-30, 42), -Math.PI / 4)
+                .waitSeconds(t)//shoot preload
+                //startIntake
                 .setTangent(Math.PI / 6)
-                .splineToConstantHeading(new Vector2d(27,60),0)
-                .splineToConstantHeading(new Vector2d(58, 20), -Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(56, 54), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(58, 20), -Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(61, 54), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(58, 20), -Math.PI / 2);
+                .splineToConstantHeading(new Vector2d(-18,47),0)//prepareShooting
+                .splineToConstantHeading(new Vector2d(-30,42),-Math.PI * 7 / 8)
+                .waitSeconds(t)//shoot
+                //start intake
+                .setTangent(Math.PI / 9)
+                .splineToConstantHeading(new Vector2d(6,47),0)//prepareShooting
+                .setTangent(-Math.PI)
+                .splineTo(new Vector2d(-14,23),-Math.PI * 26 / 36)
+                .waitSeconds(t)//shoot
+                //stopped intake
+                .setTangent(Math.PI * 10 / 36)
+                .splineToLinearHeading(new Pose2d(15,62,Math.PI * 10.5 / 16),Math.PI / 2)
+                .waitSeconds(t + 1)//intaking artifacts
+                .setTangent(-Math.PI*5.5 / 16)
+                .splineToConstantHeading(new Vector2d(-13,20),-Math.PI * 4/5)
+                .waitSeconds(t)//shoot
+                // stopped intake
+                .setTangent(Math.PI * 10 / 36)
+                .splineToLinearHeading(new Pose2d(15,62,Math.PI * 10.5 / 16),Math.PI / 2)
+                .waitSeconds(t + 1)//intaking artifacts
+                .setTangent(-Math.PI*5.5 / 16)
+                .splineTo(new Vector2d(-13,20),-Math.PI * 4/5)
+                .waitSeconds(t)//shoot
+                .setTangent(Math.PI / 5)//start intake
+                .splineTo(new Vector2d(30,47),0)
+                .setTangent(-Math.PI)
+                .splineTo(new Vector2d(-13,20),-Math.PI * 3 / 4)//prepareShooting
+                .waitSeconds(t)//shoot
+                //start intake
+                .setTangent(Math.PI / 4)
+                .splineTo(new Vector2d(46,58),0)
+                .splineToSplineHeading(new Pose2d(42.1,58,0),-Math.PI)//outtake a bit
+                .splineToConstantHeading(new Vector2d(-8,16),-Math.PI * 3 / 4)//prepareShooting
+                .waitSeconds(t)//shoot
+                .setTangent(Math.PI/4)
+                .splineToConstantHeading(new Vector2d(0,30),Math.PI/2);//park
 
-        wheatley.runAction(twentyFourOld.build());
+        wheatley.runAction(newAuto.build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)
                 .setDarkMode(true)

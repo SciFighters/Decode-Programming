@@ -132,9 +132,10 @@ public class RedCloseFull extends ActionOpMode {
                                         new SequentialCommandGroup(
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
-                                                        new WaitCommand(700),
+                                                        new WaitCommand(500),
                                                         new ActionCommand(pressGate.build(), requirements)
-                                                )
+                                                ),
+                                                new WaitCommand(300)
                                         ),
 
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
@@ -157,9 +158,10 @@ public class RedCloseFull extends ActionOpMode {
                                         new SequentialCommandGroup(
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
-                                                        new WaitUntilCommand(() -> IntakeSubsystem.count >= 60).withTimeout(1000),
+                                                        new WaitUntilCommand(() -> IntakeSubsystem.count >= 60).withTimeout(500),
                                                         new ActionCommand(pressGate.build(), requirements)
-                                                )
+                                                ),
+                                                new WaitCommand(500)
                                         ),
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 ),

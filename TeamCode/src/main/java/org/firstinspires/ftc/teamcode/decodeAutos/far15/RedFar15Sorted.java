@@ -113,20 +113,20 @@ public class RedFar15Sorted extends ActionOpMode {
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(300),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem))
                                 ),
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1300),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3500),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.decodeAutos.close18;
+package org.firstinspires.ftc.teamcode.decodeAutos.expiremental;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -172,12 +172,12 @@ public class RedClose18Sorted extends ActionOpMode {
                                                         new WaitCommand(900)
                                                 ),
                                                 new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem))
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1400),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)),
 
@@ -185,7 +185,7 @@ public class RedClose18Sorted extends ActionOpMode {
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2700),
                                                 new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(600),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),

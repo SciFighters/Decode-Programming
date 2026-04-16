@@ -4,12 +4,12 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
-import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
+import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
-import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
+import com.seattlesolvers.solverslib.gamepad.TriggerReader;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 
@@ -46,7 +45,7 @@ public class WheatleyOpMode extends ActionOpMode {
     Button driverStart, systemStart;
     Button driverBack, systemBack;
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
-    Motif motif = Motif.GPP;
+    Trigger driverLeftTrigger;
     AutoShooter.TeamColor teamColor;
     ElapsedTime time;
     boolean endGame = false;
@@ -54,11 +53,7 @@ public class WheatleyOpMode extends ActionOpMode {
 
     @Override
     public void initialize() {
-//        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-//
-//        for (LynxModule hub : allHubs) {
-//            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-//        }
+
         SavedValues.currentCount = 0;
         time = new ElapsedTime();
         teamColor = SavedValues.teamColor;
@@ -93,7 +88,7 @@ public class WheatleyOpMode extends ActionOpMode {
         driverLeftBumper.whenPressed(() -> IntakeCommands.IntakeState.resetCount = !IntakeCommands.IntakeState.resetCount);
 
         driverY.whenPressed(new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem));
-        driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+        driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
                 .whenFinished(() -> CommandScheduler.getInstance().schedule(
                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)))
         );
@@ -109,11 +104,14 @@ public class WheatleyOpMode extends ActionOpMode {
         systemA.whenReleased(() -> gamepad2.rumble(100));
         systemY.whenReleased(() -> gamepad2.rumble(100));
         systemB.whenReleased(() -> gamepad2.rumble(100));
-        systemB.whenPressed(() -> SavedValues.zone = AutoShooter.Zone.BOTH);
+//        systemB.whenPressed(() -> SavedValues.zone = AutoShooter.Zone.BOTH);
         systemLeftBumper.whenPressed(() ->  SavedValues.zone = SavedValues.teamColor == AutoShooter.TeamColor.RED ? AutoShooter.Zone.CLOSE : AutoShooter.Zone.FAR);
         systemRightBumper.whenPressed(() ->  SavedValues.zone = SavedValues.teamColor == AutoShooter.TeamColor.RED ? AutoShooter.Zone.FAR : AutoShooter.Zone.CLOSE);
         systemLeftStick.whenPressed(() -> DischargeCommands.AutomaticAiming.limelight = !DischargeCommands.AutomaticAiming.limelight);
-        systemRightStick.whenPressed(new CommandGroups.PowerTakeOff(mecanumDrive, () -> -system.getRightY()));
+        systemRightStick.whenPressed(new CommandGroups.PowerTakeOff(mecanumDrive, () -> -system.getRightY())
+                .beforeStarting(() -> {dischargeSubsystem.getCurrentCommand().cancel();
+                    schedule(new  DischargeCommands.setState(dischargeSubsystem,0,30, 180));}));
+        driverLeftTrigger.whileActiveContinuous(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,() -> gamepad1.right_trigger ,teamColor));
 
     }
 
@@ -195,5 +193,6 @@ public class WheatleyOpMode extends ActionOpMode {
         systemLeftStick = new GamepadButton(system, GamepadKeys.Button.LEFT_STICK_BUTTON);
         systemRightStick = new GamepadButton(system, GamepadKeys.Button.RIGHT_STICK_BUTTON);
         systemBack = new GamepadButton(system, GamepadKeys.Button.BACK);
+        driverLeftTrigger = new Trigger(()-> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5);
     }
 }

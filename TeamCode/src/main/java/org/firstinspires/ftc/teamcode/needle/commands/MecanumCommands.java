@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.needle.commands;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -74,23 +75,54 @@ public class MecanumCommands {
         }
     }
 
+    @Config
     public static class Aim extends CommandBase {
-        final double kp = 0.6;
+        public static double kp = 0.3, kd = 0.2, ki = 0.1, kf = 0.1;
         MecanumDrive mecanumDrive;
         AutoShooter.TeamColor teamColor;
+        double currentError = 0, lastError = 0;
+        double integral=0, derivative;
+        Supplier<Double> x,y,boost;
+        Supplier<Float> triggerValue;
+        double blue;
+        final double gateAngle = Math.PI/2;
 
-        public Aim(MecanumDrive mecanumDrive, AutoShooter.TeamColor teamColor) {
+        public Aim(MecanumDrive mecanumDrive,Supplier<Double> x, Supplier<Double> y,Supplier<Double> boost,Supplier<Float> triggerValue ,AutoShooter.TeamColor teamColor) {
             this.mecanumDrive = mecanumDrive;
             this.teamColor = teamColor;
             addRequirements(mecanumDrive);
+            this.x = x;
+            this.y = y;
+            this.boost = boost;
+            this.triggerValue = triggerValue;
+        }
+
+        @Override
+        public void initialize() {
+            blue = (teamColor == AutoShooter.TeamColor.BLUE) ? Math.PI : 0;
         }
 
         @Override
         public void execute() {
-            double launchAngle = ((AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position, 0), teamColor) + 360) % 360) / 180 * Math.PI;
-            double error = launchAngle - mecanumDrive.localizer.getPose().heading.toDouble();
-            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), error * kp + Math.signum(error) * 0.075));
+            double currentX = x.get();
+            double currentY = y.get();
+//            double launchAngle = ((AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position, 0), teamColor) + 360) % 360) / 180 * Math.PI;
+            double wantedAngle = (teamColor == AutoShooter.TeamColor.BLUE)? gateAngle : -gateAngle;
+            double currentAngle = mecanumDrive.localizer.getPose().heading.toDouble();
+            currentError = wantedAngle - currentAngle;
+            integral += currentError;
+            derivative = currentError - lastError;
+//            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), error * kp + Math.signum(error) * 0.075));
+            com.seattlesolvers.solverslib.geometry.Vector2d vector = new com.seattlesolvers.solverslib.geometry.Vector2d(
+                    -currentX * boost.get(), currentY * boost.get()).rotateBy(Math.toDegrees(-mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI / 2 + blue));
+            Vector2d vector2d = new Vector2d(vector.getX(), vector.getY());
+            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(vector2d.x, vector2d.y),currentError * kp + integral * ki + derivative * kd + Math.signum(currentError) * kf));
 
+        }
+
+        @Override
+        public boolean isFinished() {
+            return triggerValue.get() > 0.5;
         }
     }
 

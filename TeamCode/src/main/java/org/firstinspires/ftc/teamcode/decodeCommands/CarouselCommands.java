@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.decodeCommands;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -24,7 +25,7 @@ public class CarouselCommands {
         private final CarouselSubsystem carouselSubsystem;
         double targetAngle;
         double currentAngle;
-        double kp = 0.03;
+        double kp = 0.018;
         int tolerance = 3;
         private final boolean end;
 
@@ -82,7 +83,7 @@ public class CarouselCommands {
         @Override
         public void initialize() {
             moveDirection = (int) Math.signum(distance);
-            if (Math.signum(power) != moveDirection) {
+            if (Math.signum(power) != Math.signum(distance)) {
                 power *= -1;
             }
 
@@ -125,7 +126,7 @@ public class CarouselCommands {
 
             super(new HashMap<Object, Command>() {{
                 put(Sequence.ONE, new SequentialCommandGroup(
-                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
+                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed).withTimeout(500),
                         new IntakeCommands.TransferState(intakeSubsystem),
                         new SlideDistance(carouselSubsystem, -0.3, transferSpeed),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
@@ -135,18 +136,19 @@ public class CarouselCommands {
                         new SlideDistance(carouselSubsystem, -1, transferSpeed)
                 ));
                 put(Sequence.TWO, new SequentialCommandGroup(
-                        new SlideDistance(carouselSubsystem, 1.6, travelSpeed),
-                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
-                        new IntakeCommands.TransferState(intakeSubsystem),
+                        new ParallelCommandGroup(
+                                new SlideDistance(carouselSubsystem, 1.6, travelSpeed),
+                                new IntakeCommands.TransferState(intakeSubsystem)
+                        ),
+                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed).withTimeout(500),
                         new SlideDistance(carouselSubsystem, 0.3, transferSpeed),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
                         new SlideDistance(carouselSubsystem, 0.6, transferSpeed),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-                        new WaitCommand(200),
                         new SlideDistance(carouselSubsystem, 1, transferSpeed)
                 ));
                 put(Sequence.THREE, new SequentialCommandGroup(
-                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
+                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed).withTimeout(500),
                         new IntakeCommands.TransferState(intakeSubsystem),
                         new SlideDistance(carouselSubsystem, -0.3, transferSpeed),
                         new SlideDistance(carouselSubsystem, 2, travelSpeed),
@@ -158,20 +160,22 @@ public class CarouselCommands {
                         new SlideDistance(carouselSubsystem, 1, transferSpeed)
                 ));
                 put(Sequence.FOUR, new SequentialCommandGroup(
-                        new SlideDistance(carouselSubsystem, 1.6, travelSpeed),
+                        new ParallelCommandGroup(
+                                new SlideDistance(carouselSubsystem, 1.2, travelSpeed),
+                                new IntakeCommands.TransferState(intakeSubsystem)
+                        ),
+                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed).withTimeout(500),
+//                        new SlideDistance(carouselSubsystem, 0.3, transferSpeed),
+                        new SlideDistance(carouselSubsystem, -1.8, travelSpeed),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
-                        new IntakeCommands.TransferState(intakeSubsystem),
-                        new SlideDistance(carouselSubsystem, 0.3, transferSpeed),
-                        new SlideDistance(carouselSubsystem, -2.1, travelSpeed),
-                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
-                        new SlideDistance(carouselSubsystem, -0.6, transferSpeed),
-                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-                        new WaitCommand(200),
-                        new SlideDistance(carouselSubsystem, -1, transferSpeed)
+                        new SlideDistance(carouselSubsystem, -0.6, transferSpeed)
+//                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
+//                        new WaitCommand(200),
+//                        new SlideDistance(carouselSubsystem, -1, transferSpeed)
                 ));
                 put(Sequence.NONE, new SequentialCommandGroup(
 
-                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
+                        new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed).withTimeout(500),
                         new IntakeCommands.TransferState(intakeSubsystem),
                         new SlideDistance(carouselSubsystem, -0.3, transferSpeed),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
@@ -185,6 +189,7 @@ public class CarouselCommands {
         private static Sequence getSequence(CarouselSubsystem carouselSubsystem) {
             int wanted = (3 - SavedValues.currentCount % 3 + SavedValues.startMotif) % 3;
             int current = carouselSubsystem.getGreenPlacement();
+//            return Sequence.FOUR;
             if ((current == 1 && wanted == 0) || current == -1) {
                 return Sequence.NONE;
             }
@@ -214,7 +219,7 @@ public class CarouselCommands {
                 put(Sequence.CLOSE, new SequentialCommandGroup(
                         new InstantCommand(() -> DischargeSubsystem.shooting = false),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atSpeed),
-                        new SlideDistance(carouselSubsystem, 2.8, 1)
+                        new SlideDistance(carouselSubsystem, 2.2, 1)
                 ));
                 put(Sequence.MIDDLE, new SequentialCommandGroup(
 
@@ -225,7 +230,7 @@ public class CarouselCommands {
                         new InstantCommand(() -> DischargeSubsystem.shooting = false),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
                         new InstantCommand(() -> DischargeSubsystem.shooting = true),
-                        new SlideDistance(carouselSubsystem, 2.8, 1),
+                        new SlideDistance(carouselSubsystem, 2.2, 1),
                         new InstantCommand(() -> DischargeSubsystem.shooting = false)));
 
 

@@ -24,6 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private Thread sensorThread;
     public static boolean reversed = false;
     public static int count = 0;
+    volatile boolean running = true;
 
     public IntakeSubsystem(HardwareMap hm) {
         motor = hm.get(DcMotorEx.class, "intakeMotor");
@@ -35,7 +36,8 @@ public class IntakeSubsystem extends SubsystemBase {
         leftSwitch.setMode(DigitalChannel.Mode.INPUT);
         rightSwitch.setMode(DigitalChannel.Mode.INPUT);
         reversed = false;
-//        startSensorThread();
+        running = true;;
+        startSensorThread();
     }
 
     public void setPower(double power) {
@@ -44,29 +46,30 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private void startSensorThread() {
         sensorThread = new Thread(() -> {
-            ElapsedTime time = new ElapsedTime();
-            time.reset();
-            double rightSensorTime = 0, leftSensorTime = 0;
+
+//            ElapsedTime time = new ElapsedTime();
+//            time.reset();
+//            double rightSensorTime = 0, leftSensorTime = 0;
             boolean currentRight, currentLeft;
             boolean lastRight = false, lastLeft = false;
-            long cTime;
-            while (!Thread.currentThread().isInterrupted()) {
-                cTime = time.time(TimeUnit.MILLISECONDS);
+//            long cTime;
+            while (running) {
+//                cTime = time.time(TimeUnit.MILLISECONDS);
                 currentRight = !rightSwitch.getState();
                 currentLeft = !leftSwitch.getState();
-                if ((currentRight && !lastRight) && (cTime - rightSensorTime > 50)) {
+                if ((currentRight && !lastRight)) {
                     count += 1;
-                    rightSensorTime = cTime;
+//                    rightSensorTime = cTime;
                 }
-                if ((currentLeft && !lastLeft) && (cTime - leftSensorTime > 50)) {
+                if ((currentLeft && !lastLeft)) {
                     count += 1;
-                    leftSensorTime = cTime;
+//                    leftSensorTime = cTime;
                 }
 
                 lastLeft = currentLeft;
                 lastRight = currentRight;
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(1);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -78,7 +81,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void stopSensorThread() {
-        sensorThread.interrupt();
+        running = false;
     }
 
     public void setPosition(double position) {

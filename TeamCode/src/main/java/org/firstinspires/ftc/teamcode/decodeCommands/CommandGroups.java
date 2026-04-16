@@ -8,7 +8,6 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
-import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -132,13 +131,12 @@ public class CommandGroups {
     }
 
     public static class SortedShooting extends SequentialCommandGroup {
-        public SortedShooting(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem, MecanumDrive mecanumDrive) {
+        public SortedShooting(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
             addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
                     new IntakeCommands.SortingState(intakeSubsystem),
-                    new CarouselCommands.SlideDistance(carouselSubsystem, -0.56, 0.6).withTimeout(1000),
-                    new WaitCommand(200),
-                    new WaitUntilCommand(() -> AutoShooter.canLaunch(mecanumDrive.localizer.getPose())),
+                    new CarouselCommands.SlideDistance(carouselSubsystem, -0.56, 0.6).withTimeout(1000).whenFinished(() -> carouselSubsystem.setSpinPower(0)),
+//                    new WaitCommand(200),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
                     new CarouselCommands.SmartDischarge(carouselSubsystem, intakeSubsystem),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)

@@ -236,4 +236,3 @@ public class BlueCloseFull extends ActionOpMode {
         SavedValues.position = mecanumDrive.localizer.getPose();
     }
 }
-

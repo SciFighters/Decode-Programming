@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
 
-import java.util.function.Supplier;
 
 @Config
 public class DischargeCommands {
@@ -23,15 +22,14 @@ public class DischargeCommands {
         DischargeSubsystem dischargeSubsystem;
         double flyWheelRPM;
         double rampDegree;
-        double wantedPos;
+        double turretAngle;
         public static boolean canShoot;
-        static final double kp = 0.01;
 
-        public setState(DischargeSubsystem dischargeSubsystem, double flyWheelRPM, double rampDegree) {
+        public setState(DischargeSubsystem dischargeSubsystem, double flyWheelRPM, double rampDegree, double turretAngle) {
             this.dischargeSubsystem = dischargeSubsystem;
             this.flyWheelRPM = flyWheelRPM;
             this.rampDegree = rampDegree;
-
+            this.turretAngle = turretAngle;
             addRequirements(dischargeSubsystem);
         }
 
@@ -39,12 +37,12 @@ public class DischargeCommands {
         public void initialize() {
             canShoot = false;
             dischargeSubsystem.setRampDegree(rampDegree);
+            dischargeSubsystem.setTurretAngle(turretAngle);
         }
 
         @Override
         public void execute() {
             dischargeSubsystem.setFlyWheelRPM(flyWheelRPM);
-            double power = (wantedPos - dischargeSubsystem.getTurretPosition()) * kp;
             canShoot = Math.abs(dischargeSubsystem.getRPM() - flyWheelRPM) < 300;
         }
 
@@ -57,13 +55,14 @@ public class DischargeCommands {
         CarouselSubsystem carouselSubsystem;
         MecanumDrive mecanumDrive;
         AutoShooter.TeamColor teamColor;
-        public static double kp = 0.018;//0.018
-        public static double ki = 0.0;
+        public static double kp = 0.02;//0.018
+        public static double ki = -0.00025;
+        public static double kMovement = 1.8, effectSpeed = 19;
         public static double launchAngle;
         public static boolean shooting = false;
         public static boolean atSpeed = false;//+- 200rpm
         public static boolean atCloseSpeed = false;//+- 70rpm
-        public static double kv = 0.14, ks = 0.06, kd = -0.36;
+        public static double kv = 0.14, ks = 0.06, kd = -0.45, ka = 0.05;
         private com.seattlesolvers.solverslib.geometry.Vector2d mecanumToTurret;
         public static boolean aim = true;
         public static boolean inRange = true;
@@ -104,14 +103,18 @@ public class DischargeCommands {
                 deltaTime = currentTime - lastTime;
                 movement = mecanumDrive.localizer.update();
 
+
+
                 mecanumToTurret = new com.seattlesolvers.solverslib.geometry.Vector2d(1.5748, 0).rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
                 currentPos = mecanumDrive.localizer.getPose();
-                double time = AutoShooter.getTime(mecanumDrive.localizer.getPose()) + 0.1;
+                double time = AutoShooter.getTime(mecanumDrive.localizer.getPose()) * kMovement;
                 movementEffect = new com.seattlesolvers.solverslib.geometry.Vector2d(movement.linearVel.x * time, movement.linearVel.y * time)
                         .rotateBy(mecanumDrive.localizer.getPose().heading.toDouble() / Math.PI * 180);
-                acceleration = movementEffect.div(time).minus((lastMovement != null) ? lastMovement : movementEffect).times(time * time / 2).div(deltaTime).times(0.2);
+                if(movementEffect.magnitude() > effectSpeed){
+                    movementEffect = movementEffect.times(effectSpeed / movementEffect.magnitude());
+                }
+                acceleration = movementEffect.div(time).minus((lastMovement != null) ? lastMovement : movementEffect).times(time).div(deltaTime).times(ka);
                 aimTurret();
-
 
                 if (AutoShooter.canLaunch(new Pose2d(new Vector2d(currentPos.position.x + mecanumToTurret.getX(),
                         currentPos.position.y + mecanumToTurret.getY()), currentPos.heading.toDouble()))) {
@@ -165,11 +168,6 @@ public class DischargeCommands {
             double power;
             if (angleError != 0 && inRange && !(Math.abs(currentPos.position.y) > 40) && limelight) {
 
-//                if (lastAngleError == angleError) {
-//                    angleError += (turretAngle - lastTurretAngle) +
-//                            (AutoShooter.normalizeAngleError(Math.toDegrees
-//                                    (currentPos.heading.toDouble() - lastPos.heading.toDouble())));
-//                }
                 double rps = dischargeSubsystem.getRPS();
                 double aprilTagAngle = AutoShooter.getAprilTagAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX(),
                         currentPos.position.y + mecanumToTurret.getY(),
@@ -178,8 +176,11 @@ public class DischargeCommands {
                         AutoShooter.getLaunchAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX() + acceleration.getX(),
                                 currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY() + acceleration.getY(),
                                 currentPos.heading.toDouble() - Math.PI), teamColor) - aprilTagAngle;
-                integral += angleError * (currentTime - lastTime);
+                integral += (wantedError - angleError) * (currentTime - lastTime);
                 power = -(wantedError - angleError) * kp;
+                if(Math.signum(power) == Math.signum(integral)){
+                    integral = 0;
+                }
                 power += rps * kd;
                 power += integral * ki;
 
@@ -191,6 +192,7 @@ public class DischargeCommands {
                 llTime = time.seconds();
                 power = 0;
             } else if (time.seconds() - llTime > 0.1) {
+                double rps = dischargeSubsystem.getRPS();
                 launchAngle = (AutoShooter.canLaunch(currentPos)) ?
                         (AutoShooter.getLaunchAngle(new Pose2d(currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX(),
                                 currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY(),
@@ -202,6 +204,7 @@ public class DischargeCommands {
                 launchAngle = Range.clip(launchAngle, 20, 340);
                 integral = 0;
                 power = -(launchAngle - turretAngle) * kp;
+                power += rps * kd;
                 power += Math.signum(power) * ks;
             } else {
                 power = 0;
@@ -215,6 +218,12 @@ public class DischargeCommands {
             dischargeSubsystem.setTurretPower(power);
 
 
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            dischargeSubsystem.setFlyWheelPower(0);
+            dischargeSubsystem.setTurretPower(0);
         }
     }
 }

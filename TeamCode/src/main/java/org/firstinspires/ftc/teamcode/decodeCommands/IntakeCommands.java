@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode.decodeCommands;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandBase;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class IntakeCommands {
 
@@ -16,7 +14,7 @@ public class IntakeCommands {
         ElapsedTime time;
         double currentTime;
 
-        public static int count;
+
         public static boolean resetCount;
 
         public IntakeState(IntakeSubsystem intakeSubsystem) {

@@ -12,7 +12,8 @@ public class AutoShooter {
     private static final double g = 386.1;//inch/s^2
     private static final Vector2d goalPos = new Vector2d(-62, 62);
     private static final Vector2d aprilTagPos = new Vector2d(-58.346457, 55.629921);
-    private static final double[][] points = {{23,56,2400},{44.4,45.5,2680},{62,42,2830},{83.5,38,3100}, {100,38,3380},{118,38,3620},{135,38,3820},{150,36,4110}};//distance, angle, rpm
+    //{{27.6, 60, 1750}, {45.7, 57.6, 1850}, {64, 48, 2170}, {81, 46.4, 2320}, {98.4, 41.6, 2650}, {118, 38, 2641}, {135, 38, 2787}, {150, 36, 3000}}
+    private static final double[][] points = {{23,56,2400},{44.4,45.5,2680},{62,42,2800},{83.5,38,3050}, {100,38,3480},{118,38,3620},{135,38,3820},{150,36,4110}};//distance, angle, rpm
     private static final double[][] times = {{43.8, 0.36}, {61, 0.46}, {76, 0.5}, {85, 0.5}, {97, 0.63}, {107.2, 0.63}, {118.9, 0.63}, {124.2, 0.67}, {139.7, 0.7}};
 
     //robot corners
@@ -23,7 +24,7 @@ public class AutoShooter {
             new Vector2d(-robotWidth / 2, -robotLength / 2),
             new Vector2d(robotWidth / 2, 0),
             new Vector2d(-robotWidth / 2, 0),
-            new Vector2d(0, -robotLength / 2),
+            new Vector2d(0, robotLength / 2),
             new Vector2d(0, -robotLength / 2)};
 
     //is in launch zone
@@ -33,6 +34,20 @@ public class AutoShooter {
         double heading = robotPose.heading.toDouble();
         for (Vector2d p : edges) {
             p = p.rotateBy(Math.toDegrees(heading));
+            if (isInZone(x + p.getX(), y + p.getY())) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+    //lose to zone
+    public static boolean zoneClose(Pose2d robotPose) {
+        double x = robotPose.position.x;
+        double y = robotPose.position.y;
+        double heading = robotPose.heading.toDouble();
+        for (Vector2d p : edges) {
+            p = p.rotateBy(Math.toDegrees(heading)).times(2);
             if (isInZone(x + p.getX(), y + p.getY())) {
                 return true;
             }
@@ -50,7 +65,7 @@ public class AutoShooter {
         double y;
         double d;
         if (SavedValues.zone != Zone.FAR) {
-            x = Range.clip((x1 + y1 + 12) / 2.0, -60, 9);
+            x = Range.clip((x1 + y1 + 12) / 2.0, -60, -3);
             y = x - 10;
             d = dist2(p, x, y);
             if (d < bestDist) {
@@ -58,7 +73,7 @@ public class AutoShooter {
                 best = new Vector2d(x, y);
             }
 
-            x = Range.clip((x1 - y1 + 12) / 2.0, -60, 9);
+            x = Range.clip((x1 - y1 + 12) / 2.0, -60, -3);
             y = -x + 10;
             d = dist2(p, x, y);
             if (d < bestDist) {
@@ -67,7 +82,7 @@ public class AutoShooter {
             }
         }
         if (SavedValues.zone != Zone.CLOSE) {
-            x = Range.clip((x1 + y1 + 42) / 2.0, 42, 72);
+            x = Range.clip((x1 + y1 + 42) / 2.0, 48, 72);
             y = x - 42;
             d = dist2(p, x, y);
             if (d < bestDist) {
@@ -75,7 +90,7 @@ public class AutoShooter {
                 best = new Vector2d(x, y);
             }
 
-            x = Range.clip((x1 - y1 + 42) / 2.0, 42, 72);
+            x = Range.clip((x1 - y1 + 42) / 2.0, 48, 72);
             y = 42 - x;
             d = dist2(p, x, y);
             if (d < bestDist) {

@@ -26,7 +26,7 @@ public class DischargeSubsystem extends SubsystemBase {
 
     public DischargeSubsystem(HardwareMap hm) {
         flyWheelMotor = new MotorEx(hm, "flyWheelMotor", Motor.GoBILDA.BARE);
-        flyWheelMotor.encoder.setDirection(Motor.Direction.REVERSE);
+        flyWheelMotor.encoder.setDirection(Motor.Direction.FORWARD);
         turretMotor = hm.get(DcMotorEx.class, "turretMotor");
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rampServo = hm.get(Servo.class, "rampServo");

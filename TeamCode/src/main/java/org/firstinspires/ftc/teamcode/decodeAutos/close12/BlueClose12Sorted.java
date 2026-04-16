@@ -99,20 +99,20 @@ public class BlueClose12Sorted extends ActionOpMode {
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
-                                        new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                        new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
                                 ),
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1400),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3500),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),

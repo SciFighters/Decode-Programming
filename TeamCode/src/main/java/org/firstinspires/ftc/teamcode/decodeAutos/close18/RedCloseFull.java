@@ -97,9 +97,9 @@ public class RedCloseFull extends ActionOpMode {
                 .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI / 2);
         TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(0)
-                .splineToConstantHeading(new Vector2d(32, 28), Math.PI / 4)
-                .splineToConstantHeading(new Vector2d(38, 52), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(38, 52.1), -Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(34, 28), Math.PI / 4)
+                .splineToConstantHeading(new Vector2d(44, 52), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(44, 52.1), -Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-8, 12), -Math.PI * 3 / 4);
 
         TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-6, 16, Math.PI / 2), reversed)

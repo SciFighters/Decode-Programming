@@ -72,9 +72,9 @@ public final class MecanumDrive extends SubsystemBase {
         public double trackWidthTicks = 6484.557971510754;//6479.276782546479
 
         // feedforward parameters (in tick units)
-        public double kS = 1.6651351141977813;
-        public double kV = 0.00025599909972676073;
-        public double kA = 0.00009;
+        public double kS = 1.6671351141977813;
+        public double kV = 0.00025594909972676073;
+        public double kA = 0.0001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 60;//55
@@ -113,7 +113,7 @@ public final class MecanumDrive extends SubsystemBase {
     Servo leftPTO, rightPTO, liftLeft, liftRight;
 
     private final double leftPTOPos = 0.29, rightPTOPos = 1, leftDrivePos = 1, rightDrivePos = 0.1;
-    private final double liftLeftClose = 0.3, liftLeftOpen = 0.78, liftRightClose = 1, liftRightOpen = 0.62;
+    private final double liftLeftClose = 0.33, liftLeftOpen = 0.77, liftRightClose = 0.9, liftRightOpen = 0.45;
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 

@@ -6,8 +6,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
+import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
+import com.seattlesolvers.solverslib.gamepad.TriggerReader;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
@@ -43,6 +45,7 @@ public class WheatleyOpMode extends ActionOpMode {
     Button driverStart, systemStart;
     Button driverBack, systemBack;
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
+    Trigger driverLeftTrigger;
     AutoShooter.TeamColor teamColor;
     ElapsedTime time;
     boolean endGame = false;
@@ -105,8 +108,10 @@ public class WheatleyOpMode extends ActionOpMode {
         systemLeftBumper.whenPressed(() ->  SavedValues.zone = SavedValues.teamColor == AutoShooter.TeamColor.RED ? AutoShooter.Zone.CLOSE : AutoShooter.Zone.FAR);
         systemRightBumper.whenPressed(() ->  SavedValues.zone = SavedValues.teamColor == AutoShooter.TeamColor.RED ? AutoShooter.Zone.FAR : AutoShooter.Zone.CLOSE);
         systemLeftStick.whenPressed(() -> DischargeCommands.AutomaticAiming.limelight = !DischargeCommands.AutomaticAiming.limelight);
-        systemRightStick.whenPressed(new CommandGroups.PowerTakeOff(mecanumDrive, () -> -system.getRightY()).beforeStarting(() -> dischargeSubsystem.getCurrentCommand().cancel()));
-
+        systemRightStick.whenPressed(new CommandGroups.PowerTakeOff(mecanumDrive, () -> -system.getRightY())
+                .beforeStarting(() -> {dischargeSubsystem.getCurrentCommand().cancel();
+                    schedule(new  DischargeCommands.setState(dischargeSubsystem,0,30, 180));}));
+        driverLeftTrigger.whileActiveContinuous(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,() -> gamepad1.right_trigger ,teamColor));
 
     }
 
@@ -188,5 +193,6 @@ public class WheatleyOpMode extends ActionOpMode {
         systemLeftStick = new GamepadButton(system, GamepadKeys.Button.LEFT_STICK_BUTTON);
         systemRightStick = new GamepadButton(system, GamepadKeys.Button.RIGHT_STICK_BUTTON);
         systemBack = new GamepadButton(system, GamepadKeys.Button.BACK);
+        driverLeftTrigger = new Trigger(()-> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5);
     }
 }

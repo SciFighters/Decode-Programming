@@ -22,13 +22,14 @@ public class DischargeCommands {
         DischargeSubsystem dischargeSubsystem;
         double flyWheelRPM;
         double rampDegree;
+        double turretAngle;
         public static boolean canShoot;
 
-        public setState(DischargeSubsystem dischargeSubsystem, double flyWheelRPM, double rampDegree) {
+        public setState(DischargeSubsystem dischargeSubsystem, double flyWheelRPM, double rampDegree, double turretAngle) {
             this.dischargeSubsystem = dischargeSubsystem;
             this.flyWheelRPM = flyWheelRPM;
             this.rampDegree = rampDegree;
-
+            this.turretAngle = turretAngle;
             addRequirements(dischargeSubsystem);
         }
 
@@ -36,6 +37,7 @@ public class DischargeCommands {
         public void initialize() {
             canShoot = false;
             dischargeSubsystem.setRampDegree(rampDegree);
+            dischargeSubsystem.setTurretAngle(turretAngle);
         }
 
         @Override
@@ -60,7 +62,7 @@ public class DischargeCommands {
         public static boolean shooting = false;
         public static boolean atSpeed = false;//+- 200rpm
         public static boolean atCloseSpeed = false;//+- 70rpm
-        public static double kv = 0.14, ks = 0.06, kd = -0.45, ka = 0.01;
+        public static double kv = 0.14, ks = 0.06, kd = -0.45, ka = 0.05;
         private com.seattlesolvers.solverslib.geometry.Vector2d mecanumToTurret;
         public static boolean aim = true;
         public static boolean inRange = true;

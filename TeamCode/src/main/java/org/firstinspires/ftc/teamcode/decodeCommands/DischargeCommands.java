@@ -24,6 +24,7 @@ public class DischargeCommands {
         double rampDegree;
         double turretAngle;
         public static boolean canShoot;
+        double kp = -0.02;
 
         public setState(DischargeSubsystem dischargeSubsystem, double flyWheelRPM, double rampDegree, double turretAngle) {
             this.dischargeSubsystem = dischargeSubsystem;
@@ -37,12 +38,12 @@ public class DischargeCommands {
         public void initialize() {
             canShoot = false;
             dischargeSubsystem.setRampDegree(rampDegree);
-            dischargeSubsystem.setTurretAngle(turretAngle);
         }
 
         @Override
         public void execute() {
             dischargeSubsystem.setFlyWheelRPM(flyWheelRPM);
+            dischargeSubsystem.setTurretPower((turretAngle - dischargeSubsystem.getTurretAngle()) * kp);
             canShoot = Math.abs(dischargeSubsystem.getRPM() - flyWheelRPM) < 300;
         }
 
@@ -151,7 +152,7 @@ public class DischargeCommands {
             } else {
                 inRange = true;
                 dischargeSubsystem.setRampDegree(41);
-                dischargeSubsystem.setFlyWheelRPM(3000);
+                dischargeSubsystem.setFlyWheelRPM(3000 + rpmCorrection);
                 dischargeSubsystem.setTurretPower(0);
                 atSpeed = true;
                 atCloseSpeed = true;

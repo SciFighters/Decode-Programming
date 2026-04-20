@@ -37,7 +37,7 @@ public class IntakeSubsystem extends SubsystemBase {
         rightSwitch.setMode(DigitalChannel.Mode.INPUT);
         reversed = false;
         running = true;;
-        startSensorThread();
+//        startSensorThread();
     }
 
     public void setPower(double power) {
@@ -47,23 +47,16 @@ public class IntakeSubsystem extends SubsystemBase {
     private void startSensorThread() {
         sensorThread = new Thread(() -> {
 
-//            ElapsedTime time = new ElapsedTime();
-//            time.reset();
-//            double rightSensorTime = 0, leftSensorTime = 0;
             boolean currentRight, currentLeft;
             boolean lastRight = false, lastLeft = false;
-//            long cTime;
             while (running) {
-//                cTime = time.time(TimeUnit.MILLISECONDS);
                 currentRight = !rightSwitch.getState();
                 currentLeft = !leftSwitch.getState();
                 if ((currentRight && !lastRight)) {
                     count += 1;
-//                    rightSensorTime = cTime;
                 }
                 if ((currentLeft && !lastLeft)) {
                     count += 1;
-//                    leftSensorTime = cTime;
                 }
 
                 lastLeft = currentLeft;
@@ -78,6 +71,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
         sensorThread.setDaemon(true);
         sensorThread.start();
+    }
+
+    public boolean rightSwitchState(){
+        return !rightSwitch.getState();
+    }
+
+    public boolean leftSwitchState(){
+        return !leftSwitch.getState();
     }
 
     public void stopSensorThread() {

@@ -23,7 +23,7 @@ public class reset extends LinearOpMode {
         carouselSubsystem.resetEncoders();
         SavedValues.position = new Pose2d(63, 0, Math.PI);
         SavedValues.turretAngle = 180;
-        SavedValues.teamColor = AutoShooter.TeamColor.RED;
+        SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
 
     }
 }

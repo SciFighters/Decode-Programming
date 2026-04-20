@@ -13,7 +13,7 @@ public class AutoShooter {
     private static final Vector2d goalPos = new Vector2d(-62, 62);
     private static final Vector2d aprilTagPos = new Vector2d(-58.346457, 55.629921);
     //{{27.6, 60, 1750}, {45.7, 57.6, 1850}, {64, 48, 2170}, {81, 46.4, 2320}, {98.4, 41.6, 2650}, {118, 38, 2641}, {135, 38, 2787}, {150, 36, 3000}}
-    private static final double[][] points = {{23,56,2400},{44.4,45.5,2680},{62,42,2800},{83.5,38,3050}, {100,38,3480},{118,38,3620},{135,38,3820},{150,36,4110}};//distance, angle, rpm
+    private static final double[][] points = {{31,51,2430},{42.9,51,2600},{62,43,2900},{81.5,39,3150}, {96,40,3400},{119,39,3630},{130,37,3830},{148.45,36.8,4130}};//distance, angle, rpm
     private static final double[][] times = {{43.8, 0.36}, {61, 0.46}, {76, 0.5}, {85, 0.5}, {97, 0.63}, {107.2, 0.63}, {118.9, 0.63}, {124.2, 0.67}, {139.7, 0.7}};
 
     //robot corners
@@ -194,11 +194,13 @@ public class AutoShooter {
         return Math.abs(y) < -x || 48 + Math.abs(y) < x;
     }
 
-    public static double normalizeAngleError(double error) {//degrees
+    public static double normalizeDegreeError(double error) {//degrees
         error = (error + 180) % 360;
         if (error < 0)
             error += 360;
         return error - 180;
+    }public static double normalizeRadianError(double error) {//degrees
+        return Math.toRadians(normalizeDegreeError(Math.toDegrees(error)));
     }
 
     public enum TeamColor {RED, BLUE}

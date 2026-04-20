@@ -17,7 +17,7 @@ public class DischargeSubsystem extends SubsystemBase {
     private final DcMotorEx turretMotor;
     public final MotorEx flyWheelMotor;
     private final Servo rampServo;
-    private final double kS = 0.17, kV = 0.00025772193, kP = 0.00133333, kI = 0.000005;
+    private final double kS = 0.07, kV = 0.00016305959, kP = 0.00133333, kI = 0.000005;//0.17,0.00025772193
     private final double ticksPerDegree = 383.6 * (198.0 / 49.0) / 360.0;
     private double startAngle;
     private final double gearRatio = 37.0 / 37; // 34:30

@@ -9,7 +9,6 @@ import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
-import com.seattlesolvers.solverslib.gamepad.TriggerReader;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
@@ -110,8 +109,9 @@ public class WheatleyOpMode extends ActionOpMode {
         systemLeftStick.whenPressed(() -> DischargeCommands.AutomaticAiming.limelight = !DischargeCommands.AutomaticAiming.limelight);
         systemRightStick.whenPressed(new CommandGroups.PowerTakeOff(mecanumDrive, () -> -system.getRightY())
                 .beforeStarting(() -> {dischargeSubsystem.getCurrentCommand().cancel();
-                    schedule(new  DischargeCommands.setState(dischargeSubsystem,0,30, 180));}));
-        driverLeftTrigger.whileActiveContinuous(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,() -> gamepad1.right_trigger ,teamColor));
+                    schedule(new  DischargeCommands.setState(dischargeSubsystem,0,60, 180));}));
+        driverLeftTrigger.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,-120 * Math.PI/180, teamColor));
+        driverRightStick.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,Math.PI/2, teamColor));
 
     }
 
@@ -162,6 +162,7 @@ public class WheatleyOpMode extends ActionOpMode {
     @Override
     public void end() {
         limelightSubsystem.stopLimelight();
+        intakeSubsystem.stopSensorThread();
     }
 
     public void initButtons() {

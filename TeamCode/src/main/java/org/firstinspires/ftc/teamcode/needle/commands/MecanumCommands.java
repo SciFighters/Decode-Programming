@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.needle.commands;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -53,7 +53,7 @@ public class MecanumCommands {
         public void execute() {
             double currentX = x.get();
             double currentY = y.get();
-            if ((currentX == 0 && currentY == 0) && DischargeCommands.AutomaticAiming.shooting && AutoShooter.canLaunch(mecanumDrive.localizer.getPose())) {
+            if ((currentX == 0 && currentY == 0) && DischargeCommands.AutomaticAiming.shooting && AutoShooter.canLaunch(mecanumDrive.localizer.getPose()) && false) {
                 Vector2d pos = mecanumDrive.localizer.getPose().position;
                 Vector2d velocity = mecanumDrive.localizer.update().linearVel;
                 if ((lastX != 0 || lastY != 0) || (holdPos.x == 0 && holdPos.y == 0)) {
@@ -77,53 +77,58 @@ public class MecanumCommands {
 
     @Config
     public static class Aim extends CommandBase {
-        public static double kp = 0.3, kd = 0.2, ki = 0.1, kf = 0.1;
+        public static double kp = 0.5, kd = -0.001, ki = 0, kf = 0.1, deadZone = 2;
         MecanumDrive mecanumDrive;
         AutoShooter.TeamColor teamColor;
         double currentError = 0, lastError = 0;
-        double integral=0, derivative;
-        Supplier<Double> x,y,boost;
-        Supplier<Float> triggerValue;
-        double blue;
-        final double gateAngle = Math.PI/2;
+        double integral = 0, derivative;
+        Supplier<Double> x, y, boost;
+        ElapsedTime time;
+        double blue, lastTime;
+        double angle;
 
-        public Aim(MecanumDrive mecanumDrive,Supplier<Double> x, Supplier<Double> y,Supplier<Double> boost,Supplier<Float> triggerValue ,AutoShooter.TeamColor teamColor) {
+        public Aim(MecanumDrive mecanumDrive, Supplier<Double> x, Supplier<Double> y, Supplier<Double> boost,double angle, AutoShooter.TeamColor teamColor) {
             this.mecanumDrive = mecanumDrive;
             this.teamColor = teamColor;
             addRequirements(mecanumDrive);
             this.x = x;
             this.y = y;
             this.boost = boost;
-            this.triggerValue = triggerValue;
+            this.angle = angle;
         }
 
         @Override
         public void initialize() {
             blue = (teamColor == AutoShooter.TeamColor.BLUE) ? Math.PI : 0;
+            time = new ElapsedTime();
+            time.reset();
+            lastTime = time.seconds();
         }
 
         @Override
         public void execute() {
+            double currentTime = time.seconds();
+            double deltaTIme = currentTime - lastTime;
             double currentX = x.get();
             double currentY = y.get();
-//            double launchAngle = ((AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position, 0), teamColor) + 360) % 360) / 180 * Math.PI;
-            double wantedAngle = (teamColor == AutoShooter.TeamColor.BLUE)? gateAngle : -gateAngle;
+            double wantedAngle = (teamColor == AutoShooter.TeamColor.BLUE) ? angle : -angle;
             double currentAngle = mecanumDrive.localizer.getPose().heading.toDouble();
-            currentError = wantedAngle - currentAngle;
-            integral += currentError;
-            derivative = currentError - lastError;
-//            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), error * kp + Math.signum(error) * 0.075));
+            currentError = AutoShooter.normalizeRadianError(wantedAngle - currentAngle);
+            if(Math.abs(currentError) < deadZone / 180 * Math.PI){
+                currentError = 0;
+            }
+
+            integral += currentError * deltaTIme;
+            derivative = (currentError - lastError) / deltaTIme;
             com.seattlesolvers.solverslib.geometry.Vector2d vector = new com.seattlesolvers.solverslib.geometry.Vector2d(
                     -currentX * boost.get(), currentY * boost.get()).rotateBy(Math.toDegrees(-mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI / 2 + blue));
             Vector2d vector2d = new Vector2d(vector.getX(), vector.getY());
-            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(vector2d.x, vector2d.y),currentError * kp + integral * ki + derivative * kd + Math.signum(currentError) * kf));
-
+            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(vector2d.x, vector2d.y), currentError * kp + integral * ki + derivative * kd + Math.signum(currentError) * kf));
+            lastTime = currentTime;
+            lastError = currentError;
         }
 
-        @Override
-        public boolean isFinished() {
-            return triggerValue.get() > 0.5;
-        }
+
     }
 
 }

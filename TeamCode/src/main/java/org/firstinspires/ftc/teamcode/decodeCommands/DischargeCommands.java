@@ -56,9 +56,9 @@ public class DischargeCommands {
         CarouselSubsystem carouselSubsystem;
         MecanumDrive mecanumDrive;
         AutoShooter.TeamColor teamColor;
-        public static double kp = 0.02;//0.018
+        public static double kp = 0.022;//0.018
         public static double ki = -0.00025;
-        public static double kMovement = 1.8, effectSpeed = 19;
+        public static double kMovement = 2, effectSpeed = 23;
         public static double launchAngle;
         public static boolean shooting = false;
         public static boolean atSpeed = false;//+- 200rpm
@@ -92,6 +92,8 @@ public class DischargeCommands {
         public void initialize() {
             turretCorrection = 0;
             rpmCorrection = 0;
+            aim = true;
+            limelight = true;
             time = new ElapsedTime();
             limelight = true;
             lastTime = time.seconds();

@@ -123,7 +123,7 @@ public class MecanumCommands {
             com.seattlesolvers.solverslib.geometry.Vector2d vector = new com.seattlesolvers.solverslib.geometry.Vector2d(
                     -currentX * boost.get(), currentY * boost.get()).rotateBy(Math.toDegrees(-mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI / 2 + blue));
             Vector2d vector2d = new Vector2d(vector.getX(), vector.getY());
-            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(vector2d.x, vector2d.y), currentError * kp + integral * ki + derivative * kd + Math.signum(currentError) * kf));
+            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(vector2d.x, vector2d.y), 2*(currentError * kp + integral * ki + derivative * kd + Math.signum(currentError) * kf)));
             lastTime = currentTime;
             lastError = currentError;
         }

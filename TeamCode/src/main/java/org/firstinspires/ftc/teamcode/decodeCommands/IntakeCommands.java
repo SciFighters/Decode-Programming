@@ -36,7 +36,7 @@ public class IntakeCommands {
 
         @Override
         public boolean isFinished() {
-            return IntakeSubsystem.count >= 60;
+            return IntakeSubsystem.count >= 3;
         }
 
         @Override

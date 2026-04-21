@@ -1,21 +1,13 @@
 package org.firstinspires.ftc.teamcode.decodeSubsystems;
 
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.robocol.Command;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import java.sql.Time;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final DcMotorEx motor;
@@ -24,6 +16,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private Thread sensorThread;
     public static boolean reversed = false;
     public static int count = 0;
+    public static int switchloopCount = 0;
     volatile boolean running = true;
 
     public IntakeSubsystem(HardwareMap hm) {
@@ -36,7 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
         leftSwitch.setMode(DigitalChannel.Mode.INPUT);
         rightSwitch.setMode(DigitalChannel.Mode.INPUT);
         reversed = false;
-        running = true;;
+        running = true;
 //        startSensorThread();
     }
 
@@ -50,8 +43,17 @@ public class IntakeSubsystem extends SubsystemBase {
             boolean currentRight, currentLeft;
             boolean lastRight = false, lastLeft = false;
             while (running) {
-                currentRight = !rightSwitch.getState();
-                currentLeft = !leftSwitch.getState();
+                // check switch state
+                currentRight = rightSwitchState();
+                currentLeft = leftSwitchState();
+
+                // test to see how many loops run while switch is press
+                if (currentRight || currentLeft)
+                    switchloopCount++;
+                else
+                    switchloopCount = 0;
+
+                // check if a switch was press
                 if ((currentRight && !lastRight)) {
                     count += 1;
                 }
@@ -59,8 +61,11 @@ public class IntakeSubsystem extends SubsystemBase {
                     count += 1;
                 }
 
+                // update last state
                 lastLeft = currentLeft;
                 lastRight = currentRight;
+
+                // loop speed
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException e) {
@@ -74,7 +79,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean rightSwitchState(){
-        return !rightSwitch.getState();
+        return rightSwitch.getState();
     }
 
     public boolean leftSwitchState(){

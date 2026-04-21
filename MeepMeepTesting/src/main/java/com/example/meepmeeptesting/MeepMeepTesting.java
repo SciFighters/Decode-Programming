@@ -244,7 +244,7 @@ public class MeepMeepTesting {
                 .setTangent(Math.PI/4)
                 .splineToConstantHeading(new Vector2d(0,30),Math.PI/2);//park
 
-        wheatley.runAction(newAuto.build());
+        wheatley.runAction(wheatleyAuto15.build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_JUICE_DARK)
                 .setDarkMode(true)

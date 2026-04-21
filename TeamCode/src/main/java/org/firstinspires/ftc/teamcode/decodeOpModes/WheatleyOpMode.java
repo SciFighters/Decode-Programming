@@ -139,16 +139,21 @@ public class WheatleyOpMode extends ActionOpMode {
         }
         super.run();
         multipleTelemetry.addData("COUNT", SavedValues.currentCount);
-        multipleTelemetry.addLine("----------------------------");
+        multipleTelemetry.addData("----------------------------", 0);
         multipleTelemetry.addLine("Position");
         multipleTelemetry.addData("X", mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("Y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
-        multipleTelemetry.addLine("Carousel");
+
+        multipleTelemetry.addData("------------Carousel------------",0);
         multipleTelemetry.addData("carouselCount", IntakeSubsystem.count);
+//        multipleTelemetry.addData("rightSwitchState", intakeSubsystem.rightSwitchState());
+//        multipleTelemetry.addData("leftSwitchState", intakeSubsystem.leftSwitchState());
+//        multipleTelemetry.addData("SwitchLoopCount", IntakeSubsystem.switchLoopCount);
         multipleTelemetry.addData("carouselAngle", carouselSubsystem.getAngle());
         multipleTelemetry.addData("carouselPosition", carouselSubsystem.getPosition());
-        multipleTelemetry.addLine("Discharge");
+
+        multipleTelemetry.addData("----------------Discharge-------------",0);
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
         multipleTelemetry.addData("turret Ticks", dischargeSubsystem.getTurretPosition());
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());

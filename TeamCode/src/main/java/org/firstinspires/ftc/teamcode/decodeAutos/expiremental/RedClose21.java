@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.decodeAutos.expiremental;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -64,18 +65,18 @@ public class RedClose21 extends ActionOpMode {
 
         TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(-18, 18, 0), reversed)
                 .setTangent(0)
-                .splineToLinearHeading(new Pose2d(14, 36, Math.PI / 2), Math.PI / 2)
-                .splineToSplineHeading(new Pose2d(14, 36.1, Math.PI / 2), Math.PI / 2)
+                .splineToLinearHeading(new Pose2d(16, 36, Math.PI / 2), Math.PI / 2)
+                .splineToSplineHeading(new Pose2d(16, 36.1, Math.PI / 2), Math.PI / 2)
 //                .splineToConstantHeading(new Vector2d(14, 48), Math.PI *5/ 8)
-                .splineToConstantHeading(new Vector2d(-8, 12), -Math.PI * 3 / 4);
+                .splineToConstantHeading(new Vector2d(-16, 7), -Math.PI * 3 / 4,null, new ProfileAccelConstraint(-60,60));
         TrajectoryActionBuilder wheatleyAutoTwoP2 = mecanumDrive.actionBuilder((new Pose2d(14, 44, Math.PI / 2)), reversed)
                 .setTangent(-Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-8, 12), -Math.PI * 3 / 4);
 
         TrajectoryActionBuilder midOneP1 = mecanumDrive.actionBuilder(new Pose2d(-8, 12, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 5)
-                .splineToConstantHeading(new Vector2d(6, 30), Math.PI / 3)
-                .splineToSplineHeading(new Pose2d(15, 62.5, Math.PI * 10.5 / 16), Math.PI / 2);//15.5, 60
+//                .splineToConstantHeading(new Vector2d(12, 30), Math.PI / 3)
+                .splineToLinearHeading(new Pose2d(13.5, 63.5, Math.PI * 12.1 / 18), Math.PI * 12.1 / 18);//15.5, 60
         TrajectoryActionBuilder midTwoP1 = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 5)
                 .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
@@ -84,12 +85,12 @@ public class RedClose21 extends ActionOpMode {
                 .setTangent(Math.PI * 3.5 / 4)
                 .lineToX(12);
 
-        TrajectoryActionBuilder midOneP2 = mecanumDrive.actionBuilder(new Pose2d(14, 60, Math.PI * 5 / 8), reversed)
+        TrajectoryActionBuilder midOneP2 = mecanumDrive.actionBuilder(new Pose2d(12, 57, Math.PI * 12.1 / 16), reversed)
                 .setTangent(-Math.PI / 2)
-                .splineToLinearHeading(new Pose2d(-8, 12, Math.PI / 2), -Math.PI * 3 / 4);
-        TrajectoryActionBuilder midTwoP2 = mecanumDrive.actionBuilder(new Pose2d(14, 60, Math.PI * 5 / 8), reversed)
+                .splineToLinearHeading(new Pose2d(-8, 10, Math.PI / 2), -Math.PI * 5 / 8, null, new ProfileAccelConstraint(-100, 100));
+        TrajectoryActionBuilder midTwoP2 = mecanumDrive.actionBuilder(new Pose2d(12, 57, Math.PI * 12.1 / 16), reversed)
                 .setTangent(-Math.PI / 2)
-                .splineToLinearHeading(new Pose2d(-13, 20, Math.PI / 2), -Math.PI * 3 / 4);
+                .splineToLinearHeading(new Pose2d(-13, 15, Math.PI / 2), -Math.PI * 6 / 8,null,new ProfileAccelConstraint(-100,100));
 
         TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 2)
@@ -97,10 +98,10 @@ public class RedClose21 extends ActionOpMode {
                 .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI / 2);
         TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(0)
-                .splineToConstantHeading(new Vector2d(32, 28), Math.PI / 4)
-                .splineToConstantHeading(new Vector2d(38, 52), Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(38, 52.1), -Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(-8, 12), -Math.PI * 3 / 4);
+                .splineToConstantHeading(new Vector2d(36, 28), Math.PI / 4)
+                .splineToConstantHeading(new Vector2d(42, 52), Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(42, 52.1), -Math.PI / 2)
+                .splineToConstantHeading(new Vector2d(-18, 10), -Math.PI * 3 / 4,null,new ProfileAccelConstraint(-60,60));
 
         TrajectoryActionBuilder prepareGate = mecanumDrive.actionBuilder(new Pose2d(-6, 16, Math.PI / 2), reversed)
                 .splineToConstantHeading(new Vector2d(0, 25), Math.PI / 2);
@@ -132,28 +133,8 @@ public class RedClose21 extends ActionOpMode {
                                         new SequentialCommandGroup(
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
-                                                        new WaitCommand(500),
-                                                        new ActionCommand(pressGate.build(), requirements)
-                                                )
-                                        ),
-
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
-                                ),
-
-
-                                new ParallelCommandGroup(
-                                        new ActionCommand(midOneP2.build(), requirements),
-                                        new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(400),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(300),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
-                                ),
-                                new ParallelRaceGroup(
-                                        new SequentialCommandGroup(
-                                                new ActionCommand(midOneP1.build(), requirements),
-                                                new ParallelDeadlineGroup(
-                                                        new WaitCommand(500),
-                                                        new ActionCommand(pressGate.build(), requirements)
+                                                        new WaitCommand(700)
+//                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
 
@@ -169,15 +150,46 @@ public class RedClose21 extends ActionOpMode {
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
 
+                                new ParallelRaceGroup(
+                                        new SequentialCommandGroup(
+                                                new ActionCommand(midOneP1.build(), requirements),
+                                                new ParallelDeadlineGroup(
+                                                        new WaitCommand(700)
+//                                                        ,
+//                                                        new ActionCommand(pressGate.build(), requirements)
+                                                )
+                                        ),
+
+                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                ),
+
+
+                                new ParallelCommandGroup(
+                                        new ActionCommand(midTwoP2.build(), requirements),
+                                        new SequentialCommandGroup(
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(400),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(300),
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                ),
+
+                                new ParallelCommandGroup(
+                                        new SequentialCommandGroup(
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1400),
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                        ),
+                                        new ActionCommand(wheatleyAutoThree.build(), requirements)),
+
 
                                 new ParallelRaceGroup(
                                         new SequentialCommandGroup(
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
-                                                        new WaitUntilCommand(() -> IntakeSubsystem.count >= 60).withTimeout(1000),
-                                                        new ActionCommand(pressGate.build(), requirements)
+                                                        new WaitCommand(700)
+//                                                        ,
+//                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
+
                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 ),
 
@@ -191,17 +203,12 @@ public class RedClose21 extends ActionOpMode {
                                                 new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
-                                new ParallelCommandGroup(
-                                        new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1400),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
-                                        ),
-                                        new ActionCommand(wheatleyAutoThree.build(), requirements)),
+
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2700),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(600),
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2500),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(450),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
@@ -209,7 +216,7 @@ public class RedClose21 extends ActionOpMode {
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(prepareGate.build(), requirements),
-                                        new IntakeCommands.ClosedState(intakeSubsystem)
+                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
                                 )
 
 

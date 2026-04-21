@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.decodeAutos.expiremental;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -31,7 +32,6 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 
 import java.util.HashSet;
 import java.util.Set;
-@Disabled
 @Autonomous()
 public class RobotRevealAuto extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
@@ -60,11 +60,11 @@ public class RobotRevealAuto extends ActionOpMode {
         boolean reversed = SavedValues.teamColor == AutoShooter.TeamColor.BLUE;
         requirements.add(mecanumDrive);
         TrajectoryActionBuilder wheatleyAutoOne = mecanumDrive.actionBuilder(mecanumDrive.localizer.getPose())
-                .splineToConstantHeading(new Vector2d(61.4, -58), -Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(60, -30), Math.PI / 2);
+                .splineToConstantHeading(new Vector2d(61.4, -58), -Math.PI / 2,null,new ProfileAccelConstraint(-40,60))
+                .splineToConstantHeading(new Vector2d(60, -28), Math.PI / 2,null,new ProfileAccelConstraint(-40,60));
         TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(60, -30, -Math.PI / 2))
-                .splineToConstantHeading(new Vector2d(61.4, -58), -Math.PI / 2)
-                .splineToConstantHeading(new Vector2d(60, -30), Math.PI / 2);
+                .splineToConstantHeading(new Vector2d(61.4, -58), -Math.PI / 2,null,new ProfileAccelConstraint(-40,60))
+                .splineToConstantHeading(new Vector2d(60, -28), Math.PI / 2,null,new ProfileAccelConstraint(-40,60));
 
 
         CommandScheduler.getInstance().schedule(
@@ -73,19 +73,19 @@ public class RobotRevealAuto extends ActionOpMode {
                         new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
                         new SequentialCommandGroup(
                                 new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
-                                new WaitUntilCommand(() -> dischargeSubsystem.getRPM() > 4000),
+                                new WaitUntilCommand(() -> dischargeSubsystem.getRPM() > 3000),
                                 new WaitCommand(1),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3350),
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3000),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         )
 
                                 ), new ParallelCommandGroup(
                                 new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                 new SequentialCommandGroup(
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1950),
+                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1900),
                                         new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                 )
 

@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-
+@Disabled
 @Autonomous(name = "TestAuto(please disable)")
 public class TestAuto extends LinearOpMode {
     FtcDashboard dashboard = FtcDashboard.getInstance();

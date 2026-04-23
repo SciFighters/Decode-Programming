@@ -58,12 +58,12 @@ public class DischargeCommands {
         AutoShooter.TeamColor teamColor;
         public static double kp = 0.022;//0.018
         public static double ki = -0.00025;
-        public static double kMovement = 2, effectSpeed = 23;
+        public static double kMovement = 2, effectSpeed = 19;
         public static double launchAngle;
         public static boolean shooting = false;
         public static boolean atSpeed = false;//+- 200rpm
         public static boolean atCloseSpeed = false;//+- 70rpm
-        public static double kv = 0.14, ks = 0.06, kd = -0.45, ka = 0.05;
+        public static double kv = 0.14, ks = 0.06, kd = -0.45, ka = 0.06;
         private com.seattlesolvers.solverslib.geometry.Vector2d mecanumToTurret;
         public static boolean aim = true;
         public static boolean inRange = true;

@@ -51,7 +51,7 @@ public class CommandGroups {
                         PoseVelocity2d movement = mecanumDrive.localizer.update();
                         Pose2d pos = mecanumDrive.localizer.getPose();
                         com.seattlesolvers.solverslib.geometry.Vector2d movementEffect = new com.seattlesolvers.solverslib.geometry.Vector2d(
-                                movement.linearVel.x, movement.linearVel.y).rotateBy(pos.heading.toDouble() / Math.PI * 180).times(0.5);
+                                movement.linearVel.x, movement.linearVel.y).rotateBy(pos.heading.toDouble() / Math.PI * 180).times(0.35);
                         return AutoShooter.canLaunch(new Pose2d(pos.position.x + movementEffect.getX(), pos.position.y + movementEffect.getY(), pos.heading.toDouble()));
                     }),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
@@ -121,12 +121,19 @@ public class CommandGroups {
 
             double rPower = Range.clip(power - delta, 0.1, power);
             double lPower = Range.clip(power + delta, 0.1, power);
+            if(left > 5000 && right > 5000){
+                mecanumDrive.rightFront.setPower(0.1);
+                mecanumDrive.rightBack.setPower(-0.1);
+                mecanumDrive.leftFront.setPower(0.1);
+                mecanumDrive.leftBack.setPower(-0.1);
+            }else{
+                mecanumDrive.rightFront.setPower(rPower);
+                mecanumDrive.rightBack.setPower(-rPower);
 
-            mecanumDrive.rightFront.setPower(rPower);
-            mecanumDrive.rightBack.setPower(-rPower);
+                mecanumDrive.leftFront.setPower(lPower);
+                mecanumDrive.leftBack.setPower(-lPower);
+            }
 
-            mecanumDrive.leftFront.setPower(lPower);
-            mecanumDrive.leftBack.setPower(-lPower);
         }
     }
 

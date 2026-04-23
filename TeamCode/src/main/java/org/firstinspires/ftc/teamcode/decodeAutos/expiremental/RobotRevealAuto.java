@@ -32,6 +32,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 
 import java.util.HashSet;
 import java.util.Set;
+@Disabled
 @Autonomous()
 public class RobotRevealAuto extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;

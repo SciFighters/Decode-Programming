@@ -16,8 +16,9 @@ public class IntakeSubsystem extends SubsystemBase {
     private Thread sensorThread;
     public static boolean reversed = false;
     public static int count = 0;
-    public static int switchloopCount = 0;
+    public static int switchLoopCount = 0;
     volatile boolean running = true;
+    public volatile boolean intaking = false;
 
     public IntakeSubsystem(HardwareMap hm) {
         motor = hm.get(DcMotorEx.class, "intakeMotor");
@@ -43,31 +44,34 @@ public class IntakeSubsystem extends SubsystemBase {
             boolean currentRight, currentLeft;
             boolean lastRight = false, lastLeft = false;
             while (running) {
-                // check switch state
-                currentRight = rightSwitchState();
-                currentLeft = leftSwitchState();
+                if(intaking){
 
-                // test to see how many loops run while switch is press
-                if (currentRight || currentLeft)
-                    switchloopCount++;
-                else
-                    switchloopCount = 0;
+                    // check switch state
+                    currentRight = rightSwitchState();
+                    currentLeft = leftSwitchState();
 
-                // check if a switch was press
-                if ((currentRight && !lastRight)) {
-                    count += 1;
+                    // test to see how many loops run while switch is press
+                    if (currentRight || currentLeft)
+                        switchLoopCount++;
+                    else
+                        switchLoopCount = 0;
+
+                    // check if a switch was press
+                    if ((currentRight && !lastRight)) {
+                        count += 1;
+                    }
+                    if ((currentLeft && !lastLeft)) {
+                        count += 1;
+                    }
+
+                    // update last state
+                    lastLeft = currentLeft;
+                    lastRight = currentRight;
+
                 }
-                if ((currentLeft && !lastLeft)) {
-                    count += 1;
-                }
 
-                // update last state
-                lastLeft = currentLeft;
-                lastRight = currentRight;
-
-                // loop speed
                 try {
-                    Thread.sleep(1);
+                    Thread.sleep(8);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

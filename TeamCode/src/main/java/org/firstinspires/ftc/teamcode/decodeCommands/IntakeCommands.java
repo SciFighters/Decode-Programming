@@ -12,7 +12,7 @@ public class IntakeCommands {
     public static class IntakeState extends CommandBase {
         IntakeSubsystem intakeSubsystem;
         ElapsedTime time;
-        double currentTime;
+        double threeTime;
 
 
         public static boolean resetCount;
@@ -27,8 +27,9 @@ public class IntakeCommands {
         public void initialize() {
             time.reset();
             IntakeSubsystem.count = 0;
+//            intakeSubsystem.intaking = true;
             resetCount = false;
-            currentTime = time.seconds();
+            threeTime = 0;
             intakeSubsystem.setPower(1);
             intakeSubsystem.setPosition(1);
         }
@@ -41,6 +42,7 @@ public class IntakeCommands {
 
         @Override
         public void end(boolean interrupted) {
+//            intakeSubsystem.intaking = false;
             intakeSubsystem.setPower(0);
         }
     }

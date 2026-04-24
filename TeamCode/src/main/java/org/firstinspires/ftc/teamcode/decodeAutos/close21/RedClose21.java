@@ -74,7 +74,7 @@ public class RedClose21 extends ActionOpMode {
         TrajectoryActionBuilder midOneP1 = mecanumDrive.actionBuilder(new Pose2d(-8, 12, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 5)
 //                .splineToConstantHeading(new Vector2d(12, 30), Math.PI / 3)
-                .splineToLinearHeading(new Pose2d(13.5, 63.5, Math.PI * 12.1 / 18), Math.PI * 12.1 / 18);//15.5, 60
+                .splineToLinearHeading(new Pose2d(14, 63.5, Math.PI * 12.1 / 18), Math.PI * 12.1 / 18);//15.5, 60
         TrajectoryActionBuilder midTwoP1 = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 5)
                 .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)

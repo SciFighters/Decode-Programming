@@ -84,7 +84,7 @@ public class WheatleyOpMode extends ActionOpMode {
                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)))
         );
         driverDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.aim = !DischargeCommands.AutomaticAiming.aim);
-        driverLeftBumper.whenPressed(() -> IntakeCommands.IntakeState.resetCount = !IntakeCommands.IntakeState.resetCount);
+//        driverLeftBumper.whenPressed(() -> IntakeCommands.IntakeState.resetCount = !IntakeCommands.IntakeState.resetCount);
 
         driverY.whenPressed(new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem));
         driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
@@ -110,8 +110,9 @@ public class WheatleyOpMode extends ActionOpMode {
         systemRightStick.whenPressed(new CommandGroups.PowerTakeOff(mecanumDrive, () -> -system.getRightY())
                 .beforeStarting(() -> {dischargeSubsystem.getCurrentCommand().cancel();
                     schedule(new  DischargeCommands.setState(dischargeSubsystem,0,60, 180));}));
-        driverLeftTrigger.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,-120 * Math.PI/180, teamColor));
-        driverRightStick.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,Math.PI/2, teamColor));
+        driverLeftTrigger.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,-120 * Math.PI/180,2, teamColor));
+        driverRightStick.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,Math.PI/2,1, teamColor)
+                .beforeStarting(new IntakeCommands.ClosedState(intakeSubsystem)));
 
     }
 

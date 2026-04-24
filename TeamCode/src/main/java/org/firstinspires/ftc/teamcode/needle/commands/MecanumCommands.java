@@ -86,8 +86,9 @@ public class MecanumCommands {
         ElapsedTime time;
         double blue, lastTime;
         double angle;
+        double multiplier;
 
-        public Aim(MecanumDrive mecanumDrive, Supplier<Double> x, Supplier<Double> y, Supplier<Double> boost,double angle, AutoShooter.TeamColor teamColor) {
+        public Aim(MecanumDrive mecanumDrive, Supplier<Double> x, Supplier<Double> y, Supplier<Double> boost,double angle,double multiplier, AutoShooter.TeamColor teamColor) {
             this.mecanumDrive = mecanumDrive;
             this.teamColor = teamColor;
             addRequirements(mecanumDrive);
@@ -95,6 +96,7 @@ public class MecanumCommands {
             this.y = y;
             this.boost = boost;
             this.angle = angle;
+            this.multiplier = multiplier;
         }
 
         @Override
@@ -123,7 +125,7 @@ public class MecanumCommands {
             com.seattlesolvers.solverslib.geometry.Vector2d vector = new com.seattlesolvers.solverslib.geometry.Vector2d(
                     -currentX * boost.get(), currentY * boost.get()).rotateBy(Math.toDegrees(-mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI / 2 + blue));
             Vector2d vector2d = new Vector2d(vector.getX(), vector.getY());
-            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(vector2d.x, vector2d.y), 2*(currentError * kp + integral * ki + derivative * kd + Math.signum(currentError) * kf)));
+            mecanumDrive.setDrivePowers(new PoseVelocity2d(new Vector2d(vector2d.x, vector2d.y), multiplier*(currentError * kp + integral * ki + derivative * kd + Math.signum(currentError) * kf)));
             lastTime = currentTime;
             lastError = currentError;
         }

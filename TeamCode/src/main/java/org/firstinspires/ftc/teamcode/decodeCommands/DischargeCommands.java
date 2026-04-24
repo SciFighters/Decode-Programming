@@ -63,7 +63,7 @@ public class DischargeCommands {
         public static boolean shooting = false;
         public static boolean atSpeed = false;//+- 200rpm
         public static boolean atCloseSpeed = false;//+- 70rpm
-        public static double kv = 0.14, ks = 0.06, kd = -0.45, ka = 0.06;
+        public static double kv = 0.14, ks = 0.06, kd = -0.45, ka = 0.08;
         private com.seattlesolvers.solverslib.geometry.Vector2d mecanumToTurret;
         public static boolean aim = true;
         public static boolean inRange = true;
@@ -126,7 +126,7 @@ public class DischargeCommands {
                     dischargeSubsystem.setRampDegree(launchVector[0]);
                     dischargeSubsystem.setFlyWheelRPM(launchVector[1] + rpmCorrection);
                     double delta = Math.abs(dischargeSubsystem.getRPM() - (launchVector[1] + rpmCorrection));
-                    atSpeed = delta < 200;
+                    atSpeed = delta < 120;
                     atCloseSpeed = delta < 70;
                 } else if (shooting) {
                     com.seattlesolvers.solverslib.geometry.Vector2d closest = AutoShooter.closestPoint(
@@ -137,7 +137,7 @@ public class DischargeCommands {
                     dischargeSubsystem.setRampDegree(launchVector[0]);
                     dischargeSubsystem.setFlyWheelRPM(launchVector[1] + rpmCorrection);
                     double delta = Math.abs(dischargeSubsystem.getRPM() - (launchVector[1] + rpmCorrection));
-                    atSpeed = delta < 200;
+                    atSpeed = delta < 120;
                     atCloseSpeed = delta < 70;
                 } else {
                     com.seattlesolvers.solverslib.geometry.Vector2d closest = AutoShooter.closestPoint(

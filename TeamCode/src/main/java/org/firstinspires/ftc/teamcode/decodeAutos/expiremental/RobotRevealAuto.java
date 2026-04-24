@@ -40,7 +40,6 @@ public class RobotRevealAuto extends ActionOpMode {
     CarouselSubsystem carouselSubsystem;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
-    double iteration = 1;
     double turretStartAngle = 90;
     ElapsedTime time;
 

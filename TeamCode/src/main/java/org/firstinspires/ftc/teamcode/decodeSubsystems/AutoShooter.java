@@ -16,10 +16,10 @@ public class AutoShooter {
     private static final Vector2d goalPos = new Vector2d(-62, 62);
     private static final Vector2d aprilTagPos = new Vector2d(-58.346457, 55.629921);
     //{{27.6, 60, 1750}, {45.7, 57.6, 1850}, {64, 48, 2170}, {81, 46.4, 2320}, {98.4, 41.6, 2650}, {118, 38, 2641}, {135, 38, 2787}, {150, 36, 3000}}
-    private static final double[][] points = {{31,51,2510}, {42.9,51,2680}, {62,43,2980}, {81.5,39,3230}, {96,40,3480}, {119,39,3710}, {130,37,3910}, {148.45,36.8,4210}};//distance, angle, rpm
+    private static final double[][] points = {{31,51,2510}, {42.9,51,2680}, {62,43,2980}, {81.5,39,3200}, {96,40,3450}, {119,39,3710}, {130,37,3910}, {148.45,36.8,4210}};//distance, angle, rpm
     private static final double[][] times = {{43.8, 0.36}, {61, 0.46}, {76, 0.5}, {85, 0.5}, {97, 0.63}, {107.2, 0.63}, {118.9, 0.63}, {124.2, 0.67}, {139.7, 0.7}};
 
-    //robot corners
+    //robot cornersx
     private static final Vector2d[] edges = {
             new Vector2d(robotWidth / 2, robotLength / 2),
             new Vector2d(-robotWidth / 2, robotLength / 2),

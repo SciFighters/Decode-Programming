@@ -173,9 +173,11 @@ public class RedClose21 extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1400),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
-                                        new ActionCommand(wheatleyAutoThree.build(), requirements)),
+                                        new ActionCommand(wheatleyAutoThree.build(), requirements)
+                                ),
 
 
                                 new ParallelRaceGroup(
@@ -192,7 +194,7 @@ public class RedClose21 extends ActionOpMode {
                                 ),
 
                                 new ParallelCommandGroup(
-                                        new ActionCommand(midTwoP2.build(), requirements),
+                                        new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new ParallelRaceGroup(
                                                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem),
@@ -203,13 +205,28 @@ public class RedClose21 extends ActionOpMode {
                                 ),
 
 
-                                new ParallelCommandGroup(
+                                new ParallelRaceGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2500),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(400),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new ActionCommand(midOneP1.build(), requirements),
+                                                new ParallelDeadlineGroup(
+                                                        new WaitCommand(700)
+//                                                        ,
+//                                                        new ActionCommand(pressGate.build(), requirements)
+                                                )
                                         ),
-                                        new ActionCommand(wheatleyAutoFour.build(), requirements)
+
+                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                ),
+
+                                new ParallelCommandGroup(
+                                        new ActionCommand(midOneP2.build(), requirements),
+                                        new SequentialCommandGroup(
+                                                new ParallelRaceGroup(
+                                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem),
+                                                        new WaitCommand(900)
+                                                ),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
 
                                 new ParallelCommandGroup(

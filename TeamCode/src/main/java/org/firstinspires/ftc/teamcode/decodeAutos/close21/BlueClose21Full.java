@@ -30,8 +30,8 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import java.util.HashSet;
 import java.util.Set;
 
-@Autonomous(name = "21 blue close", group = "blue close")
-public class BlueClose21 extends ActionOpMode {
+@Autonomous(name = "21 blue close full", group = "blue close")
+public class BlueClose21Full extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
     CarouselSubsystem carouselSubsystem;
@@ -204,28 +204,13 @@ public class BlueClose21 extends ActionOpMode {
                                 ),
 
 
-                                new ParallelRaceGroup(
-                                        new SequentialCommandGroup(
-                                                new ActionCommand(midOneP1.build(), requirements),
-                                                new ParallelDeadlineGroup(
-                                                        new WaitCommand(500)
-//                                                        ,
-//                                                        new ActionCommand(pressGate.build(), requirements)
-                                                )
-                                        ),
-
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
-                                ),
-
                                 new ParallelCommandGroup(
-                                        new ActionCommand(midTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new ParallelRaceGroup(
-                                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem),
-                                                        new WaitCommand(900)
-                                                ),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2500),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(400),
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                        ),
+                                        new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),
 
                                 new ParallelCommandGroup(

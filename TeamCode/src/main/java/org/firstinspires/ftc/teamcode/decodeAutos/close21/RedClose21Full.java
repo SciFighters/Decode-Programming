@@ -30,22 +30,22 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import java.util.HashSet;
 import java.util.Set;
 
-@Autonomous(name = "21 blue close", group = "blue close")
-public class BlueClose21 extends ActionOpMode {
+@Autonomous(name = "21 red close full", group = "red close")
+public class RedClose21Full extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
     IntakeSubsystem intakeSubsystem;
     CarouselSubsystem carouselSubsystem;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
 
-    double turretStartAngle = 295;
+    double turretStartAngle = 65;
     ElapsedTime time;
 
     @Override
     public void initialize() {
         time = new ElapsedTime();
         SavedValues.currentCount = 0;
-        SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
+        SavedValues.teamColor = AutoShooter.TeamColor.RED;
         Set<Subsystem> requirements = new HashSet<>();
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
@@ -74,11 +74,11 @@ public class BlueClose21 extends ActionOpMode {
         TrajectoryActionBuilder midOneP1 = mecanumDrive.actionBuilder(new Pose2d(-8, 12, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 5)
 //                .splineToConstantHeading(new Vector2d(12, 30), Math.PI / 3)
-                .splineToLinearHeading(new Pose2d(14, 63.5, Math.PI * 12.1 / 18), Math.PI * 12.1 / 18);//15.5, 60 //13.5
+                .splineToLinearHeading(new Pose2d(14, 63.5, Math.PI * 12.1 / 18), Math.PI * 12.1 / 18);//15.5, 60
         TrajectoryActionBuilder midTwoP1 = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 5)
                 .splineToConstantHeading(new Vector2d(4, 30), Math.PI / 3)
-                .splineToSplineHeading(new Pose2d(13, 62.5, Math.PI * 10.5 / 16), Math.PI / 2);
+                .splineToSplineHeading(new Pose2d(14, 62.5, Math.PI * 10.5 / 16), Math.PI / 2);
         TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(16, 62.5, Math.PI * 10.5 / 16), reversed)
                 .setTangent(Math.PI * 3.5 / 4)
                 .lineToX(12);
@@ -131,7 +131,7 @@ public class BlueClose21 extends ActionOpMode {
                                         new SequentialCommandGroup(
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
-                                                        new WaitCommand(500)
+                                                        new WaitCommand(700)
 //                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
@@ -152,7 +152,7 @@ public class BlueClose21 extends ActionOpMode {
                                         new SequentialCommandGroup(
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
-                                                        new WaitCommand(500)
+                                                        new WaitCommand(700)
 //                                                        ,
 //                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
@@ -176,14 +176,15 @@ public class BlueClose21 extends ActionOpMode {
                                                 new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         ),
-                                        new ActionCommand(wheatleyAutoThree.build(), requirements)),
+                                        new ActionCommand(wheatleyAutoThree.build(), requirements)
+                                ),
 
 
                                 new ParallelRaceGroup(
                                         new SequentialCommandGroup(
                                                 new ActionCommand(midOneP1.build(), requirements),
                                                 new ParallelDeadlineGroup(
-                                                        new WaitCommand(500)
+                                                        new WaitCommand(700)
 //                                                        ,
 //                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
@@ -204,28 +205,13 @@ public class BlueClose21 extends ActionOpMode {
                                 ),
 
 
-                                new ParallelRaceGroup(
-                                        new SequentialCommandGroup(
-                                                new ActionCommand(midOneP1.build(), requirements),
-                                                new ParallelDeadlineGroup(
-                                                        new WaitCommand(500)
-//                                                        ,
-//                                                        new ActionCommand(pressGate.build(), requirements)
-                                                )
-                                        ),
-
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
-                                ),
-
                                 new ParallelCommandGroup(
-                                        new ActionCommand(midTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new ParallelRaceGroup(
-                                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem),
-                                                        new WaitCommand(900)
-                                                ),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2500),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(400),
+                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                        ),
+                                        new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),
 
                                 new ParallelCommandGroup(
@@ -257,21 +243,15 @@ public class BlueClose21 extends ActionOpMode {
             multipleTelemetry.addData("current", current);
             multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
             multipleTelemetry.update();
-//            mecanumDrive.localizer.setPose(new Pose2d(-41.2, -54.3, 0));
+            mecanumDrive.localizer.setPose(new Pose2d(-41.2, 54.3, 0));
         }
 
     }
 
     @Override
     public void run() {
-        limelightSubsystem.setPipeline(2);
+        limelightSubsystem.setPipeline(1);
         super.run();
         SavedValues.position = mecanumDrive.localizer.getPose();
-    }
-
-    @Override
-    public void end() {
-
-        intakeSubsystem.stopSensorThread();
     }
 }

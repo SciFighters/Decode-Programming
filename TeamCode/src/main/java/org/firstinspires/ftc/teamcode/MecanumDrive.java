@@ -63,9 +63,9 @@ public final class MecanumDrive extends SubsystemBase {
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
         // drive model parameters
         public double inPerTick = 0.00197416797; //0.001978956 , 0.00197416797
         public double lateralInPerTick = 0.00197416797;//0.0013678570914981494, 0.0015432081508325105
@@ -257,7 +257,7 @@ public final class MecanumDrive extends SubsystemBase {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        localizer = new DriveLocalizer(pose);
         localizer.getPose();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);

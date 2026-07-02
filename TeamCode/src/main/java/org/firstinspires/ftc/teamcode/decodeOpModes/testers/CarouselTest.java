@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
-import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
@@ -10,7 +8,6 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CarouselCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 
 @TeleOp(name = "CarouselTest", group = "tests")
 public class CarouselTest extends ActionOpMode {
@@ -24,7 +21,7 @@ public class CarouselTest extends ActionOpMode {
 
         carouselSubsystem = new CarouselSubsystem(hardwareMap);
         carouselSubsystem.resetEncoders();
-        gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new CarouselCommands.SlideDistance(carouselSubsystem, 3, 1));
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new CarouselCommands.RotateDistance(carouselSubsystem, 3, 1));
     }
 
     @Override

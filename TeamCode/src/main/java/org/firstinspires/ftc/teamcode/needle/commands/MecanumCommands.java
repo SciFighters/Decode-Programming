@@ -9,8 +9,10 @@ import com.seattlesolvers.solverslib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
+import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 
 import java.util.function.Supplier;
+
 
 public class MecanumCommands {
 
@@ -53,7 +55,7 @@ public class MecanumCommands {
         public void execute() {
             double currentX = x.get();
             double currentY = y.get();
-            if ((currentX == 0 && currentY == 0) && DischargeCommands.AutomaticAiming.shooting && AutoShooter.canLaunch(mecanumDrive.localizer.getPose()) && false) {
+            if ((Math.hypot(currentX, currentY) < 2) && DischargeCommands.AutomaticAiming.shooting && AutoShooter.canLaunch(mecanumDrive.localizer.getPose()) && SavedValues.zone == AutoShooter.Zone.FAR) {
                 Vector2d pos = mecanumDrive.localizer.getPose().position;
                 Vector2d velocity = mecanumDrive.localizer.update().linearVel;
                 if ((lastX != 0 || lastY != 0) || (holdPos.x == 0 && holdPos.y == 0)) {

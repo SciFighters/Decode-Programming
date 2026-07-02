@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.decodeSubsystems;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
@@ -26,7 +28,7 @@ public class DischargeSubsystem extends SubsystemBase {
 
     public DischargeSubsystem(HardwareMap hm) {
         flyWheelMotor = new MotorEx(hm, "flyWheelMotor", Motor.GoBILDA.BARE);
-        flyWheelMotor.encoder.setDirection(Motor.Direction.FORWARD);
+        flyWheelMotor.encoder.setDirection(Motor.Direction.REVERSE); // for testing 2.7.26
         turretMotor = hm.get(DcMotorEx.class, "turretMotor");
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rampServo = hm.get(Servo.class, "rampServo");
@@ -46,7 +48,7 @@ public class DischargeSubsystem extends SubsystemBase {
     }
 
     public void setFlyWheelRPM(double rpm) {
-        if (Math.abs(rpm) < 200) {
+        if (abs(rpm) < 200) {
             flyWheelMotor.set(0);
 //            turretMotor.setPower(0);
             return;
@@ -56,7 +58,7 @@ public class DischargeSubsystem extends SubsystemBase {
 //        rpm *= gearRatio;
         double currentRPM = getRPM();
         if (currentRPM - rpm > 280) {
-            flyWheelMotor.set(-1);
+            flyWheelMotor.set(0);
         } else if (currentRPM < rpm || shooting) {
             flyWheelMotor.set(1);
 //            turretMotor.setPower(-1);
@@ -64,7 +66,7 @@ public class DischargeSubsystem extends SubsystemBase {
             flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.07 + kP * (rpm - getRPM()));
 //            turretMotor.setPower(-kS * Math.signum(rpm) - kV * rpm + 0.04);
         }
-
+//        flyWheelMotor.set(1);
     }
 
     public void stayRPM(double rpm) {

@@ -44,8 +44,8 @@ public class FlyWheelTester extends ActionOpMode {
         B.whenPressed(() -> wantedRpm -= 100);
 //        X.whenPressed(() -> wantedAngle = 75);
 //        Y.whenPressed(() -> wantedAngle = 30);
-        A.whenPressed(() -> power += 0.01);
-        B.whenPressed(() -> power -= 0.01);
+//        A.whenPressed(() -> power += 0.01);
+//        B.whenPressed(() -> power -= 0.01);
         X.whenPressed(() -> power += 0.1);
         Y.whenPressed(() -> power -= 0.1);
 //        X.whenPressed(new Runnable() {
@@ -65,9 +65,12 @@ public class FlyWheelTester extends ActionOpMode {
 //        m2.setPower(power);
         dischargeSubsystem.setRampDegree(wantedAngle);
 //        dischargeSubsystem.setFlyWheelRPM(wantedRpm);
-        dischargeSubsystem.setFlyWheelPower(power);
+//        dischargeSubsystem.setFlyWheelPower(power);
+        dischargeSubsystem.setFlyWheelRPM(wantedRpm);
+
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
         multipleTelemetry.addData("power", dischargeSubsystem.getFlyWheelPower());
+        multipleTelemetry.addData("wanted", wantedRpm);
         multipleTelemetry.addData("angle", wantedAngle);
         multipleTelemetry.update();
         super.run();

@@ -56,11 +56,11 @@ public class RedFarCyclesFull extends ActionOpMode {
         TrajectoryActionBuilder wheatleyAutoOne = mecanumDrive.actionBuilder(mecanumDrive.localizer.getPose(), reversed)
                 .splineToConstantHeading(new Vector2d(61.4, 58), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(60, 24), -Math.PI / 2);
-        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(58, 24, Math.PI / 2), reversed)
-                .splineToConstantHeading(new Vector2d(59, 50), Math.PI / 2)
+        TrajectoryActionBuilder wheatleyAutoTwo = mecanumDrive.actionBuilder(new Pose2d(58, 24, Math.PI / 2), reversed) //make move more left
+                .splineToConstantHeading(new Vector2d(48, 52), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(58, 24), -Math.PI / 2);
-        TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(58, 24, Math.PI / 2), reversed)
-                .splineToConstantHeading(new Vector2d(50, 50), Math.PI / 2)
+        TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(58, 24, Math.PI / 2), reversed) //make move more left
+                .splineToConstantHeading(new Vector2d(38, 52), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(58, 24), -Math.PI / 2);
         TrajectoryActionBuilder stack = mecanumDrive.actionBuilder(new Pose2d(58, 24, Math.PI / 2), reversed)
                 .setTangent(Math.PI)

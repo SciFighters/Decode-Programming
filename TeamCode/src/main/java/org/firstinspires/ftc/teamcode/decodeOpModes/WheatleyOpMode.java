@@ -113,7 +113,7 @@ public class WheatleyOpMode extends ActionOpMode {
         driverLeftTrigger.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,-120 * Math.PI/180,2, teamColor));
         driverRightStick.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,Math.PI/2,1, teamColor)
                 .beforeStarting(new IntakeCommands.ClosedState(intakeSubsystem)));
-
+        systemX.whenPressed(() -> mecanumDrive.localizer.setPose(new Pose2d(63, 0, Math.PI)));
     }
 
     @Override

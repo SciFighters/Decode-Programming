@@ -74,7 +74,7 @@ public class CommandGroups {
         public StartIntake(IntakeSubsystem intake, CarouselSubsystem carousel) {
             addCommands(
                     intake.intake(),
-                    new CarouselCommands.MoveToAngle(carousel, 180)
+                    carousel.rotateToAngle(180)
             );
         }
     }
@@ -83,7 +83,7 @@ public class CommandGroups {
         public StartOuttake(IntakeSubsystem intake, CarouselSubsystem carousel) {
             addCommands(
                     intake.outtake(),
-                    new CarouselCommands.MoveToAngle(carousel, 195)
+                    carousel.rotateToAngle(195)
             );
         }
     }

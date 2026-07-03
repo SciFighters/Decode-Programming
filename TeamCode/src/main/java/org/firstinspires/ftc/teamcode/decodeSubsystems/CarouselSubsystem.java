@@ -5,7 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.FunctionalCommand;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.controller.PIDController;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -14,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class CarouselSubsystem extends SubsystemBase {
     private final DcMotorEx carouselMotor;
     double tickPerRev = 384.5;//537.6
-
+    private final PIDController pid = new PIDController(0.018, 0, 0);
 
     public final double spinConversion = tickPerRev * 132.0 / 39.0 / 3.0; // for moving the motor a third of a spin
     public ColorSensor leftColorSensor, rightColorSensor, middleColorSensor;
@@ -97,5 +100,18 @@ public class CarouselSubsystem extends SubsystemBase {
             return SensorColors.Purple;
         }
         return SensorColors.Unknown;
+    }
+
+
+    public Command rotateToAngle(double targetAngle, boolean finishWhenAtSetpoint) {
+        double tolerance = 3;
+        return new FunctionalCommand(() -> {
+        },
+                () -> setSpinPower(pid.calculate(getAngle(), targetAngle)),
+                (i) -> stop(),
+                () -> finishWhenAtSetpoint && Math.abs(getAngle() - targetAngle) < tolerance);
+    }
+    public Command rotateToAngle(double targetAngle) {
+        return rotateToAngle(targetAngle, false);
     }
 }

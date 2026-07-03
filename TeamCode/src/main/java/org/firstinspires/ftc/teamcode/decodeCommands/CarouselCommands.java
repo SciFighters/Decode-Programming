@@ -25,47 +25,6 @@ public class CarouselCommands {
 
     public static final long DEFAULT_TIMEOUT = 500; // millis
 
-    public static class MoveToAngle extends CommandBase {
-        private final CarouselSubsystem carousel;
-        private final double targetAngle;
-        private double currentAngle;
-        private final PIDController pid = new PIDController(0.018, 0, 0);
-        private int tolerance = 3;
-        private final boolean finishWhenAtSetpoint;
-
-        public MoveToAngle(CarouselSubsystem carousel, double angle) {
-            this.carousel = carousel;
-            this.targetAngle = angle;
-            finishWhenAtSetpoint = false;
-            addRequirements(carousel);
-        }
-
-        public MoveToAngle(CarouselSubsystem carousel, double angle, boolean finishWhenAtSetpoint) {
-            this.carousel = carousel;
-            this.targetAngle = angle;
-            this.finishWhenAtSetpoint = finishWhenAtSetpoint;
-            addRequirements(carousel);
-        }
-
-
-        @Override
-        public void execute() {
-            currentAngle = carousel.getAngle();
-            double power = pid.calculate(currentAngle, targetAngle);
-            carousel.setSpinPower(power);
-        }
-
-        @Override
-        public boolean isFinished() {
-            return finishWhenAtSetpoint && Math.abs(currentAngle - targetAngle) < tolerance;
-        }
-
-
-        @Override
-        public void end(boolean interrupted) {
-            carousel.stop();
-        }
-    }
 
     public static class RotateDistance extends CommandBase {
         private final double SWITCH_DIRECTION_CURRENT = 7.0;

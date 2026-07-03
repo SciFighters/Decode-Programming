@@ -4,22 +4,24 @@ import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.controller.PIDController;
+import com.seattlesolvers.solverslib.controller.wpilibcontroller.SimpleMotorFeedforward;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.BangBangController;
 
 public class DischargeSubsystem extends SubsystemBase {
-
     private final DcMotorEx turretMotor;
     public final MotorEx flyWheelMotor;
     private final Servo rampServo;
-    private final double kS = 0.07, kV = 0.00016305959, kP = 0.00133333, kI = 0.000005;//0.17,0.00025772193
+    private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.07, 0.00016305959, 0);
+    private final PIDController pid = new PIDController(0.00133333, 0.000005, 0);
+    private final BangBangController bangbang = new BangBangController(200);
     private final double ticksPerDegree = 383.6 * (198.0 / 49.0) / 360.0;
     private double startAngle;
     private final double gearRatio = 37.0 / 37; // 34:30
@@ -44,33 +46,29 @@ public class DischargeSubsystem extends SubsystemBase {
 
     public void setFlyWheelPower(double flyWheelPower) {
         flyWheelMotor.set(flyWheelPower);
-//        turretMotor.setPower(-flyWheelPower);
     }
 
     public void setFlyWheelRPM(double rpm) {
         if (abs(rpm) < 200) {
             flyWheelMotor.set(0);
-//            turretMotor.setPower(0);
             return;
         }
 
-
-//        rpm *= gearRatio;
         double currentRPM = getRPM();
-        if (currentRPM - rpm > 280) {
-            flyWheelMotor.set(0);
-        } else if (currentRPM < rpm || shooting) {
-            flyWheelMotor.set(1);
-//            turretMotor.setPower(-1);
+
+        if (bangbang.isAtSetpoint(currentRPM, rpm)) { // switching to pid for close range-error
+            flyWheelMotor.set(calculateCloseLoopOutput(currentRPM, rpm));
         } else {
-            flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.07 + kP * (rpm - getRPM()));
-//            turretMotor.setPower(-kS * Math.signum(rpm) - kV * rpm + 0.04);
+            flyWheelMotor.set(bangbang.calculate(currentRPM, rpm));
         }
-//        flyWheelMotor.set(1);
+    }
+
+    private double calculateCloseLoopOutput(double currentRPM, double setpoint) {
+        return pid.calculate(currentRPM, setpoint) + feedforward.calculate(setpoint);
     }
 
     public void stayRPM(double rpm) {
-        flyWheelMotor.set(kS * Math.signum(rpm) + kV * rpm - 0.02 + kP * (rpm - getRPM()));
+        flyWheelMotor.set(calculateCloseLoopOutput(getRPM(), rpm));
     }
 
     public double getRPM() {

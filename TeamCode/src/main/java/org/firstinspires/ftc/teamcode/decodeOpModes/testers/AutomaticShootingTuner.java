@@ -28,8 +28,8 @@ import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 @TeleOp(group = "tests")
 public class AutomaticShootingTuner extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     GamepadEx driver, system;
@@ -55,10 +55,10 @@ public class AutomaticShootingTuner extends ActionOpMode {
     public void initialize() {
         SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
 
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
 
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(63, 0), Math.PI));
 
@@ -68,11 +68,11 @@ public class AutomaticShootingTuner extends ActionOpMode {
         system = new GamepadEx(gamepad2);
         initButtons();
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX()));
-        driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem));
-        driverB.whenPressed(intakeSubsystem.closeState());
-        driverY.whenPressed(intakeSubsystem.outtake());
-        driverX.whenPressed(new CommandGroups.Shoot(intakeSubsystem,carouselSubsystem) .whenFinished(() -> CommandScheduler.getInstance().schedule(
-                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem))));
+        driverA.whenPressed(new CommandGroups.StartIntake(intake,carousel));
+        driverB.whenPressed(intake.closeState());
+        driverY.whenPressed(intake.outtake());
+        driverX.whenPressed(new CommandGroups.Shoot(intake,carousel) .whenFinished(() -> CommandScheduler.getInstance().schedule(
+                new CommandGroups.StartIntake(intake, carousel))));
         systemDPadUp.whenPressed(() -> wantedRPM += 50);
         systemDPadDown.whenPressed(() -> wantedRPM -= 50);
         systemA.whenPressed(() -> wantedDegree += 2);
@@ -80,13 +80,13 @@ public class AutomaticShootingTuner extends ActionOpMode {
         systemX.whenPressed(() -> wantedDegree += 0.2);
         systemB.whenPressed(() -> wantedDegree -= 0.2);
 
-        driverY.whenPressed(intakeSubsystem.outtake());
+        driverY.whenPressed(intake.outtake());
         driverDPadDown.whenPressed(new SequentialCommandGroup(
                 new InstantCommand(() -> work = false),
                 new WaitCommand(30000),
                 new InstantCommand(() -> work = true)
         ));
-        driverDPadUp.whenPressed(intakeSubsystem.closeState());
+        driverDPadUp.whenPressed(intake.closeState());
         systemDPadLeft.whenPressed(() -> correction +=2);
         systemDPadRight.whenPressed(() -> correction -=2);
 //        limelightSubsystem.startLimelight();

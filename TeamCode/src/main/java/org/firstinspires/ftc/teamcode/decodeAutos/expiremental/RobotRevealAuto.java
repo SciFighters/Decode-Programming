@@ -33,8 +33,8 @@ import java.util.Set;
 @Autonomous()
 public class RobotRevealAuto extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double turretStartAngle = 90;
@@ -46,11 +46,11 @@ public class RobotRevealAuto extends ActionOpMode {
         SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.RED;
         Set<Subsystem> requirements = new HashSet<>();
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         dischargeSubsystem.resetTurret();
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(61.5, 22, -Math.PI / 2));
         mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
@@ -67,23 +67,23 @@ public class RobotRevealAuto extends ActionOpMode {
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
 //                        new LimelightCommands.KalmanFilter(limelightSubsystem, mecanumDrive, dischargeSubsystem::getTurretAngle),
-                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
+                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carousel, SavedValues.teamColor),
                         new SequentialCommandGroup(
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
+                                new CommandGroups.Shoot(intake, carousel),
                                 new WaitUntilCommand(() -> dischargeSubsystem.getRPM() > 3000),
                                 new WaitCommand(1),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3000),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(3000),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
 
                                 ), new ParallelCommandGroup(
                                 new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                 new SequentialCommandGroup(
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1900),
-                                        new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                        new CommandGroups.StartIntake(intake, carousel).withTimeout(1900),
+                                        new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                 )
 
                         )

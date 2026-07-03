@@ -33,8 +33,8 @@ import java.util.Set;
 @Autonomous(name = "21 blue close full", group = "blue close")
 public class BlueClose21Full extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
 
@@ -47,11 +47,11 @@ public class BlueClose21Full extends ActionOpMode {
         SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
         Set<Subsystem> requirements = new HashSet<>();
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         dischargeSubsystem.resetTurret();
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-41.2, 54.3, 0));
         mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
@@ -107,7 +107,7 @@ public class BlueClose21Full extends ActionOpMode {
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
 //                        new LimelightCommands.KalmanFilter(limelightSubsystem, mecanumDrive, dischargeSubsystem::getTurretAngle),
-                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
+                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carousel, SavedValues.teamColor),
                         new SequentialCommandGroup(
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
@@ -115,14 +115,14 @@ public class BlueClose21Full extends ActionOpMode {
 //                                                new InstantCommand(() -> DischargeSubsystem.shooting = true),
 //                                                new WaitCommand(600),
 //                                                new InstantCommand(() -> DischargeSubsystem.shooting = false),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2300),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2300),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
 
                                         )
                                 ),
@@ -136,16 +136,16 @@ public class BlueClose21Full extends ActionOpMode {
                                                 )
                                         ),
 
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        new CommandGroups.StartIntake(intake, carousel)
                                 ),
 
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(400),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(600),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(400),
+                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(600),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
 
                                 new ParallelRaceGroup(
@@ -158,23 +158,23 @@ public class BlueClose21Full extends ActionOpMode {
                                                 )
                                         ),
 
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        new CommandGroups.StartIntake(intake, carousel)
                                 ),
 
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(midTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(400),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(400),
+                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(500),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1400),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(300),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1400),
+                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)),
 
@@ -189,33 +189,33 @@ public class BlueClose21Full extends ActionOpMode {
                                                 )
                                         ),
 
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        new CommandGroups.StartIntake(intake, carousel)
                                 ),
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(midTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new ParallelRaceGroup(
-                                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem),
+                                                        new CommandGroups.StartIntake(intake, carousel),
                                                         new WaitCommand(900)
                                                 ),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(500),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
 
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2500),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(400),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2500),
+                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(400),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(prepareGate.build(), requirements),
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        new CommandGroups.StartIntake(intake, carousel)
                                 )
 
 
@@ -257,6 +257,6 @@ public class BlueClose21Full extends ActionOpMode {
     @Override
     public void end() {
 
-        intakeSubsystem.stopSensorThread();
+        intake.stopSensorThread();
     }
 }

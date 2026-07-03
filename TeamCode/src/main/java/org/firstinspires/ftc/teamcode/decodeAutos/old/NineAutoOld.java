@@ -29,8 +29,8 @@ import java.util.Set;
 @Autonomous
 public class NineAutoOld extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
@@ -38,11 +38,11 @@ public class NineAutoOld extends ActionOpMode {
     @Override
     public void initialize() {
         Set<Subsystem> requirements = new HashSet<>();
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         dischargeSubsystem.resetTurret();
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-47.2, 47.7, Math.PI));
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
         boolean reversed = SavedValues.teamColor == AutoShooter.TeamColor.BLUE;
@@ -76,28 +76,28 @@ public class NineAutoOld extends ActionOpMode {
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
 //                        new LimelightCommands.KalmanFilter(limelightSubsystem,mecanumDrive,dischargeSubsystem::getTurretAngle),
-                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
+                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carousel, SavedValues.teamColor),
                         new SequentialCommandGroup(
                                 new ActionCommand(wheatleyAutoOne.build(), requirements),
 //                                new WaitCommand(4000),
 
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
+                                new CommandGroups.Shoot(intake, carousel),
 //                                new WaitCommand(10000),
                                 new ParallelRaceGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        new CommandGroups.StartIntake(intake, carousel)
                                 ),
 
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
+                                new CommandGroups.Shoot(intake, carousel),
 
                                 new ParallelRaceGroup(
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem),
+                                        new CommandGroups.StartIntake(intake, carousel),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
 
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
+                                new CommandGroups.Shoot(intake, carousel),
 
-                                intakeSubsystem.closeState()
+                                intake.closeState()
 
 
                         )
@@ -114,6 +114,6 @@ public class NineAutoOld extends ActionOpMode {
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.update();
         SavedValues.position = mecanumDrive.localizer.getPose();
-        SavedValues.carouselTicks = carouselSubsystem.getPosition();
+        SavedValues.carouselTicks = carousel.getPosition();
     }
 }

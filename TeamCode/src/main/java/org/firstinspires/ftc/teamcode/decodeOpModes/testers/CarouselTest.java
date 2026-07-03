@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 
 @TeleOp(name = "CarouselTest", group = "tests")
 public class CarouselTest extends ActionOpMode {
-    CarouselSubsystem carouselSubsystem;
+    CarouselSubsystem carousel;
     GamepadEx gamepadEx;
     Button A, B;
 
@@ -19,16 +19,16 @@ public class CarouselTest extends ActionOpMode {
     public void initialize() {
         gamepadEx = new GamepadEx(gamepad1);
 
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
-        gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new CarouselCommands.RotateDistance(carouselSubsystem, 3, 1));
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A).whenPressed(new CarouselCommands.RotateDistance(carousel, 3, 1));
     }
 
     @Override
     public void run() {
-        carouselSubsystem.setSpinPower(gamepad1.left_stick_x);
-        multipleTelemetry.addData("pos", carouselSubsystem.getPosition());
-        multipleTelemetry.addData("angle", carouselSubsystem.getAngle());
+        carousel.setSpinPower(gamepad1.left_stick_x);
+        multipleTelemetry.addData("pos", carousel.getPosition());
+        multipleTelemetry.addData("angle", carousel.getAngle());
         multipleTelemetry.update();
         super.run();
     }

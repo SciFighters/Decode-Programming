@@ -18,7 +18,7 @@ public class TouchSensorTester extends ActionOpMode {
     double lastTime, currentTime;
     boolean last = false;
     DigitalChannel left;
-    IntakeSubsystem intakeSubsystem;
+    IntakeSubsystem intake;
     int i = 0;
     GamepadEx gamepad;
     Button A, B, X, Y;
@@ -26,7 +26,7 @@ public class TouchSensorTester extends ActionOpMode {
 
     @Override
     public void initialize() {
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         gamepad = new GamepadEx(gamepad1);
         A = new GamepadButton(gamepad, GamepadKeys.Button.A);
         Y = new GamepadButton(gamepad, GamepadKeys.Button.Y);
@@ -34,9 +34,9 @@ public class TouchSensorTester extends ActionOpMode {
         B = new GamepadButton(gamepad, GamepadKeys.Button.B);
 
 
-        X.whenPressed(intakeSubsystem.intake());
-        Y.whenPressed(intakeSubsystem.outtake());
-        B.whenPressed(intakeSubsystem.closeState());
+        X.whenPressed(intake.intake());
+        Y.whenPressed(intake.outtake());
+        B.whenPressed(intake.closeState());
     }
 
     @Override
@@ -44,15 +44,15 @@ public class TouchSensorTester extends ActionOpMode {
         super.run();
 
         multipleTelemetry.addData("count", IntakeSubsystem.count);
-        multipleTelemetry.addData("rightSwitchState", intakeSubsystem.rightSwitchState());
-        multipleTelemetry.addData("leftSwitchState", intakeSubsystem.leftSwitchState());
-//        multipleTelemetry.addData("left",intakeSubsystem.leftSwitch.getState()  ? 0:1);
-//        multipleTelemetry.addData("right",intakeSubsystem.rightSwitch.getState() ? 0:1);
+        multipleTelemetry.addData("rightSwitchState", intake.rightSwitchState());
+        multipleTelemetry.addData("leftSwitchState", intake.leftSwitchState());
+//        multipleTelemetry.addData("left",intake.leftSwitch.getState()  ? 0:1);
+//        multipleTelemetry.addData("right",intake.rightSwitch.getState() ? 0:1);
         multipleTelemetry.update();
     }
 
     @Override
     public void end() {
-        intakeSubsystem.stopSensorThread();
+        intake.stopSensorThread();
     }
 }

@@ -32,8 +32,8 @@ import java.util.Set;
 @Autonomous(name = "15 blue far")
 public class BlueFar15 extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
@@ -46,11 +46,11 @@ public class BlueFar15 extends ActionOpMode {
         SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
         Set<Subsystem> requirements = new HashSet<>();
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         dischargeSubsystem.resetTurret();
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(61.5, 22, Math.PI / 2));
         mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
@@ -90,48 +90,48 @@ public class BlueFar15 extends ActionOpMode {
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
 //                        new LimelightCommands.KalmanFilter(limelightSubsystem, mecanumDrive, dischargeSubsystem::getTurretAngle),
-                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
+                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carousel, SavedValues.teamColor),
                         new SequentialCommandGroup(
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
+                                new CommandGroups.Shoot(intake, carousel),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1850),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1850),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
 
                                 ),
                                 new ParallelRaceGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        new CommandGroups.StartIntake(intake, carousel)
                                 ),
                                 new WaitCommand(100),
-                                intakeSubsystem.closeState(),
+                                intake.closeState(),
                                 new WaitCommand(800),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(300),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1300),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1300),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(3500),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(prepareGate.build(), requirements),
-                                        intakeSubsystem.closeState()
+                                        intake.closeState()
                                 )
 
 

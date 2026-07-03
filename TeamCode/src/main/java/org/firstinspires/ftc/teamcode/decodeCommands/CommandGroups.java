@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.decodeCommands;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.util.Range;
+import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
@@ -20,13 +21,13 @@ import java.util.function.Supplier;
 
 public class CommandGroups {
     public static class Shoot extends SequentialCommandGroup {
-        public Shoot(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
+        public Shoot(IntakeSubsystem intake, CarouselSubsystem carousel) {
             addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
-                    intakeSubsystem.transfer(),
+                    intake.transfer(),
 //                    new WaitCommand(100),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
-                    new CarouselCommands.Discharge(carouselSubsystem),
+                    new CarouselCommands.Discharge(carousel),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
             );
         }
@@ -41,11 +42,11 @@ public class CommandGroups {
     }
 
     public static class PrepareShooting extends SequentialCommandGroup {
-        public PrepareShooting(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem, MecanumDrive mecanumDrive) {
+        public PrepareShooting(IntakeSubsystem intake, CarouselSubsystem carousel, MecanumDrive mecanumDrive) {
 
             addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
-                    intakeSubsystem.transfer(),
+                    intake.transfer(),
                     new WaitUntilCommand(() -> {
                         PoseVelocity2d movement = mecanumDrive.localizer.update();
                         Pose2d pos = mecanumDrive.localizer.getPose();
@@ -54,7 +55,7 @@ public class CommandGroups {
                         return AutoShooter.canLaunch(new Pose2d(pos.position.x + movementEffect.getX(), pos.position.y + movementEffect.getY(), pos.heading.toDouble()));
                     }),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
-                    new CarouselCommands.Discharge(carouselSubsystem),
+                    new CarouselCommands.Discharge(carousel),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
 
             );
@@ -70,19 +71,19 @@ public class CommandGroups {
     }
 
     public static class StartIntake extends ParallelCommandGroup {
-        public StartIntake(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
+        public StartIntake(IntakeSubsystem intake, CarouselSubsystem carousel) {
             addCommands(
-                    intakeSubsystem.intake(),
-                    new CarouselCommands.MoveToAngle(carouselSubsystem, 180)
+                    intake.intake(),
+                    new CarouselCommands.MoveToAngle(carousel, 180)
             );
         }
     }
 
     public static class StartOuttake extends ParallelCommandGroup {
-        public StartOuttake(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
+        public StartOuttake(IntakeSubsystem intake, CarouselSubsystem carousel) {
             addCommands(
-                    intakeSubsystem.outtake(),
-                    new CarouselCommands.MoveToAngle(carouselSubsystem, 195)
+                    intake.outtake(),
+                    new CarouselCommands.MoveToAngle(carousel, 195)
             );
         }
     }
@@ -137,14 +138,14 @@ public class CommandGroups {
     }
 
     public static class SortedShooting extends SequentialCommandGroup {
-        public SortedShooting(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
+        public SortedShooting(IntakeSubsystem intake, CarouselSubsystem carousel) {
             addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
-                    intakeSubsystem.sortState(),
-                    new CarouselCommands.RotateDistance(carouselSubsystem, -0.56, 0.6).withTimeout(1000).whenFinished(() -> carouselSubsystem.setSpinPower(0)),
+                    intake.sortState(),
+                    new CarouselCommands.RotateDistance(carousel, -0.56, 0.6).withTimeout(1000).whenFinished(() -> carousel.setSpinPower(0)),
 //                    new WaitCommand(200),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
-                    new CarouselCommands.SmartDischarge(carouselSubsystem, intakeSubsystem),
+                    new CarouselCommands.SmartDischarge(carousel, intake),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
 
             );

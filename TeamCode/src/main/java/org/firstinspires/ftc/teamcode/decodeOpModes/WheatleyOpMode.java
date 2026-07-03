@@ -25,8 +25,8 @@ import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 @TeleOp
 public class WheatleyOpMode extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     GamepadEx driver, system;
@@ -56,9 +56,9 @@ public class WheatleyOpMode extends ActionOpMode {
         time = new ElapsedTime();
         teamColor = SavedValues.teamColor;
 
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
+        carousel = new CarouselSubsystem(hardwareMap);
 
         mecanumDrive = new MecanumDrive(hardwareMap, SavedValues.position);
         mecanumDrive.driveMode();
@@ -70,27 +70,27 @@ public class WheatleyOpMode extends ActionOpMode {
         initButtons();
 
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX() * 1.25, () -> 1 - 0.5 * gamepad1.right_trigger, teamColor));
-        dischargeSubsystem.setDefaultCommand(new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, teamColor));
-        driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem));
+        dischargeSubsystem.setDefaultCommand(new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carousel, teamColor));
+        driverA.whenPressed(new CommandGroups.StartIntake(intake, carousel));
         driverB.whenPressed(
-                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                         .whenFinished(() -> CommandScheduler.getInstance().schedule(
-                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)))
+                                new CommandGroups.StartIntake(intake, carousel)))
         );
         driverX.whenPressed(
-                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem)
+                new CommandGroups.Shoot(intake, carousel)
                         .whenFinished(() -> CommandScheduler.getInstance().schedule(
-                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)))
+                                new CommandGroups.StartIntake(intake, carousel)))
         );
         driverDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.aim = !DischargeCommands.AutomaticAiming.aim);
 //        driverLeftBumper.whenPressed(() -> IntakeCommands.IntakeState.resetCount = !IntakeCommands.IntakeState.resetCount);
 
-        driverY.whenPressed(new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem));
-        driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
+        driverY.whenPressed(new CommandGroups.StartOuttake(intake, carousel));
+        driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intake, carousel)
                 .whenFinished(() -> CommandScheduler.getInstance().schedule(
-                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)))
+                        new CommandGroups.StartIntake(intake, carousel)))
         );
-        driverRightBumper.whenPressed(intakeSubsystem.closeState());
+        driverRightBumper.whenPressed(intake.closeState());
         mecanumDrive.lazyImu.get().resetYaw();
         systemDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);
         systemDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection -= 2);
@@ -111,7 +111,7 @@ public class WheatleyOpMode extends ActionOpMode {
                     schedule(new  DischargeCommands.setState(dischargeSubsystem,0,60, 180));}));
         driverLeftTrigger.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,-120 * Math.PI/180,2, teamColor));
         driverRightStick.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,Math.PI/2,1, teamColor)
-                .beforeStarting(intakeSubsystem.closeState()));
+                .beforeStarting(intake.closeState()));
         systemX.whenPressed(() -> mecanumDrive.localizer.setPose(new Pose2d(63, 0, Math.PI)));
     }
 
@@ -147,11 +147,11 @@ public class WheatleyOpMode extends ActionOpMode {
 
         multipleTelemetry.addData("------------Carousel------------",0);
         multipleTelemetry.addData("carouselCount", IntakeSubsystem.count);
-//        multipleTelemetry.addData("rightSwitchState", intakeSubsystem.rightSwitchState());
-//        multipleTelemetry.addData("leftSwitchState", intakeSubsystem.leftSwitchState());
+//        multipleTelemetry.addData("rightSwitchState", intake.rightSwitchState());
+//        multipleTelemetry.addData("leftSwitchState", intake.leftSwitchState());
 //        multipleTelemetry.addData("SwitchLoopCount", IntakeSubsystem.switchLoopCount);
-        multipleTelemetry.addData("carouselAngle", carouselSubsystem.getAngle());
-        multipleTelemetry.addData("carouselPosition", carouselSubsystem.getPosition());
+        multipleTelemetry.addData("carouselAngle", carousel.getAngle());
+        multipleTelemetry.addData("carouselPosition", carousel.getPosition());
 
         multipleTelemetry.addData("----------------Discharge-------------",0);
         multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
@@ -167,7 +167,7 @@ public class WheatleyOpMode extends ActionOpMode {
     @Override
     public void end() {
         limelightSubsystem.stopLimelight();
-        intakeSubsystem.stopSensorThread();
+        intake.stopSensorThread();
     }
 
     public void initButtons() {

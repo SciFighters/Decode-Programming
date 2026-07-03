@@ -22,13 +22,13 @@ public class DistanceSensorTester extends ActionOpMode {
     int count = 0;
     double leftDistance = 0, rightDistance = 0;
     double start = 0, fStart = 0;
-    IntakeSubsystem intakeSubsystem;
+    IntakeSubsystem intake;
     MecanumDrive mecanumDrive;
 
     @Override
     public void initialize() {
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-63, 0, -Math.PI));
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         left = hardwareMap.get(Rev2mDistanceSensor.class, "leftDistance");
         right = hardwareMap.get(Rev2mDistanceSensor.class, "rightDistance");
         time = new ElapsedTime();
@@ -41,15 +41,15 @@ public class DistanceSensorTester extends ActionOpMode {
     public void run() {
         i++;
         if (count < 3) {
-            intakeSubsystem.setPower(gamepad1.left_stick_x);
+            intake.setPower(gamepad1.left_stick_x);
             start = time.seconds();
             fStart = start;
         } else if (count >= 3) {
 //            start = time.seconds();
 //            if(start - fStart > 0.3){
-            intakeSubsystem.setPower(0);
+            intake.setPower(0);
         } else {
-            intakeSubsystem.setPower(-0.5);
+            intake.setPower(-0.5);
             if (time.seconds() - start > 0.7) {
                 count = 3;
             }

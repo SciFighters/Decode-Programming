@@ -34,8 +34,8 @@ import java.util.Set;
 @Autonomous(name = "18 red close V2", group = "red close")
 public class RedClose18V2 extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
@@ -48,11 +48,11 @@ public class RedClose18V2 extends ActionOpMode {
         SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.RED;
         Set<Subsystem> requirements = new HashSet<>();
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         dischargeSubsystem.resetTurret();
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-41.2, 54.3, 0));
         mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
@@ -97,30 +97,30 @@ public class RedClose18V2 extends ActionOpMode {
 
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
-                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
+                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carousel, SavedValues.teamColor),
                         new SequentialCommandGroup(
-                                intakeSubsystem.open(),
+                                intake.open(),
                                 new ParallelCommandGroup(
                                         new ActionCommand(shootPreload.build(), requirements),
-                                        new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                        new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                 ),
-                                intakeSubsystem.open(),
+                                intake.open(),
                                 new ParallelCommandGroup(
                                         new ActionCommand(spikeOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1500),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
-                                intakeSubsystem.open(),
+                                intake.open(),
                                 new ParallelCommandGroup(
                                         new ActionCommand(spikeTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1500),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
-                                intakeSubsystem.open(),
+                                intake.open(),
                                 new ParallelRaceGroup(
                                         new SequentialCommandGroup(
                                                 new ActionCommand(gateCycle.build(), requirements),
@@ -130,7 +130,7 @@ public class RedClose18V2 extends ActionOpMode {
                                                 )
                                         ),
 
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        new CommandGroups.StartIntake(intake, carousel)
                                 ),
 
 
@@ -138,34 +138,34 @@ public class RedClose18V2 extends ActionOpMode {
                                         new ActionCommand(gateCycleP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(200),
-                                                intakeSubsystem.outtake().withTimeout(550),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                intake.outtake().withTimeout(550),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
 
 
-                                intakeSubsystem.open(),
+                                intake.open(),
                                 new ParallelCommandGroup(
                                         new ActionCommand(spikeThree.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2300),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(400),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2300),
+                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(400),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
-                                intakeSubsystem.open(),
+                                intake.open(),
                                 new ParallelCommandGroup(
                                         new ActionCommand(loadingZone.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2700),
-                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2700),
+                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(500),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
 
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(park.build(), requirements),
-                                        intakeSubsystem.closeState()
+                                        intake.closeState()
                                 )
 
 

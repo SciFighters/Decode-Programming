@@ -53,7 +53,7 @@ public class DischargeCommands {
     public static class AutomaticAiming extends CommandBase {
         DischargeSubsystem dischargeSubsystem;
         LimelightSubsystem limelightSubsystem;
-        CarouselSubsystem carouselSubsystem;
+        CarouselSubsystem carousel;
         MecanumDrive mecanumDrive;
         AutoShooter.TeamColor teamColor;
         public static double kp = 0.022;//0.018
@@ -78,10 +78,10 @@ public class DischargeCommands {
         double currentTime, lastTime, deltaTime;
         double integral = 0;
 
-        public AutomaticAiming(DischargeSubsystem dischargeSubsystem, LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, CarouselSubsystem carouselSubsystem, AutoShooter.TeamColor teamColor) {
+        public AutomaticAiming(DischargeSubsystem dischargeSubsystem, LimelightSubsystem limelightSubsystem, MecanumDrive mecanumDrive, CarouselSubsystem carousel, AutoShooter.TeamColor teamColor) {
             this.dischargeSubsystem = dischargeSubsystem;
             this.limelightSubsystem = limelightSubsystem;
-            this.carouselSubsystem = carouselSubsystem;
+            this.carousel = carousel;
             this.mecanumDrive = mecanumDrive;
             this.teamColor = teamColor;
             addRequirements(dischargeSubsystem);

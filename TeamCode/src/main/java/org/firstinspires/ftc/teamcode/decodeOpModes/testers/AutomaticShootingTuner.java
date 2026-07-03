@@ -68,11 +68,11 @@ public class AutomaticShootingTuner extends ActionOpMode {
         system = new GamepadEx(gamepad2);
         initButtons();
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX()));
-        driverA.whenPressed(new CommandGroups.StartIntake(intake,carousel));
+        driverA.whenPressed(CommandGroups.startIntake(intake,carousel));
         driverB.whenPressed(intake.closeState());
         driverY.whenPressed(intake.outtake());
         driverX.whenPressed(new CommandGroups.Shoot(intake,carousel) .whenFinished(() -> CommandScheduler.getInstance().schedule(
-                new CommandGroups.StartIntake(intake, carousel))));
+                CommandGroups.startIntake(intake, carousel))));
         systemDPadUp.whenPressed(() -> wantedRPM += 50);
         systemDPadDown.whenPressed(() -> wantedRPM -= 50);
         systemA.whenPressed(() -> wantedDegree += 2);
@@ -107,7 +107,7 @@ public class AutomaticShootingTuner extends ActionOpMode {
 
         if(work){
             dischargeSubsystem.setFlyWheelRPM(wantedRPM);
-            dischargeSubsystem.setRampDegree(wantedDegree);
+            dischargeSubsystem.ramp.setRampDegree(wantedDegree);
         }else{
             dischargeSubsystem.setFlyWheelRPM(0);
         }

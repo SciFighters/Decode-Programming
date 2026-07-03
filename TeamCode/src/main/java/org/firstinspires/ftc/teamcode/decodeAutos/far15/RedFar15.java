@@ -96,14 +96,14 @@ public class RedFar15 extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1850),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1850),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
 
                                 ),
                                 new ParallelRaceGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
-                                        new CommandGroups.StartIntake(intake, carousel)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
                                 new WaitCommand(100),
                                 intake.closeState(),
@@ -117,14 +117,14 @@ public class RedFar15 extends ActionOpMode {
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(3500),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(3500),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)

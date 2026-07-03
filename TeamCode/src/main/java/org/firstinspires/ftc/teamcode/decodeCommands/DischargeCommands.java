@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.LimelightSubsystem;
 
 @Config
 public class DischargeCommands {
-
     public static class setState extends CommandBase {
         DischargeSubsystem dischargeSubsystem;
         double flyWheelRPM;
@@ -37,7 +36,7 @@ public class DischargeCommands {
         @Override
         public void initialize() {
             canShoot = false;
-            dischargeSubsystem.setRampDegree(rampDegree);
+            dischargeSubsystem.ramp.setRampDegree(rampDegree);
         }
 
         @Override
@@ -123,7 +122,7 @@ public class DischargeCommands {
                         currentPos.position.y + mecanumToTurret.getY()), currentPos.heading.toDouble()))) {
                     double[] launchVector = AutoShooter.getLaunchVector(new Pose2d(new Vector2d(currentPos.position.x + mecanumToTurret.getX() + movementEffect.getX(),
                             currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY()), currentPos.heading.toDouble()), teamColor);
-                    dischargeSubsystem.setRampDegree(launchVector[0]);
+                    dischargeSubsystem.ramp.setRampDegree(launchVector[0]);
                     dischargeSubsystem.setFlyWheelRPM(launchVector[1] + rpmCorrection);
                     double delta = Math.abs(dischargeSubsystem.getRPM() - (launchVector[1] + rpmCorrection));
                     atSpeed = delta < 120;
@@ -134,7 +133,7 @@ public class DischargeCommands {
                             currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY() / time);
                     double[] launchVector = AutoShooter.getLaunchVector(new Pose2d(new Vector2d(closest.getX(),
                             closest.getY()), currentPos.heading.toDouble()), teamColor);
-                    dischargeSubsystem.setRampDegree(launchVector[0]);
+                    dischargeSubsystem.ramp.setRampDegree(launchVector[0]);
                     dischargeSubsystem.setFlyWheelRPM(launchVector[1] + rpmCorrection);
                     double delta = Math.abs(dischargeSubsystem.getRPM() - (launchVector[1] + rpmCorrection));
                     atSpeed = delta < 120;
@@ -145,7 +144,7 @@ public class DischargeCommands {
                             currentPos.position.y + mecanumToTurret.getY() + movementEffect.getY());
                     double[] launchVector = AutoShooter.getLaunchVector(new Pose2d(new Vector2d(closest.getX(),
                             closest.getY()), currentPos.heading.toDouble()), teamColor);
-                    dischargeSubsystem.setRampDegree(launchVector[0]);
+                    dischargeSubsystem.ramp.setRampDegree(launchVector[0]);
                     dischargeSubsystem.stayRPM(launchVector[1] + rpmCorrection);
                     atSpeed = false;
                 }
@@ -153,7 +152,7 @@ public class DischargeCommands {
                 lastMovement = movementEffect.div(time);
             } else {
                 inRange = true;
-                dischargeSubsystem.setRampDegree(41);
+                dischargeSubsystem.ramp.setRampDegree(41);
                 dischargeSubsystem.setFlyWheelRPM(3000 + rpmCorrection);
                 dischargeSubsystem.setTurretPower(0);
                 atSpeed = true;

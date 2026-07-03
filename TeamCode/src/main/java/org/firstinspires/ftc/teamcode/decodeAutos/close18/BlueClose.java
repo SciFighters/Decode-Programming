@@ -114,7 +114,7 @@ public class BlueClose extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
 
                                         )
@@ -126,7 +126,7 @@ public class BlueClose extends ActionOpMode {
 //                                new WaitCommand(500),
                                 new ParallelRaceGroup(
                                         new ActionCommand(midOneP1.build(), requirements),
-                                        new CommandGroups.StartIntake(intake, carousel)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(pressGate.build(), requirements).withTimeout(450),
@@ -138,14 +138,14 @@ public class BlueClose extends ActionOpMode {
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(500),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(500),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
 
 
                                 new ParallelRaceGroup(
                                         new ActionCommand(midOneP1.build(), requirements),
-                                        new CommandGroups.StartIntake(intake, carousel)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(pressGate.build(), requirements).withTimeout(650),
@@ -156,12 +156,12 @@ public class BlueClose extends ActionOpMode {
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(500),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(500),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
                                 new ParallelRaceGroup(
                                         new ActionCommand(midOneP1.build(), requirements),
-                                        new CommandGroups.StartIntake(intake, carousel)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(pressGate.build(), requirements).withTimeout(650),
@@ -172,12 +172,12 @@ public class BlueClose extends ActionOpMode {
                                         new ActionCommand(midTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(500),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(500),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1400),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1400),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)),

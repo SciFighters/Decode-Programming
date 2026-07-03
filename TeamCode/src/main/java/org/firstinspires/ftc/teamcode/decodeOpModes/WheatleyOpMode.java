@@ -71,24 +71,24 @@ public class WheatleyOpMode extends ActionOpMode {
 
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX() * 1.25, () -> 1 - 0.5 * gamepad1.right_trigger, teamColor));
         dischargeSubsystem.setDefaultCommand(new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carousel, teamColor));
-        driverA.whenPressed(new CommandGroups.StartIntake(intake, carousel));
+        driverA.whenPressed(CommandGroups.startIntake(intake, carousel));
         driverB.whenPressed(
                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                         .whenFinished(() -> CommandScheduler.getInstance().schedule(
-                                new CommandGroups.StartIntake(intake, carousel)))
+                                CommandGroups.startIntake(intake, carousel)))
         );
         driverX.whenPressed(
                 new CommandGroups.Shoot(intake, carousel)
                         .whenFinished(() -> CommandScheduler.getInstance().schedule(
-                                new CommandGroups.StartIntake(intake, carousel)))
+                                CommandGroups.startIntake(intake, carousel)))
         );
         driverDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.aim = !DischargeCommands.AutomaticAiming.aim);
 //        driverLeftBumper.whenPressed(() -> IntakeCommands.IntakeState.resetCount = !IntakeCommands.IntakeState.resetCount);
 
-        driverY.whenPressed(new CommandGroups.StartOuttake(intake, carousel));
-        driverLeftBumper.whenPressed(new CommandGroups.SortedShooting(intake, carousel)
+        driverY.whenPressed(CommandGroups.startOuttake(intake, carousel));
+        driverLeftBumper.whenPressed(CommandGroups.sortedShooting(intake, carousel)
                 .whenFinished(() -> CommandScheduler.getInstance().schedule(
-                        new CommandGroups.StartIntake(intake, carousel)))
+                        CommandGroups.startIntake(intake, carousel)))
         );
         driverRightBumper.whenPressed(intake.closeState());
         mecanumDrive.lazyImu.get().resetYaw();
@@ -154,10 +154,10 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addData("carouselPosition", carousel.getPosition());
 
         multipleTelemetry.addData("----------------Discharge-------------",0);
-        multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
-        multipleTelemetry.addData("turret Ticks", dischargeSubsystem.getTurretPosition());
-        multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
-        multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
+        multipleTelemetry.addData("turretAngle", dischargeSubsystem.turret.getAngle());
+        multipleTelemetry.addData("turret Ticks", dischargeSubsystem.turret.getPosition());
+        multipleTelemetry.addData("rpm", dischargeSubsystem.flywheel.getRPM());
+        multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flywheel.getPower());
         multipleTelemetry.addData("correction", DischargeCommands.AutomaticAiming.turretCorrection);
 
         multipleTelemetry.update();

@@ -85,13 +85,13 @@ public class NineAutoOld extends ActionOpMode {
 //                                new WaitCommand(10000),
                                 new ParallelRaceGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
-                                        new CommandGroups.StartIntake(intake, carousel)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
 
                                 new CommandGroups.Shoot(intake, carousel),
 
                                 new ParallelRaceGroup(
-                                        new CommandGroups.StartIntake(intake, carousel),
+                                        CommandGroups.startIntake(intake, carousel),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
 

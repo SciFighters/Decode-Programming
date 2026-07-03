@@ -96,14 +96,14 @@ public class BlueFar15Sorted extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1850),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1850),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
 
                                 ),
                                 new ParallelRaceGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
-                                        new CommandGroups.StartIntake(intake, carousel)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
                                 new WaitCommand(100),
                                 intake.closeState(),
@@ -112,20 +112,20 @@ public class BlueFar15Sorted extends ActionOpMode {
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(300),
-                                                new CommandGroups.SortedShooting(intake, carousel))
+                                                CommandGroups.sortedShooting(intake, carousel))
                                 ),
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1300),
-                                                new CommandGroups.SortedShooting(intake, carousel)
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1300),
+                                                CommandGroups.sortedShooting(intake, carousel)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(3500),
-                                                new CommandGroups.SortedShooting(intake, carousel)
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(3500),
+                                                CommandGroups.sortedShooting(intake, carousel)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),

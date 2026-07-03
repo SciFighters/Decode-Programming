@@ -70,22 +70,18 @@ public class CommandGroups {
         }
     }
 
-    public static class StartIntake extends ParallelCommandGroup {
-        public StartIntake(IntakeSubsystem intake, CarouselSubsystem carousel) {
-            addCommands(
-                    intake.intake(),
-                    carousel.rotateToAngle(180)
-            );
-        }
+    public static Command startIntake(IntakeSubsystem intake, CarouselSubsystem carousel) {
+        return new ParallelCommandGroup(
+                intake.intake(),
+                carousel.rotateToAngle(180)
+        );
     }
 
-    public static class StartOuttake extends ParallelCommandGroup {
-        public StartOuttake(IntakeSubsystem intake, CarouselSubsystem carousel) {
-            addCommands(
-                    intake.outtake(),
-                    carousel.rotateToAngle(195)
-            );
-        }
+    public static Command startOuttake(IntakeSubsystem intake, CarouselSubsystem carousel) {
+        return new ParallelCommandGroup(
+                intake.outtake(),
+                carousel.rotateToAngle(195)
+        );
     }
 
 
@@ -137,20 +133,15 @@ public class CommandGroups {
         }
     }
 
-    public static class SortedShooting extends SequentialCommandGroup {
-        public SortedShooting(IntakeSubsystem intake, CarouselSubsystem carousel) {
-            addCommands(
-                    new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
-                    intake.sortState(),
-                    new CarouselCommands.RotateDistance(carousel, -0.56, 0.6).withTimeout(1000).whenFinished(() -> carousel.setSpinPower(0)),
+    public static Command sortedShooting(IntakeSubsystem intake, CarouselSubsystem carousel) {
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
+                intake.sortState(),
+                new CarouselCommands.RotateDistance(carousel, -0.56, 0.6).withTimeout(1000).whenFinished(() -> carousel.setSpinPower(0)),
 //                    new WaitCommand(200),
-                    new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
-                    new CarouselCommands.SmartDischarge(carousel, intake),
-                    new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
-
-            );
-        }
+                new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
+                new CarouselCommands.SmartDischarge(carousel, intake),
+                new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
+        );
     }
-
-
 }

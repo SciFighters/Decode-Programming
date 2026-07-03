@@ -95,7 +95,7 @@ public class BlueClose12 extends ActionOpMode {
                                 ),
                                 new ParallelRaceGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
-                                        new CommandGroups.StartIntake(intake, carousel)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
@@ -104,14 +104,14 @@ public class BlueClose12 extends ActionOpMode {
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1400),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1400),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(3500),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(3500),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)

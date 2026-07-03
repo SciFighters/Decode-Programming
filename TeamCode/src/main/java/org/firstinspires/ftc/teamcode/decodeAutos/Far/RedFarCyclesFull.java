@@ -79,7 +79,7 @@ public class RedFarCyclesFull extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2500),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2500),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
 
@@ -87,47 +87,47 @@ public class RedFarCyclesFull extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(stack.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoThree.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoThree.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
@@ -145,12 +145,12 @@ public class RedFarCyclesFull extends ActionOpMode {
         if (time.seconds() > 1) {
             int current = limelightSubsystem.getMotif();
             SavedValues.startMotif = (current != -1) ? current : SavedValues.startMotif;
-            double power = -(turretStartAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
-            if (Math.abs(turretStartAngle - dischargeSubsystem.getTurretAngle()) < 5) {
+            double power = -(turretStartAngle - dischargeSubsystem.turret.getAngle()) * 0.018;
+            if (Math.abs(turretStartAngle - dischargeSubsystem.turret.getAngle()) < 5) {
                 power = 0;
             }
             power = Range.clip(power, -0.3, 0.3);
-            dischargeSubsystem.setTurretPower(power);
+            dischargeSubsystem.turret.setPower(power);
             multipleTelemetry.addData("used", SavedValues.startMotif);
             multipleTelemetry.addData("current", current);
             multipleTelemetry.update();
@@ -167,6 +167,6 @@ public class RedFarCyclesFull extends ActionOpMode {
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.update();
         SavedValues.position = mecanumDrive.localizer.getPose();
-        SavedValues.turretAngle = dischargeSubsystem.getTurretAngle();
+        SavedValues.turretAngle = dischargeSubsystem.turret.getAngle();
     }
 }

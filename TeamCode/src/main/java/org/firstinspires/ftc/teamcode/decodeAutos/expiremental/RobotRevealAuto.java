@@ -75,14 +75,14 @@ public class RobotRevealAuto extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(3000),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(3000),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
 
                                 ), new ParallelCommandGroup(
                                 new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                 new SequentialCommandGroup(
-                                        new CommandGroups.StartIntake(intake, carousel).withTimeout(1900),
+                                        CommandGroups.startIntake(intake, carousel).withTimeout(1900),
                                         new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                 )
 

@@ -108,7 +108,7 @@ public class RedClose18V2 extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(spikeOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1500),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1500),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
@@ -116,7 +116,7 @@ public class RedClose18V2 extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(spikeTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(1500),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1500),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
@@ -130,7 +130,7 @@ public class RedClose18V2 extends ActionOpMode {
                                                 )
                                         ),
 
-                                        new CommandGroups.StartIntake(intake, carousel)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
 
 
@@ -147,8 +147,8 @@ public class RedClose18V2 extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(spikeThree.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2300),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(400),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2300),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(400),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
@@ -156,8 +156,8 @@ public class RedClose18V2 extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(loadingZone.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2700),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(500),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2700),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(500),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),

@@ -79,7 +79,7 @@ public class BlueFarCyclesFull extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2500),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2500),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
 
@@ -87,47 +87,47 @@ public class BlueFarCyclesFull extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(stack.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoThree.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoThree.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intake, carousel).withTimeout(2000),
-                                                new CommandGroups.StartOuttake(intake, carousel).withTimeout(300),
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2000),
+                                                CommandGroups.startOuttake(intake, carousel).withTimeout(300),
                                                 new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),

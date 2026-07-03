@@ -36,7 +36,7 @@ public class SortingTest extends ActionOpMode {
         Y = new GamepadButton(gamepad, GamepadKeys.Button.Y);
         UP = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP);
 
-        A.whenPressed(new CommandGroups.StartIntake(intake, carousel));
+        A.whenPressed(CommandGroups.startIntake(intake, carousel));
         UP.whenPressed(intake.outtake());
         schedule(new MecanumCommands.Drive(mecanumDrive, () -> gamepad.getLeftY(), () -> gamepad.getLeftX(), () -> gamepad.getRightX()));
     }

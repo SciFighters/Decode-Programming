@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -91,7 +90,7 @@ public class WheatleyOpMode extends ActionOpMode {
                 .whenFinished(() -> CommandScheduler.getInstance().schedule(
                         new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)))
         );
-        driverRightBumper.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
+        driverRightBumper.whenPressed(intakeSubsystem.closeState());
         mecanumDrive.lazyImu.get().resetYaw();
         systemDPadLeft.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection += 2);
         systemDPadRight.whenPressed(() -> DischargeCommands.AutomaticAiming.turretCorrection -= 2);
@@ -112,7 +111,7 @@ public class WheatleyOpMode extends ActionOpMode {
                     schedule(new  DischargeCommands.setState(dischargeSubsystem,0,60, 180));}));
         driverLeftTrigger.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,-120 * Math.PI/180,2, teamColor));
         driverRightStick.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,Math.PI/2,1, teamColor)
-                .beforeStarting(new IntakeCommands.ClosedState(intakeSubsystem)));
+                .beforeStarting(intakeSubsystem.closeState()));
         systemX.whenPressed(() -> mecanumDrive.localizer.setPose(new Pose2d(63, 0, Math.PI)));
     }
 

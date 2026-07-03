@@ -130,7 +130,7 @@ public class CarouselCommands {
             super(new HashMap<Object, Command>() {{
                 put(Sequence.ONE, new SequentialCommandGroup(
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed).withTimeout(DEFAULT_TIMEOUT),
-                        new IntakeCommands.TransferState(intakeSubsystem),
+                        intakeSubsystem.transfer(),
                         new RotateDistance(carouselSubsystem, -CAROUSEL_STEP, transferSpeed),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
                         new RotateDistance(carouselSubsystem, -(CAROUSEL_STEP * 2), transferSpeed),
@@ -141,7 +141,7 @@ public class CarouselCommands {
                 put(Sequence.TWO, new SequentialCommandGroup(
                         new ParallelCommandGroup(
                                 new RotateDistance(carouselSubsystem, CAROUSEL_STEP * 2 + CAROUSEL_FULL, travelSpeed),
-                                new IntakeCommands.TransferState(intakeSubsystem)
+                                intakeSubsystem.transfer()
                         ),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed).withTimeout(DEFAULT_TIMEOUT),
                         new RotateDistance(carouselSubsystem, CAROUSEL_STEP, transferSpeed),
@@ -152,7 +152,7 @@ public class CarouselCommands {
                 ));
                 put(Sequence.THREE, new SequentialCommandGroup(
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed).withTimeout(DEFAULT_TIMEOUT),
-                        new IntakeCommands.TransferState(intakeSubsystem),
+                        intakeSubsystem.transfer(),
                         new RotateDistance(carouselSubsystem, -CAROUSEL_STEP, transferSpeed),
                         new RotateDistance(carouselSubsystem, CAROUSEL_FULL * 2, travelSpeed),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
@@ -165,7 +165,7 @@ public class CarouselCommands {
                 put(Sequence.FOUR, new SequentialCommandGroup(
                         new ParallelCommandGroup(
                                 new RotateDistance(carouselSubsystem, 1.2, travelSpeed),
-                                new IntakeCommands.TransferState(intakeSubsystem)
+                                intakeSubsystem.transfer()
                         ),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed).withTimeout(DEFAULT_TIMEOUT),
                         new RotateDistance(carouselSubsystem, -1.8, travelSpeed),
@@ -174,7 +174,7 @@ public class CarouselCommands {
                 ));
                 put(Sequence.NONE, new SequentialCommandGroup(
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed).withTimeout(DEFAULT_TIMEOUT),
-                        new IntakeCommands.TransferState(intakeSubsystem),
+                        intakeSubsystem.transfer(),
                         new RotateDistance(carouselSubsystem, -CAROUSEL_STEP, transferSpeed),
                         new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.atCloseSpeed),
                         new RotateDistance(carouselSubsystem, -CAROUSEL_STEP * 2, transferSpeed),

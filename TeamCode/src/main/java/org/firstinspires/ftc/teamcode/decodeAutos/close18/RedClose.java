@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.actions.ActionCommand;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -139,7 +138,7 @@ public class RedClose extends ActionOpMode {
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
+                                                intakeSubsystem.outtake().withTimeout(350),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
 
@@ -161,7 +160,7 @@ public class RedClose extends ActionOpMode {
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
+                                                intakeSubsystem.outtake().withTimeout(350),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
                                 new ParallelRaceGroup(
@@ -179,7 +178,7 @@ public class RedClose extends ActionOpMode {
                                         new ActionCommand(midTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
+                                                intakeSubsystem.outtake().withTimeout(350),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
                                 new ParallelCommandGroup(
@@ -191,7 +190,7 @@ public class RedClose extends ActionOpMode {
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(prepareGate.build(), requirements),
-                                        new IntakeCommands.ClosedState(intakeSubsystem)
+                                        intakeSubsystem.closeState()
                                 )
 
 

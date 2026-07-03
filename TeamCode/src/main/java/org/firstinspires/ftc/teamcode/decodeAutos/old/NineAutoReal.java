@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.actions.ActionCommand;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -110,7 +109,7 @@ public class NineAutoReal extends ActionOpMode {
 //                                ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(prepareGate.build(), requirements),
-                                        new IntakeCommands.ClosedState(intakeSubsystem)
+                                        intakeSubsystem.closeState()
                                 )
 
 

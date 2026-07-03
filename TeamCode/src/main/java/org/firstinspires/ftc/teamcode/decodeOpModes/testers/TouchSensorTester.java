@@ -9,7 +9,6 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 
 @TeleOp(group = "tests")
@@ -33,10 +32,11 @@ public class TouchSensorTester extends ActionOpMode {
         Y = new GamepadButton(gamepad, GamepadKeys.Button.Y);
         X = new GamepadButton(gamepad, GamepadKeys.Button.X);
         B = new GamepadButton(gamepad, GamepadKeys.Button.B);
-        ;
-        X.whenPressed(new IntakeCommands.IntakeState(intakeSubsystem));
-        Y.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
-        B.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
+
+
+        X.whenPressed(intakeSubsystem.intake());
+        Y.whenPressed(intakeSubsystem.outtake());
+        B.whenPressed(intakeSubsystem.closeState());
     }
 
     @Override

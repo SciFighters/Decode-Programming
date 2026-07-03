@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.actions.ActionCommand;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -147,7 +146,7 @@ public class RedCloseFull extends ActionOpMode {
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(400),
                                                 new ParallelCommandGroup(
-                                                        new IntakeCommands.OutTakeState(intakeSubsystem),
+                                                        intakeSubsystem.outtake(),
                                                         new WaitCommand(200)
                                                 ),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
@@ -194,7 +193,7 @@ public class RedCloseFull extends ActionOpMode {
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(prepareGate.build(), requirements),
-                                        new IntakeCommands.ClosedState(intakeSubsystem)
+                                        intakeSubsystem.closeState()
                                 )
 
 

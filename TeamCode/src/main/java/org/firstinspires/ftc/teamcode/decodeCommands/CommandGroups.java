@@ -19,17 +19,16 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 import java.util.function.Supplier;
 
 public class CommandGroups {
-    public static class Shoot extends ParallelRaceGroup {
-
+    public static class Shoot extends SequentialCommandGroup {
         public Shoot(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
-            addCommands(new SequentialCommandGroup(
+            addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
-                    new IntakeCommands.TransferState(intakeSubsystem),
+                    intakeSubsystem.transfer(),
 //                    new WaitCommand(100),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),
                     new CarouselCommands.Discharge(carouselSubsystem),
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = false)
-            ));
+            );
         }
 
         @Override
@@ -46,7 +45,7 @@ public class CommandGroups {
 
             addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
-                    new IntakeCommands.TransferState(intakeSubsystem),
+                    intakeSubsystem.transfer(),
                     new WaitUntilCommand(() -> {
                         PoseVelocity2d movement = mecanumDrive.localizer.update();
                         Pose2d pos = mecanumDrive.localizer.getPose();
@@ -73,7 +72,7 @@ public class CommandGroups {
     public static class StartIntake extends ParallelCommandGroup {
         public StartIntake(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
             addCommands(
-                    new IntakeCommands.IntakeState(intakeSubsystem),
+                    intakeSubsystem.intake(),
                     new CarouselCommands.MoveToAngle(carouselSubsystem, 180)
             );
         }
@@ -82,7 +81,7 @@ public class CommandGroups {
     public static class StartOuttake extends ParallelCommandGroup {
         public StartOuttake(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
             addCommands(
-                    new IntakeCommands.OutTakeState(intakeSubsystem),
+                    intakeSubsystem.outtake(),
                     new CarouselCommands.MoveToAngle(carouselSubsystem, 195)
             );
         }
@@ -121,12 +120,12 @@ public class CommandGroups {
 
             double rPower = Range.clip(power - delta, 0.1, power);
             double lPower = Range.clip(power + delta, 0.1, power);
-            if(left > 5000 && right > 5000){
+            if (left > 5000 && right > 5000) {
                 mecanumDrive.rightFront.setPower(0.1);
                 mecanumDrive.rightBack.setPower(-0.1);
                 mecanumDrive.leftFront.setPower(0.1);
                 mecanumDrive.leftBack.setPower(-0.1);
-            }else{
+            } else {
                 mecanumDrive.rightFront.setPower(rPower);
                 mecanumDrive.rightBack.setPower(-rPower);
 
@@ -141,7 +140,7 @@ public class CommandGroups {
         public SortedShooting(IntakeSubsystem intakeSubsystem, CarouselSubsystem carouselSubsystem) {
             addCommands(
                     new InstantCommand(() -> DischargeCommands.AutomaticAiming.shooting = true),
-                    new IntakeCommands.SortingState(intakeSubsystem),
+                    intakeSubsystem.sortState(),
                     new CarouselCommands.RotateDistance(carouselSubsystem, -0.56, 0.6).withTimeout(1000).whenFinished(() -> carouselSubsystem.setSpinPower(0)),
 //                    new WaitCommand(200),
                     new WaitUntilCommand(() -> DischargeCommands.AutomaticAiming.inRange),

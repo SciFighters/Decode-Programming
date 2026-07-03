@@ -10,10 +10,6 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
-import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 
 @TeleOp(group = "tests")

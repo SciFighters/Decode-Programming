@@ -17,7 +17,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -70,8 +69,8 @@ public class AutomaticShootingTuner extends ActionOpMode {
         initButtons();
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX()));
         driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem));
-        driverB.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
-        driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
+        driverB.whenPressed(intakeSubsystem.closeState());
+        driverY.whenPressed(intakeSubsystem.outtake());
         driverX.whenPressed(new CommandGroups.Shoot(intakeSubsystem,carouselSubsystem) .whenFinished(() -> CommandScheduler.getInstance().schedule(
                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem))));
         systemDPadUp.whenPressed(() -> wantedRPM += 50);
@@ -81,13 +80,13 @@ public class AutomaticShootingTuner extends ActionOpMode {
         systemX.whenPressed(() -> wantedDegree += 0.2);
         systemB.whenPressed(() -> wantedDegree -= 0.2);
 
-        driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
+        driverY.whenPressed(intakeSubsystem.outtake());
         driverDPadDown.whenPressed(new SequentialCommandGroup(
                 new InstantCommand(() -> work = false),
                 new WaitCommand(30000),
                 new InstantCommand(() -> work = true)
         ));
-        driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
+        driverDPadUp.whenPressed(intakeSubsystem.closeState());
         systemDPadLeft.whenPressed(() -> correction +=2);
         systemDPadRight.whenPressed(() -> correction -=2);
 //        limelightSubsystem.startLimelight();

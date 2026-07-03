@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.seattlesolvers.solverslib.command.ScheduleCommand;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -11,10 +10,8 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.Motif;
 import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 
 @TeleOp(group = "tests")
@@ -40,7 +37,7 @@ public class SortingTest extends ActionOpMode {
         UP = new GamepadButton(gamepad, GamepadKeys.Button.DPAD_UP);
 
         A.whenPressed(new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem));
-        UP.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
+        UP.whenPressed(intakeSubsystem.outtake());
         schedule(new MecanumCommands.Drive(mecanumDrive, () -> gamepad.getLeftY(), () -> gamepad.getLeftX(), () -> gamepad.getRightX()));
     }
 

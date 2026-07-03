@@ -15,14 +15,12 @@ import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.Subsystem;
 import com.seattlesolvers.solverslib.command.WaitCommand;
-import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionCommand;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -60,53 +58,53 @@ public class RedClose18V2 extends ActionOpMode {
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
         boolean reversed = SavedValues.teamColor == AutoShooter.TeamColor.BLUE;
         requirements.add(mecanumDrive);
-        TrajectoryActionBuilder shootPreload = mecanumDrive.actionBuilder(new Pose2d(-41.2, 54.3, 0),reversed)
+        TrajectoryActionBuilder shootPreload = mecanumDrive.actionBuilder(new Pose2d(-41.2, 54.3, 0), reversed)
                 .setTangent(-Math.PI / 4)
                 .splineToConstantHeading(new Vector2d(-30, 42), -Math.PI / 4);
-        TrajectoryActionBuilder spikeOne = mecanumDrive.actionBuilder(new Pose2d(-30,42,0),reversed)
+        TrajectoryActionBuilder spikeOne = mecanumDrive.actionBuilder(new Pose2d(-30, 42, 0), reversed)
                 .setTangent(Math.PI / 6)
-                .splineToConstantHeading(new Vector2d(-18,47),0)//might need to wait
-                .splineToConstantHeading(new Vector2d(-30,42),-Math.PI * 7 / 8);
-        TrajectoryActionBuilder spikeTwo = mecanumDrive.actionBuilder(new Pose2d(-30,42,0),reversed)
+                .splineToConstantHeading(new Vector2d(-18, 47), 0)//might need to wait
+                .splineToConstantHeading(new Vector2d(-30, 42), -Math.PI * 7 / 8);
+        TrajectoryActionBuilder spikeTwo = mecanumDrive.actionBuilder(new Pose2d(-30, 42, 0), reversed)
                 .setTangent(Math.PI / 9)
-                .splineToConstantHeading(new Vector2d(6,47),0)
+                .splineToConstantHeading(new Vector2d(6, 47), 0)
                 .setTangent(-Math.PI)
-                .splineTo(new Vector2d(-14,23),-Math.PI * 26 / 36);
-        TrajectoryActionBuilder gateCycle = mecanumDrive.actionBuilder(new Pose2d(-14,23,0),reversed)
+                .splineTo(new Vector2d(-14, 23), -Math.PI * 26 / 36);
+        TrajectoryActionBuilder gateCycle = mecanumDrive.actionBuilder(new Pose2d(-14, 23, 0), reversed)
                 .setTangent(Math.PI * 10 / 36)
 //                .splineTo(new Vector2d(5,40),Math.PI * 18 / 36)
 //                .splineToSplineHeading(new Pose2d(5,40.1,Math.PI /2),Math.PI /2)
-                .splineToLinearHeading(new Pose2d(15,62,Math.PI * 10.5 / 16),Math.PI / 2);
-        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(16,62.5,Math.PI * 10.5 / 16), reversed)
-                .setTangent(Math.PI * 3.5/4)
+                .splineToLinearHeading(new Pose2d(15, 62, Math.PI * 10.5 / 16), Math.PI / 2);
+        TrajectoryActionBuilder pressGate = mecanumDrive.actionBuilder(new Pose2d(16, 62.5, Math.PI * 10.5 / 16), reversed)
+                .setTangent(Math.PI * 3.5 / 4)
                 .lineToX(12);
-        TrajectoryActionBuilder gateCycleP2 = mecanumDrive.actionBuilder(new Pose2d(14,60,Math.PI * 11 / 16))
-                .setTangent(-Math.PI*5 / 16)
-                .splineTo(new Vector2d(-13,20),-Math.PI * 4/5);
-        TrajectoryActionBuilder spikeThree = mecanumDrive.actionBuilder(new Pose2d(-13,20,Math.PI / 5))
+        TrajectoryActionBuilder gateCycleP2 = mecanumDrive.actionBuilder(new Pose2d(14, 60, Math.PI * 11 / 16))
+                .setTangent(-Math.PI * 5 / 16)
+                .splineTo(new Vector2d(-13, 20), -Math.PI * 4 / 5);
+        TrajectoryActionBuilder spikeThree = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 5))
                 .setTangent(Math.PI / 5)
-                .splineTo(new Vector2d(30,47),0)
+                .splineTo(new Vector2d(30, 47), 0)
                 .setTangent(-Math.PI)
-                .splineTo(new Vector2d(-13,20),-Math.PI * 3 / 4);
-        TrajectoryActionBuilder loadingZone = mecanumDrive.actionBuilder(new Pose2d(-13,20,Math.PI / 4))
+                .splineTo(new Vector2d(-13, 20), -Math.PI * 3 / 4);
+        TrajectoryActionBuilder loadingZone = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 4))
                 .setTangent(Math.PI / 4)
-                .splineTo(new Vector2d(46,58),0)
-                .splineToSplineHeading(new Pose2d(46.1,58,0),-Math.PI)//outtake a bit
-                .splineToConstantHeading(new Vector2d(-8,16),-Math.PI * 3 / 4);
-        TrajectoryActionBuilder park = mecanumDrive.actionBuilder(new Pose2d(-8,16,0))
-                .setTangent(Math.PI/4)
-                .splineToConstantHeading(new Vector2d(0,30),Math.PI/2);
+                .splineTo(new Vector2d(46, 58), 0)
+                .splineToSplineHeading(new Pose2d(46.1, 58, 0), -Math.PI)//outtake a bit
+                .splineToConstantHeading(new Vector2d(-8, 16), -Math.PI * 3 / 4);
+        TrajectoryActionBuilder park = mecanumDrive.actionBuilder(new Pose2d(-8, 16, 0))
+                .setTangent(Math.PI / 4)
+                .splineToConstantHeading(new Vector2d(0, 30), Math.PI / 2);
 
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
                         new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
                         new SequentialCommandGroup(
-                                new InstantCommand(() -> intakeSubsystem.setPosition(1)),
+                                intakeSubsystem.open(),
                                 new ParallelCommandGroup(
                                         new ActionCommand(shootPreload.build(), requirements),
                                         new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                 ),
-                                new InstantCommand(() -> intakeSubsystem.setPosition(1)),
+                                intakeSubsystem.open(),
                                 new ParallelCommandGroup(
                                         new ActionCommand(spikeOne.build(), requirements),
                                         new SequentialCommandGroup(
@@ -114,7 +112,7 @@ public class RedClose18V2 extends ActionOpMode {
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         )
                                 ),
-                                new InstantCommand(() -> intakeSubsystem.setPosition(1)),
+                                intakeSubsystem.open(),
                                 new ParallelCommandGroup(
                                         new ActionCommand(spikeTwo.build(), requirements),
                                         new SequentialCommandGroup(
@@ -122,13 +120,13 @@ public class RedClose18V2 extends ActionOpMode {
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         )
                                 ),
-                                new InstantCommand(() -> intakeSubsystem.setPosition(1)),
+                                intakeSubsystem.open(),
                                 new ParallelRaceGroup(
                                         new SequentialCommandGroup(
                                                 new ActionCommand(gateCycle.build(), requirements),
                                                 new ParallelDeadlineGroup(
                                                         new WaitCommand(800),
-                                                        new ActionCommand(pressGate.build(),requirements)
+                                                        new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
 
@@ -140,35 +138,34 @@ public class RedClose18V2 extends ActionOpMode {
                                         new ActionCommand(gateCycleP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(200),
-                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(550),
+                                                intakeSubsystem.outtake().withTimeout(550),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
                                 ),
 
 
-                                new InstantCommand(() -> intakeSubsystem.setPosition(1)),
+                                intakeSubsystem.open(),
                                 new ParallelCommandGroup(
                                         new ActionCommand(spikeThree.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2300),
-                                                new CommandGroups.StartOuttake(intakeSubsystem,carouselSubsystem).withTimeout(400),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(400),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         )
                                 ),
-                                new InstantCommand(() -> intakeSubsystem.setPosition(1)),
+                                intakeSubsystem.open(),
                                 new ParallelCommandGroup(
                                         new ActionCommand(loadingZone.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2700),
-                                                new CommandGroups.StartOuttake(intakeSubsystem,carouselSubsystem).withTimeout(500),
+                                                new CommandGroups.StartOuttake(intakeSubsystem, carouselSubsystem).withTimeout(500),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         )
                                 ),
 
 
-
                                 new ParallelCommandGroup(
                                         new ActionCommand(park.build(), requirements),
-                                        new IntakeCommands.ClosedState(intakeSubsystem)
+                                        intakeSubsystem.closeState()
                                 )
 
 

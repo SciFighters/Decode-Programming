@@ -38,6 +38,10 @@ public class CarouselSubsystem extends SubsystemBase {
         carouselMotor.setPower(power);
     }
 
+    public void stop() {
+        setSpinPower(0);
+    }
+
     public int getPosition() {
         return carouselMotor.getCurrentPosition() + startingTicks;
     }

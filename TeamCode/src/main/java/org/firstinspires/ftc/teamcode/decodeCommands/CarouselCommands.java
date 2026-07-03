@@ -8,6 +8,7 @@ import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.WaitUntilCommand;
+import com.seattlesolvers.solverslib.controller.PIDController;
 
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
@@ -26,23 +27,23 @@ public class CarouselCommands {
 
     public static class MoveToAngle extends CommandBase {
         private final CarouselSubsystem carouselSubsystem;
-        double targetAngle;
-        double currentAngle;
-        double kp = 0.018;
-        int tolerance = 3;
-        private final boolean end;
+        private final double targetAngle;
+        private double currentAngle;
+        private final PIDController pid = new PIDController(0.018, 0, 0);
+        private int tolerance = 3;
+        private final boolean finishWhenAtSetpoint;
 
         public MoveToAngle(CarouselSubsystem carouselSubsystem, double angle) {
             this.carouselSubsystem = carouselSubsystem;
             this.targetAngle = angle;
-            end = false;
+            finishWhenAtSetpoint = false;
             addRequirements(carouselSubsystem);
         }
 
-        public MoveToAngle(CarouselSubsystem carouselSubsystem, double angle, boolean end) {
+        public MoveToAngle(CarouselSubsystem carouselSubsystem, double angle, boolean finishWhenAtSetpoint) {
             this.carouselSubsystem = carouselSubsystem;
             this.targetAngle = angle;
-            this.end = end;
+            this.finishWhenAtSetpoint = finishWhenAtSetpoint;
             addRequirements(carouselSubsystem);
         }
 
@@ -50,22 +51,22 @@ public class CarouselCommands {
         @Override
         public void execute() {
             currentAngle = carouselSubsystem.getAngle();
-            double error = targetAngle - currentAngle;
-            double power = kp * error;
+            double power = pid.calculate(currentAngle, targetAngle);
             carouselSubsystem.setSpinPower(power);
         }
 
         @Override
         public boolean isFinished() {
-            return end && Math.abs(currentAngle - targetAngle) < tolerance;
+            return finishWhenAtSetpoint && Math.abs(currentAngle - targetAngle) < tolerance;
         }
 
 
         @Override
         public void end(boolean interrupted) {
-            carouselSubsystem.setSpinPower(0);
+            carouselSubsystem.stop();
         }
     }
+
     public static class RotateDistance extends CommandBase {
         private final double SWITCH_DIRECTION_CURRENT = 7.0;
 
@@ -112,6 +113,7 @@ public class CarouselCommands {
             carouselSubsystem.setSpinPower(0);
         }
     }
+
     public static class SmartDischarge extends SelectCommand {
         private static final double transferSpeed = 0.7, travelSpeed = 1;
 
@@ -201,6 +203,7 @@ public class CarouselCommands {
 
 
     }
+
     public static class Discharge extends SelectCommand {
         enum Sequence {
             CLOSE,

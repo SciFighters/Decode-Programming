@@ -41,7 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
 //        startSensorThread();
     }
 
-    private void setPower(double power) {
+    public void setPower(double power) {
         motor.setPower(power);
     }
 
@@ -56,6 +56,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void stopIntake() {
         setPower(0);
     }
+
 
 
     public Command transfer() {

@@ -47,9 +47,9 @@ public class DistanceSensorTester extends ActionOpMode {
         } else if (count >= 3) {
 //            start = time.seconds();
 //            if(start - fStart > 0.3){
-            intake.setPower(0);
+            intake.stopIntake();
         } else {
-            intake.setPower(-0.5);
+            intake.runReverse();
             if (time.seconds() - start > 0.7) {
                 count = 3;
             }

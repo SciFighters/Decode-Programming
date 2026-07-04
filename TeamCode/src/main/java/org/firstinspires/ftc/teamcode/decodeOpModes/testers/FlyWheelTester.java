@@ -52,10 +52,10 @@ public class FlyWheelTester extends ActionOpMode {
         super.run();
 
         dischargeSubsystem.ramp.setRampDegree(wantedAngle);
-        dischargeSubsystem.setFlyWheelRPM(wantedRpm);
+        dischargeSubsystem.flywheel.runRPM(wantedRpm);
 
-        multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
-        multipleTelemetry.addData("power", dischargeSubsystem.getFlyWheelPower());
+        multipleTelemetry.addData("rpm", dischargeSubsystem.flywheel.getRPM());
+        multipleTelemetry.addData("power", dischargeSubsystem.flywheel.getPower());
         multipleTelemetry.addData("wanted", wantedRpm);
         multipleTelemetry.addData("angle", wantedAngle);
         multipleTelemetry.update();

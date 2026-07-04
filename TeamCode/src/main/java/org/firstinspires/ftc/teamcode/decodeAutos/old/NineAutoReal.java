@@ -127,6 +127,6 @@ public class NineAutoReal extends ActionOpMode {
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.update();
         SavedValues.position = mecanumDrive.localizer.getPose();
-        SavedValues.turretAngle = dischargeSubsystem.getTurretAngle();
+        SavedValues.turretAngle = dischargeSubsystem.turret.getAngle();
     }
 }

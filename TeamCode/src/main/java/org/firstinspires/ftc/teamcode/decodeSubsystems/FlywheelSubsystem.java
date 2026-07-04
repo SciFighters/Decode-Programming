@@ -24,14 +24,11 @@ public class FlywheelSubsystem extends SubsystemBase {
         flyWheelMotor.encoder.setDirection(Motor.Direction.REVERSE); // for testing 2.7.26
     }
 
-    public void setFlyWheelPower(double flyWheelPower) {
+    public void setPower(double flyWheelPower) {
         flyWheelMotor.set(flyWheelPower);
     }
 
-    public double getPower() {
-        return flyWheelMotor.motorEx.getPower();
-    }
-    public void setFlyWheelRPM(double rpm) {
+    public void runRPM(double rpm) {
         if (abs(rpm) < 200) {
             flyWheelMotor.set(0);
             return;
@@ -51,7 +48,7 @@ public class FlywheelSubsystem extends SubsystemBase {
         return flywheelPID.calculate(currentRPM, setpoint) + flywheelFeedforward.calculate(setpoint);
     }
 
-    public void stayRPM(double rpm) {
+    public void keepRPM(double rpm) {
         flyWheelMotor.set(calculateFlywheelCloseLoopOutput(getRPM(), rpm));
     }
 
@@ -59,7 +56,7 @@ public class FlywheelSubsystem extends SubsystemBase {
         return -flyWheelMotor.getCorrectedVelocity() / flyWheelMotor.getCPR() * 60 * gearRatio;
     }
 
-    public double getFlyWheelPower() {
+    public double getPower() {
         return flyWheelMotor.get();
     }
 }

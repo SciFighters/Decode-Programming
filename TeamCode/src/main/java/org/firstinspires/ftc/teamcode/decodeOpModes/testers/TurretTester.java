@@ -32,13 +32,13 @@ public class TurretTester extends ActionOpMode {
         A.whenPressed(() -> manual = !manual);
         B.whenPressed(() -> power += 0.01);
         X.whenPressed(new SequentialCommandGroup( new InstantCommand((() ->{
-            lastVelocity = dischargeSubsystem.turret.getRPS();
+            lastVelocity = dischargeSubsystem.turret.getAngularVelocity();
             lastTime = time.seconds();
             dischargeSubsystem.turret.setPower(0.5);
                 } )),
                 new WaitCommand(500),
                 new InstantCommand(() -> {
-                    velocity = dischargeSubsystem.turret.getRPS();
+                    velocity = dischargeSubsystem.turret.getAngularVelocity();
                     currentTime = time.seconds();
                     dischargeSubsystem.turret.stopPower();
                 })));
@@ -52,15 +52,15 @@ public class TurretTester extends ActionOpMode {
     @Override
     public void run() {
 //        if (manual) {
-//            dischargeSubsystem.setTurretPower(gamepad.getRightX() * (0.5 + 0.5 * gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+//            dischargeSubsystem.turret.setPower(gamepad.getRightX() * (0.5 + 0.5 * gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
 //        } else {
-//            dischargeSubsystem.setTurretPower(power);
+//            dischargeSubsystem.turret.setPower(power);
 //        }
 //        velocity = dischargeSubsystem.getRPS();
 //        currentTime = time.seconds();
         double acceleration = (velocity - lastVelocity) / (currentTime - lastTime);
         multipleTelemetry.addData("power", power);
-        multipleTelemetry.addData("speed", dischargeSubsystem.turret.getRPS());
+        multipleTelemetry.addData("speed", dischargeSubsystem.turret.getAngularVelocity());
         multipleTelemetry.addData("acceleration",acceleration);
         multipleTelemetry.addData("ticks", dischargeSubsystem.turret.getPosition());
         multipleTelemetry.addData("angle", dischargeSubsystem.turret.getAngle());

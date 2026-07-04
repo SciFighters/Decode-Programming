@@ -95,29 +95,29 @@ public class AutomaticShootingTuner extends ActionOpMode {
     @Override
     public void run() {
         aimTurret();
-        atSpeed = Math.abs(dischargeSubsystem.getRPM() - wantedRPM) < 70;
+        atSpeed = Math.abs(dischargeSubsystem.flywheel.getRPM() - wantedRPM) < 70;
 
         mecanumDrive.localizer.update();
         double launchAngle =
                 (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position,mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), AutoShooter.TeamColor.BLUE) + 360) % 360;
-//        double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle());
+//        double power = -((launchAngle + 360) % 360 - dischargeSubsystem.turret.getAngle());
 //        power += Math.signum(power) * 0.03;
 //        power = Range.clip(power, -0.4, 0.4);
-//        dischargeSubsystem.setTurretPower(power);
+//        dischargeSubsystem.turret.setPower(power);
 
         if(work){
-            dischargeSubsystem.setFlyWheelRPM(wantedRPM);
+            dischargeSubsystem.flywheel.runRPM(wantedRPM);
             dischargeSubsystem.ramp.setRampDegree(wantedDegree);
         }else{
-            dischargeSubsystem.setFlyWheelRPM(0);
+            dischargeSubsystem.flywheel.runRPM(0);
         }
         super.run();
-        multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
+        multipleTelemetry.addData("turretAngle", dischargeSubsystem.turret.getAngle());
 
         multipleTelemetry.addData("rampDegree", wantedDegree);
         multipleTelemetry.addData("wantedRPM", wantedRPM );
-        multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
-        multipleTelemetry.addData("power", dischargeSubsystem.getFlyWheelPower());
+        multipleTelemetry.addData("rpm", dischargeSubsystem.flywheel.getRPM());
+        multipleTelemetry.addData("power", dischargeSubsystem.flywheel.getPower());
         multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.addData("distance", AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), AutoShooter.TeamColor.BLUE));
@@ -137,14 +137,14 @@ public class AutomaticShootingTuner extends ActionOpMode {
         launchAngle = Range.clip(launchAngle,24,332);
 
         double power;
-//            if (limelightSubsystem.getTx() != 0 && dischargeSubsystem.getTurretAngle() < 355 && dischargeSubsystem.getTurretAngle() > 5){
+//            if (limelightSubsystem.getTx() != 0 && dischargeSubsystem.turret.getAngle() < 355 && dischargeSubsystem.turret.getAngle() > 5){
 //                power = limelightSubsystem.getTx() * kp;
 //            } else{
-        power = -(launchAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
+        power = -(launchAngle - dischargeSubsystem.turret.getAngle()) * 0.018;
 //            }
 //        power += mecanumSpeed * 0.12;
         power += Math.signum(power) * 0.04;
-        dischargeSubsystem.setTurretPower(power);
+        dischargeSubsystem.turret.setPower(power);
     }
 
     @Override

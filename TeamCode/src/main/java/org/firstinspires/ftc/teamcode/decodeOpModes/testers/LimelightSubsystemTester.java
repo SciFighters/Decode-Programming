@@ -41,10 +41,10 @@ public class LimelightSubsystemTester extends ActionOpMode {
         multipleTelemetry.addData("pinpointY", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.addData("heading", mecanumDrive.localizer.getPose().heading.toDouble() * 180 / Math.PI);
         multipleTelemetry.addData("IMUheading", mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw());
-        multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
+        multipleTelemetry.addData("turretAngle", dischargeSubsystem.turret.getAngle());
         multipleTelemetry.update();
         super.run();
-//        Position llCalcPos = limelightSubsystem.getRobotPosMT2(dischargeSubsystem.getTurretAngle());
+//        Position llCalcPos = limelightSubsystem.getRobotPosMT2(dischargeSubsystem.turret.getAngle());
 //        if(llCalcPos != null){
 //            multipleTelemetry.addData("llCalcX",llCalcPos.x);
 //            multipleTelemetry.addData("llCalcY",llCalcPos.y);

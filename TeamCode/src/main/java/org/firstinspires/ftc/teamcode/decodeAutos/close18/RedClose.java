@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.actions.ActionCommand;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -34,8 +33,8 @@ import java.util.Set;
 @Autonomous(name = "18 red close", group = "red close")
 public class RedClose extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
@@ -48,11 +47,11 @@ public class RedClose extends ActionOpMode {
         SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.RED;
         Set<Subsystem> requirements = new HashSet<>();
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         dischargeSubsystem.resetTurret();
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-41.2, 54.3, 0));
         mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
@@ -102,7 +101,7 @@ public class RedClose extends ActionOpMode {
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
 //                        new LimelightCommands.KalmanFilter(limelightSubsystem, mecanumDrive, dischargeSubsystem::getTurretAngle),
-                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
+                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carousel, SavedValues.teamColor),
                         new SequentialCommandGroup(
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
@@ -110,14 +109,14 @@ public class RedClose extends ActionOpMode {
 //                                                new InstantCommand(() -> DischargeSubsystem.shooting = true),
 //                                                new WaitCommand(600),
 //                                                new InstantCommand(() -> DischargeSubsystem.shooting = false),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2300),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(2300),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
 
                                         )
                                 ),
@@ -131,7 +130,7 @@ public class RedClose extends ActionOpMode {
                                                 )
                                         ),
 
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
 
 
@@ -139,8 +138,8 @@ public class RedClose extends ActionOpMode {
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                intake.outtake().withTimeout(350),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
 
 
@@ -153,7 +152,7 @@ public class RedClose extends ActionOpMode {
                                                 )
                                         ),
 
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
 
 
@@ -161,8 +160,8 @@ public class RedClose extends ActionOpMode {
                                         new ActionCommand(midOneP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                intake.outtake().withTimeout(350),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
                                 new ParallelRaceGroup(
                                         new SequentialCommandGroup(
@@ -172,26 +171,26 @@ public class RedClose extends ActionOpMode {
                                                         new ActionCommand(pressGate.build(), requirements)
                                                 )
                                         ),
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(midTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(400),
-                                                new IntakeCommands.OutTakeState(intakeSubsystem).withTimeout(350),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive))
+                                                intake.outtake().withTimeout(350),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive))
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1400),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1400),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)),
 
                                 new ParallelCommandGroup(
                                         new ActionCommand(prepareGate.build(), requirements),
-                                        new IntakeCommands.ClosedState(intakeSubsystem)
+                                        intake.closeState()
                                 )
 
 
@@ -207,12 +206,12 @@ public class RedClose extends ActionOpMode {
         if (time.seconds() > 1) {
             int current = limelightSubsystem.getMotif();
             SavedValues.startMotif = (current != -1) ? current : SavedValues.startMotif;
-            double power = -(turretStartAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
-            if (Math.abs(turretStartAngle - dischargeSubsystem.getTurretAngle()) < 5) {
+            double power = -(turretStartAngle - dischargeSubsystem.turret.getAngle()) * 0.018;
+            if (Math.abs(turretStartAngle - dischargeSubsystem.turret.getAngle()) < 5) {
                 power = 0;
             }
             power = Range.clip(power, -0.3, 0.3);
-            dischargeSubsystem.setTurretPower(power);
+            dischargeSubsystem.turret.setPower(power);
             multipleTelemetry.addData("used", SavedValues.startMotif);
             multipleTelemetry.addData("current", current);
             multipleTelemetry.update();

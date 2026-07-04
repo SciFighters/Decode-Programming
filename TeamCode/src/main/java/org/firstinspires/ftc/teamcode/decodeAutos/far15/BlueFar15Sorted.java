@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.actions.ActionCommand;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -33,8 +32,8 @@ import java.util.Set;
 @Autonomous(name = "15 blue far sort")
 public class BlueFar15Sorted extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double iteration = 1;
@@ -47,11 +46,11 @@ public class BlueFar15Sorted extends ActionOpMode {
         SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
         Set<Subsystem> requirements = new HashSet<>();
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         dischargeSubsystem.resetTurret();
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(61.5, 22, Math.PI / 2));
         mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
@@ -91,48 +90,48 @@ public class BlueFar15Sorted extends ActionOpMode {
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
 //                        new LimelightCommands.KalmanFilter(limelightSubsystem, mecanumDrive, dischargeSubsystem::getTurretAngle),
-                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
+                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carousel, SavedValues.teamColor),
                         new SequentialCommandGroup(
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
+                                new CommandGroups.Shoot(intake, carousel),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1850),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1850),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
 
                                 ),
                                 new ParallelRaceGroup(
                                         new ActionCommand(wheatleyAutoTwo.build(), requirements),
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem)
+                                        CommandGroups.startIntake(intake, carousel)
                                 ),
                                 new WaitCommand(100),
-                                new IntakeCommands.ClosedState(intakeSubsystem),
+                                intake.closeState(),
                                 new WaitCommand(800),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoTwoP2.build(), requirements),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(300),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem))
+                                                CommandGroups.sortedShooting(intake, carousel))
                                 ),
 
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1300),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(1300),
+                                                CommandGroups.sortedShooting(intake, carousel)
                                         ),
                                         new ActionCommand(wheatleyAutoThree.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3500),
-                                                new CommandGroups.SortedShooting(intakeSubsystem, carouselSubsystem)
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(3500),
+                                                CommandGroups.sortedShooting(intake, carousel)
                                         ),
                                         new ActionCommand(wheatleyAutoFour.build(), requirements)
                                 ),
                                 new ParallelCommandGroup(
                                         new ActionCommand(prepareGate.build(), requirements),
-                                        new IntakeCommands.ClosedState(intakeSubsystem)
+                                        intake.closeState()
                                 )
 
 
@@ -148,12 +147,12 @@ public class BlueFar15Sorted extends ActionOpMode {
         if (time.seconds() > 1) {
             int current = limelightSubsystem.getMotif();
             SavedValues.startMotif = (current != -1) ? current : SavedValues.startMotif;
-            double power = -(turretStartAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
-            if (Math.abs(turretStartAngle - dischargeSubsystem.getTurretAngle()) < 5) {
+            double power = -(turretStartAngle - dischargeSubsystem.turret.getAngle()) * 0.018;
+            if (Math.abs(turretStartAngle - dischargeSubsystem.turret.getAngle()) < 5) {
                 power = 0;
             }
             power = Range.clip(power, -0.3, 0.3);
-            dischargeSubsystem.setTurretPower(power);
+            dischargeSubsystem.turret.setPower(power);
             multipleTelemetry.addData("used", SavedValues.startMotif);
             multipleTelemetry.addData("current", current);
             multipleTelemetry.update();
@@ -168,6 +167,6 @@ public class BlueFar15Sorted extends ActionOpMode {
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.update();
         SavedValues.position = mecanumDrive.localizer.getPose();
-        SavedValues.turretAngle = dischargeSubsystem.getTurretAngle();
+        SavedValues.turretAngle = dischargeSubsystem.turret.getAngle();
     }
 }

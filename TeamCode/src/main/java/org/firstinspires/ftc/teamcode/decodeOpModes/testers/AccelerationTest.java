@@ -43,12 +43,12 @@ public class AccelerationTest extends ActionOpMode {
 
     @Override
     public void run() {
-        if (!reached && Math.abs(dischargeSubsystem.getRPM() - wantedRpm) < 100) {
+        if (!reached && Math.abs(dischargeSubsystem.flywheel.getRPM() - wantedRpm) < 100) {
             timeTaken = time.seconds();
             reached = true;
         }
         multipleTelemetry.addData("time taken", timeTaken);
-        dischargeSubsystem.setFlyWheelRPM(wantedRpm);
+        dischargeSubsystem.flywheel.runRPM(wantedRpm);
         multipleTelemetry.update();
         super.run();
     }

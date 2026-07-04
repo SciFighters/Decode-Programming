@@ -2,20 +2,13 @@ package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.qualcomm.hardware.lynx.LynxController;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
-import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 
@@ -29,13 +22,13 @@ public class DistanceSensorTester extends ActionOpMode {
     int count = 0;
     double leftDistance = 0, rightDistance = 0;
     double start = 0, fStart = 0;
-    IntakeSubsystem intakeSubsystem;
+    IntakeSubsystem intake;
     MecanumDrive mecanumDrive;
 
     @Override
     public void initialize() {
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(-63, 0, -Math.PI));
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         left = hardwareMap.get(Rev2mDistanceSensor.class, "leftDistance");
         right = hardwareMap.get(Rev2mDistanceSensor.class, "rightDistance");
         time = new ElapsedTime();
@@ -48,15 +41,15 @@ public class DistanceSensorTester extends ActionOpMode {
     public void run() {
         i++;
         if (count < 3) {
-            intakeSubsystem.setPower(gamepad1.left_stick_x);
+            intake.setPower(gamepad1.left_stick_x);
             start = time.seconds();
             fStart = start;
         } else if (count >= 3) {
 //            start = time.seconds();
 //            if(start - fStart > 0.3){
-            intakeSubsystem.setPower(0);
+            intake.stopIntake();
         } else {
-            intakeSubsystem.setPower(-0.5);
+            intake.runReverse();
             if (time.seconds() - start > 0.7) {
                 count = 3;
             }

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.decodeAutos.expiremental;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -11,7 +10,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
-import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.Subsystem;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -22,7 +20,6 @@ import org.firstinspires.ftc.teamcode.actions.ActionCommand;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
 import org.firstinspires.ftc.teamcode.decodeCommands.DischargeCommands;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -36,8 +33,8 @@ import java.util.Set;
 @Autonomous()
 public class RobotRevealAuto extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     double turretStartAngle = 90;
@@ -49,11 +46,11 @@ public class RobotRevealAuto extends ActionOpMode {
         SavedValues.currentCount = 0;
         SavedValues.teamColor = AutoShooter.TeamColor.RED;
         Set<Subsystem> requirements = new HashSet<>();
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
         dischargeSubsystem.resetTurret();
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(61.5, 22, -Math.PI / 2));
         mecanumDrive.driveMode();
         limelightSubsystem = new LimelightSubsystem(hardwareMap, SavedValues.teamColor, mecanumDrive);
@@ -70,23 +67,23 @@ public class RobotRevealAuto extends ActionOpMode {
         CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
 //                        new LimelightCommands.KalmanFilter(limelightSubsystem, mecanumDrive, dischargeSubsystem::getTurretAngle),
-                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carouselSubsystem, SavedValues.teamColor),
+                        new DischargeCommands.AutomaticAiming(dischargeSubsystem, limelightSubsystem, mecanumDrive, carousel, SavedValues.teamColor),
                         new SequentialCommandGroup(
-                                new CommandGroups.Shoot(intakeSubsystem, carouselSubsystem),
-                                new WaitUntilCommand(() -> dischargeSubsystem.getRPM() > 3000),
+                                new CommandGroups.Shoot(intake, carousel),
+                                new WaitUntilCommand(() -> dischargeSubsystem.flywheel.getRPM() > 3000),
                                 new WaitCommand(1),
                                 new ParallelCommandGroup(
                                         new ActionCommand(wheatleyAutoOne.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(3000),
-                                                new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                                CommandGroups.startIntake(intake, carousel).withTimeout(3000),
+                                                new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                         )
 
                                 ), new ParallelCommandGroup(
                                 new ActionCommand(wheatleyAutoTwo.build(), requirements),
                                 new SequentialCommandGroup(
-                                        new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(1900),
-                                        new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
+                                        CommandGroups.startIntake(intake, carousel).withTimeout(1900),
+                                        new CommandGroups.PrepareShooting(intake, carousel, mecanumDrive)
                                 )
 
                         )
@@ -103,12 +100,12 @@ public class RobotRevealAuto extends ActionOpMode {
         if (time.seconds() > 1) {
             int current = limelightSubsystem.getMotif();
             SavedValues.startMotif = (current != -1) ? current : SavedValues.startMotif;
-            double power = -(turretStartAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
-            if (Math.abs(turretStartAngle - dischargeSubsystem.getTurretAngle()) < 5) {
+            double power = -(turretStartAngle - dischargeSubsystem.turret.getAngle()) * 0.018;
+            if (Math.abs(turretStartAngle - dischargeSubsystem.turret.getAngle()) < 5) {
                 power = 0;
             }
             power = Range.clip(power, -0.3, 0.3);
-            dischargeSubsystem.setTurretPower(power);
+            dischargeSubsystem.turret.setPower(power);
             multipleTelemetry.addData("used", SavedValues.startMotif);
             multipleTelemetry.addData("current", current);
             multipleTelemetry.update();
@@ -123,6 +120,6 @@ public class RobotRevealAuto extends ActionOpMode {
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.update();
         SavedValues.position = mecanumDrive.localizer.getPose();
-        SavedValues.turretAngle = dischargeSubsystem.getTurretAngle();
+        SavedValues.turretAngle = dischargeSubsystem.turret.getAngle();
     }
 }

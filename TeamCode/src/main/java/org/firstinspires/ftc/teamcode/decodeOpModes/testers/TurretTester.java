@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.decodeOpModes.testers;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -25,7 +24,7 @@ public class TurretTester extends ActionOpMode {
     @Override
     public void initialize() {
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
-        dischargeSubsystem.resetTurret();
+        dischargeSubsystem.turret.reset();
         gamepad = new GamepadEx(gamepad1);
         A = new GamepadButton(gamepad, GamepadKeys.Button.A);
         B = new GamepadButton(gamepad, GamepadKeys.Button.B);
@@ -33,15 +32,15 @@ public class TurretTester extends ActionOpMode {
         A.whenPressed(() -> manual = !manual);
         B.whenPressed(() -> power += 0.01);
         X.whenPressed(new SequentialCommandGroup( new InstantCommand((() ->{
-            lastVelocity = dischargeSubsystem.getRPS();
+            lastVelocity = dischargeSubsystem.turret.getAngularVelocity();
             lastTime = time.seconds();
-            dischargeSubsystem.setTurretPower(0.5);
+            dischargeSubsystem.turret.setPower(0.5);
                 } )),
                 new WaitCommand(500),
                 new InstantCommand(() -> {
-                    velocity = dischargeSubsystem.getRPS();
+                    velocity = dischargeSubsystem.turret.getAngularVelocity();
                     currentTime = time.seconds();
-                    dischargeSubsystem.setTurretPower(0);
+                    dischargeSubsystem.turret.stopPower();
                 })));
         time = new ElapsedTime();
         lastTime = 0;
@@ -53,18 +52,18 @@ public class TurretTester extends ActionOpMode {
     @Override
     public void run() {
 //        if (manual) {
-//            dischargeSubsystem.setTurretPower(gamepad.getRightX() * (0.5 + 0.5 * gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
+//            dischargeSubsystem.turret.setPower(gamepad.getRightX() * (0.5 + 0.5 * gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
 //        } else {
-//            dischargeSubsystem.setTurretPower(power);
+//            dischargeSubsystem.turret.setPower(power);
 //        }
 //        velocity = dischargeSubsystem.getRPS();
 //        currentTime = time.seconds();
         double acceleration = (velocity - lastVelocity) / (currentTime - lastTime);
         multipleTelemetry.addData("power", power);
-        multipleTelemetry.addData("speed", dischargeSubsystem.getRPS());
+        multipleTelemetry.addData("speed", dischargeSubsystem.turret.getAngularVelocity());
         multipleTelemetry.addData("acceleration",acceleration);
-        multipleTelemetry.addData("ticks", dischargeSubsystem.getTurretPosition());
-        multipleTelemetry.addData("angle", dischargeSubsystem.getTurretAngle());
+        multipleTelemetry.addData("ticks", dischargeSubsystem.turret.getPosition());
+        multipleTelemetry.addData("angle", dischargeSubsystem.turret.getAngle());
         multipleTelemetry.update();
         super.run();
 

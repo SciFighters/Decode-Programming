@@ -17,7 +17,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.actions.ActionOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.decodeCommands.CommandGroups;
-import org.firstinspires.ftc.teamcode.decodeCommands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.AutoShooter;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.CarouselSubsystem;
 import org.firstinspires.ftc.teamcode.decodeSubsystems.DischargeSubsystem;
@@ -29,8 +28,8 @@ import org.firstinspires.ftc.teamcode.needle.commands.MecanumCommands;
 @TeleOp(group = "tests")
 public class AutomaticShootingTuner extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    CarouselSubsystem carouselSubsystem;
+    IntakeSubsystem intake;
+    CarouselSubsystem carousel;
     MecanumDrive mecanumDrive;
     LimelightSubsystem limelightSubsystem;
     GamepadEx driver, system;
@@ -56,10 +55,10 @@ public class AutomaticShootingTuner extends ActionOpMode {
     public void initialize() {
         SavedValues.teamColor = AutoShooter.TeamColor.BLUE;
 
-        intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
         dischargeSubsystem = new DischargeSubsystem(hardwareMap);
-        carouselSubsystem = new CarouselSubsystem(hardwareMap);
-        carouselSubsystem.resetEncoders();
+        carousel = new CarouselSubsystem(hardwareMap);
+        carousel.resetEncoders();
 
         mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(63, 0), Math.PI));
 
@@ -69,11 +68,11 @@ public class AutomaticShootingTuner extends ActionOpMode {
         system = new GamepadEx(gamepad2);
         initButtons();
         mecanumDrive.setDefaultCommand(new MecanumCommands.Drive(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> driver.getRightX()));
-        driverA.whenPressed(new CommandGroups.StartIntake(intakeSubsystem,carouselSubsystem));
-        driverB.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
-        driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
-        driverX.whenPressed(new CommandGroups.Shoot(intakeSubsystem,carouselSubsystem) .whenFinished(() -> CommandScheduler.getInstance().schedule(
-                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem))));
+        driverA.whenPressed(CommandGroups.startIntake(intake,carousel));
+        driverB.whenPressed(intake.closeState());
+        driverY.whenPressed(intake.outtake());
+        driverX.whenPressed(new CommandGroups.Shoot(intake,carousel) .whenFinished(() -> CommandScheduler.getInstance().schedule(
+                CommandGroups.startIntake(intake, carousel))));
         systemDPadUp.whenPressed(() -> wantedRPM += 50);
         systemDPadDown.whenPressed(() -> wantedRPM -= 50);
         systemA.whenPressed(() -> wantedDegree += 2);
@@ -81,13 +80,13 @@ public class AutomaticShootingTuner extends ActionOpMode {
         systemX.whenPressed(() -> wantedDegree += 0.2);
         systemB.whenPressed(() -> wantedDegree -= 0.2);
 
-        driverY.whenPressed(new IntakeCommands.OutTakeState(intakeSubsystem));
+        driverY.whenPressed(intake.outtake());
         driverDPadDown.whenPressed(new SequentialCommandGroup(
                 new InstantCommand(() -> work = false),
                 new WaitCommand(30000),
                 new InstantCommand(() -> work = true)
         ));
-        driverDPadUp.whenPressed(new IntakeCommands.ClosedState(intakeSubsystem));
+        driverDPadUp.whenPressed(intake.closeState());
         systemDPadLeft.whenPressed(() -> correction +=2);
         systemDPadRight.whenPressed(() -> correction -=2);
 //        limelightSubsystem.startLimelight();
@@ -96,29 +95,29 @@ public class AutomaticShootingTuner extends ActionOpMode {
     @Override
     public void run() {
         aimTurret();
-        atSpeed = Math.abs(dischargeSubsystem.getRPM() - wantedRPM) < 70;
+        atSpeed = Math.abs(dischargeSubsystem.flywheel.getRPM() - wantedRPM) < 70;
 
         mecanumDrive.localizer.update();
         double launchAngle =
                 (AutoShooter.getLaunchAngle(new Pose2d(mecanumDrive.localizer.getPose().position,mecanumDrive.localizer.getPose().heading.toDouble() - Math.PI), AutoShooter.TeamColor.BLUE) + 360) % 360;
-//        double power = -((launchAngle + 360) % 360 - dischargeSubsystem.getTurretAngle());
+//        double power = -((launchAngle + 360) % 360 - dischargeSubsystem.turret.getAngle());
 //        power += Math.signum(power) * 0.03;
 //        power = Range.clip(power, -0.4, 0.4);
-//        dischargeSubsystem.setTurretPower(power);
+//        dischargeSubsystem.turret.setPower(power);
 
         if(work){
-            dischargeSubsystem.setFlyWheelRPM(wantedRPM);
-            dischargeSubsystem.setRampDegree(wantedDegree);
+            dischargeSubsystem.flywheel.runRPM(wantedRPM);
+            dischargeSubsystem.ramp.setRampDegree(wantedDegree);
         }else{
-            dischargeSubsystem.setFlyWheelRPM(0);
+            dischargeSubsystem.flywheel.runRPM(0);
         }
         super.run();
-        multipleTelemetry.addData("turretAngle", dischargeSubsystem.getTurretAngle());
+        multipleTelemetry.addData("turretAngle", dischargeSubsystem.turret.getAngle());
 
         multipleTelemetry.addData("rampDegree", wantedDegree);
         multipleTelemetry.addData("wantedRPM", wantedRPM );
-        multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
-        multipleTelemetry.addData("power", dischargeSubsystem.getFlyWheelPower());
+        multipleTelemetry.addData("rpm", dischargeSubsystem.flywheel.getRPM());
+        multipleTelemetry.addData("power", dischargeSubsystem.flywheel.getPower());
         multipleTelemetry.addData("x", mecanumDrive.localizer.getPose().position.x);
         multipleTelemetry.addData("y", mecanumDrive.localizer.getPose().position.y);
         multipleTelemetry.addData("distance", AutoShooter.getGoalDistance(mecanumDrive.localizer.getPose(), AutoShooter.TeamColor.BLUE));
@@ -138,14 +137,14 @@ public class AutomaticShootingTuner extends ActionOpMode {
         launchAngle = Range.clip(launchAngle,24,332);
 
         double power;
-//            if (limelightSubsystem.getTx() != 0 && dischargeSubsystem.getTurretAngle() < 355 && dischargeSubsystem.getTurretAngle() > 5){
+//            if (limelightSubsystem.getTx() != 0 && dischargeSubsystem.turret.getAngle() < 355 && dischargeSubsystem.turret.getAngle() > 5){
 //                power = limelightSubsystem.getTx() * kp;
 //            } else{
-        power = -(launchAngle - dischargeSubsystem.getTurretAngle()) * 0.018;
+        power = -(launchAngle - dischargeSubsystem.turret.getAngle()) * 0.018;
 //            }
 //        power += mecanumSpeed * 0.12;
         power += Math.signum(power) * 0.04;
-        dischargeSubsystem.setTurretPower(power);
+        dischargeSubsystem.turret.setPower(power);
     }
 
     @Override

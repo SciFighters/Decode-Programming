@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
@@ -29,7 +30,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 
 import java.util.HashSet;
 import java.util.Set;
-
+@Disabled
 @Autonomous(name = "15 blue far sort")
 public class BlueFar15Sorted extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;

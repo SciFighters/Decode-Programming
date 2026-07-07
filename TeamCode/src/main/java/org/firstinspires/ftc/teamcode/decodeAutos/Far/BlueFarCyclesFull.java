@@ -69,11 +69,12 @@ public class BlueFarCyclesFull extends ActionOpMode {
         TrajectoryActionBuilder sweepIntake = mecanumDrive
                 .actionBuilder(new Pose2d(58, 24, Math.PI / 2), reversed)
                 .splineToConstantHeading(new Vector2d(61.4, 58), Math.PI / 2)   // up to the human-player wall, facing +Y
-                .splineToConstantHeading(new Vector2d(58, 58), -Math.PI / 2)    // back off so it has room to turn
-                .turnTo(Math.PI)                                                // pivot left in place to face along the wall
-                .lineToX(11)                                                    // drive forward ~1.2 m (47 in), intake facing -X
-                .setTangent(Math.toRadians(-30))
-                .splineToLinearHeading(new Pose2d(58, 24, Math.PI / 2), Math.toRadians(-30)); // return to the shooting spot
+                .splineToConstantHeading(new Vector2d(54, 54), -Math.PI / 2)    // back off so it has room to turn
+                .turnTo(0)  // pivot right in place to face along the wall
+                .splineToConstantHeading(new Vector2d(54, 63), 0) // move back closer to te wall
+                .lineToX(24) // drive forward ~1.2 m (47 in), intake facing -X
+                .setTangent(Math.toRadians(-30)) // idk what this does - orisup1
+                .splineToLinearHeading(new Pose2d(60, 12, Math.PI / 2), Math.toRadians(-30)); // return to the shooting spot
 
 
         CommandScheduler.getInstance().schedule(
@@ -102,7 +103,7 @@ public class BlueFarCyclesFull extends ActionOpMode {
                                 new ParallelCommandGroup(
                                         new ActionCommand(sweepIntake.build(), requirements),
                                         new SequentialCommandGroup(
-                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(4000),
+                                                new CommandGroups.StartIntake(intakeSubsystem, carouselSubsystem).withTimeout(2000),
                                                 new CommandGroups.PrepareShooting(intakeSubsystem, carouselSubsystem, mecanumDrive)
                                         )
                                 ),

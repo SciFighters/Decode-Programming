@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.decodeSubsystems;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
@@ -235,6 +236,10 @@ public class LimelightSubsystem extends SubsystemBase {
             }
         }
         return null;
+    }
+
+    public LLStatus getLimelightStatus(){
+        return limelight.getStatus();
     }
 
 }

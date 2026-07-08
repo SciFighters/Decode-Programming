@@ -92,7 +92,7 @@ public class BlueClose21 extends ActionOpMode {
 
         TrajectoryActionBuilder wheatleyAutoThree = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(Math.PI / 2)
-                .splineTo(new Vector2d(-13, 46), Math.PI / 2)
+                .splineTo(new Vector2d(-13, 40), Math.PI / 2)
                 .splineToConstantHeading(new Vector2d(-13, 20), -Math.PI / 2);
         TrajectoryActionBuilder wheatleyAutoFour = mecanumDrive.actionBuilder(new Pose2d(-13, 20, Math.PI / 2), reversed)
                 .setTangent(0)

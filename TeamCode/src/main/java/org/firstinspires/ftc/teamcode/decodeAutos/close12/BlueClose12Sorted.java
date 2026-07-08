@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
@@ -29,6 +30,7 @@ import org.firstinspires.ftc.teamcode.decodeSubsystems.SavedValues;
 import java.util.HashSet;
 import java.util.Set;
 
+@Disabled
 @Autonomous(name = "12 blue close sort", group = "blue close")
 public class BlueClose12Sorted extends ActionOpMode {
     DischargeSubsystem dischargeSubsystem;

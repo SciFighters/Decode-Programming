@@ -44,6 +44,7 @@ public class WheatleyOpMode extends ActionOpMode {
     Button driverStart, systemStart;
     Button driverBack, systemBack;
     Button driverLeftStick, systemLeftStick, driverRightStick, systemRightStick;
+    Button systemShare;
     Trigger driverLeftTrigger;
     AutoShooter.TeamColor teamColor;
     ElapsedTime time;
@@ -114,6 +115,7 @@ public class WheatleyOpMode extends ActionOpMode {
         driverRightStick.whileActiveOnce(new MecanumCommands.Aim(mecanumDrive, () -> driver.getLeftY(), () -> driver.getLeftX(),() -> 1 - 0.5 * gamepad1.right_trigger,Math.PI/2,1, teamColor)
                 .beforeStarting(new IntakeCommands.ClosedState(intakeSubsystem)));
         systemX.whenPressed(() -> mecanumDrive.localizer.setPose(new Pose2d(63, 0, Math.PI)));
+        systemShare.whenPressed(() -> limelightSubsystem.startLimelight());
     }
 
     @Override
@@ -160,6 +162,8 @@ public class WheatleyOpMode extends ActionOpMode {
         multipleTelemetry.addData("rpm", dischargeSubsystem.getRPM());
         multipleTelemetry.addData("flyWheelPower", dischargeSubsystem.flyWheelMotor.motorEx.getPower());
         multipleTelemetry.addData("correction", DischargeCommands.AutomaticAiming.turretCorrection);
+        multipleTelemetry.addData("limelight on?", DischargeCommands.AutomaticAiming.limelight);
+//        multipleTelemetry.addData("limelight status", limelightSubsystem.getLimelightStatus());
 
         multipleTelemetry.update();
         SavedValues.position = mecanumDrive.localizer.getPose();
@@ -201,5 +205,6 @@ public class WheatleyOpMode extends ActionOpMode {
         systemRightStick = new GamepadButton(system, GamepadKeys.Button.RIGHT_STICK_BUTTON);
         systemBack = new GamepadButton(system, GamepadKeys.Button.BACK);
         driverLeftTrigger = new Trigger(()-> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5);
+        systemShare = new GamepadButton(system, GamepadKeys.Button.SHARE);
     }
 }
